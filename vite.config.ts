@@ -10,6 +10,9 @@ export default defineConfig({
         react(),
         basicSsl(),
         VitePWA({
+            devOptions: {
+                enabled: true
+            },
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
             manifest: {
