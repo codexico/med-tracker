@@ -19,17 +19,29 @@ export default defineConfig({
                 name: 'MedTracker',
                 short_name: 'MedTracker',
                 description: 'Acompanhe seus medicamentos diários',
-                theme_color: '#ffffff',
+                theme_color: '#cdab8f',
+                background_color: '#ffffff',
+                display: 'standalone',
+                start_url: '/',
+                orientation: 'portrait',
                 icons: [
                     {
                         src: 'pwa-192x192.png',
                         sizes: '192x192',
-                        type: 'image/png'
+                        type: 'image/png',
+                        purpose: 'any'
                     },
                     {
                         src: 'pwa-512x512.png',
                         sizes: '512x512',
-                        type: 'image/png'
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: 'pwa-512x512.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                        purpose: 'maskable'
                     }
                 ]
             }
