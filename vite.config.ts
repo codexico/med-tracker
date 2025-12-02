@@ -16,6 +16,7 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
             manifest: {
+                lang: 'pt-BR',
                 name: 'MedTracker',
                 short_name: 'MedTracker',
                 description: 'Acompanhe seus medicamentos diários',
