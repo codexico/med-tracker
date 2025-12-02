@@ -3,8 +3,9 @@ import { Container, Typography, Box, Button, Switch, Divider, Popover, List, Lis
 import { Medication } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/pt-br';
 import { DigitalClock } from '@mui/x-date-pickers/DigitalClock';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { MedEvent } from '../types';
 import { iconMap } from '../utils/iconMap';
 
@@ -16,13 +17,16 @@ interface OnboardingProps {
 }
 
 export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime }) => {
+    dayjs.locale('pt-br')
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [editingEventId, setEditingEventId] = useState<string | null>(null);
+    const [editingValue, setEditingValue] = useState<Dayjs>(dayjs());
 
-    const handleTimeClick = (event: React.MouseEvent<HTMLButtonElement>, eventId: string) => {
+    function handleTimeClick(event: React.MouseEvent<HTMLButtonElement>, eventId: string, eventTime: string) {
         setAnchorEl(event.currentTarget);
         setEditingEventId(eventId);
-    };
+        setEditingValue(dayjs(eventTime, 'HH:mm'));
+    }
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -39,7 +43,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
     const open = Boolean(anchorEl);
 
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
             <Container maxWidth="sm" sx={{ py: 4, px: 0 }}>
                 <Box sx={{ mx: 2, my: 0 }}>
 
@@ -66,7 +70,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                                             <Button
                                                 size='small'
                                                 variant="outlined"
-                                                onClick={(e) => handleTimeClick(e, event.id)}
+                                                onClick={(e) => handleTimeClick(e, event.id, event.time)}
                                                 sx={{
                                                     minWidth: '40px', mr: 2, py: 0, px: 1
                                                 }}
@@ -110,6 +114,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                 >
                     <DigitalClock
                         timeStep={30}
+                        value={editingValue}
                         onChange={handleTimeChange}
                     />
                 </Popover>
