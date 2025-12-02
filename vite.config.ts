@@ -22,7 +22,7 @@ export default defineConfig({
                 theme_color: '#cdab8f',
                 background_color: '#ffffff',
                 display: 'standalone',
-                start_url: '/',
+                start_url: '/git/medtracker/dist/index.html',
                 orientation: 'portrait',
                 icons: [
                     {
