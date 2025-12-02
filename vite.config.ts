@@ -17,8 +17,8 @@ export default defineConfig({
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
             manifest: {
                 lang: 'pt-BR',
-                name: 'MedTracker',
-                short_name: 'MedTracker',
+                name: 'Meus Remedinhos',
+                short_name: 'Meus Remedinhos',
                 description: 'Acompanhe seus medicamentos diários',
                 theme_color: '#cdab8f',
                 background_color: '#ffffff',
