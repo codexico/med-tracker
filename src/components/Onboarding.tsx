@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Button, Switch, Divider, Popover, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
+import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover } from '@mui/material';
 import { Medication } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -56,52 +56,43 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                     </Typography>
                 </Box>
 
-                <List sx={{ mb: 4, bgcolor: 'background.paper', borderRadius: 1 }}>
+                <Paper elevation={3} sx={{ p: 2, mb: 4, mx: 0 }}>
                     {events.map((event, index) => {
                         const IconComponent = iconMap[event.icon] || Medication;
                         return (
                             <React.Fragment key={event.id}>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <IconComponent color="primary" fontSize="large" />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={
+                                <Box sx={{ py: 2, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
+                                            <IconComponent fontSize="large" />
+                                        </Box>
+                                        <Box>
                                             <Button
-                                                size='small'
-                                                variant="outlined"
+                                                variant="contained"
+                                                size="small"
                                                 onClick={(e) => handleTimeClick(e, event.id, event.time)}
                                                 sx={{
-                                                    minWidth: '40px', mr: 2, py: 0, px: 1
+                                                    minWidth: '80px', mr: 2, py: 0, px: 1
                                                 }}
                                             >
                                                 <Typography variant="body1">{event.time}</Typography>
-
                                             </Button>
-                                        }
-                                        sx={{
-                                            flexGrow: 0,
-                                        }}
-                                    />
-                                    <ListItemText primary={event.label}
-                                        sx={{
-                                            alignSelf: "start",
-
-                                        }} />
+                                        </Box>
+                                        <Box>
+                                            <Typography variant="body1">{event.label}</Typography>
+                                        </Box>
+                                    </Box>
                                     <Switch
-                                        edge="end"
                                         checked={event.enabled}
                                         onChange={() => onToggleEnabled(event.id)}
                                         inputProps={{ 'aria-label': `Habilitar ${event.label}` }}
                                     />
-                                </ListItem>
-                                {index < events.length - 1 && <Divider variant="middle" component="li" sx={{
-                                    'border-bottom-width': 'medium'
-                                }} />}
+                                </Box>
+                                {index < events.length - 1 && <Divider />}
                             </React.Fragment>
                         );
                     })}
-                </List>
+                </Paper>
 
                 <Popover
                     open={open}
