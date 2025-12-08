@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover } from '@mui/material';
+import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton } from '@mui/material';
 import { Medication } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -79,14 +79,26 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                                             </Button>
                                         </Box>
                                         <Box>
-                                            <Typography variant="body1">{event.label}</Typography>
+                                            <Box>
+                                                <Typography variant="body1">{event.label}</Typography>
+                                            </Box>
+                                            <Box>
+                                                {/* aqui vai a lista de remédios */}
+                                                <Typography variant="body1">remédio 1, remédio 2, remédio 3, remédio 4 </Typography>
+                                            </Box>
                                         </Box>
                                     </Box>
-                                    <Switch
-                                        checked={event.enabled}
-                                        onChange={() => onToggleEnabled(event.id)}
-                                        inputProps={{ 'aria-label': `Habilitar ${event.label}` }}
-                                    />
+                                    <Box sx={{ py: 2, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <IconButton color="primary" aria-label="adicionar medicamento" >
+                                            <Medication fontSize="large" />
+                                        </IconButton>
+
+                                        <Switch
+                                            checked={event.enabled}
+                                            onChange={() => onToggleEnabled(event.id)}
+                                            inputProps={{ 'aria-label': `Habilitar ${event.label}` }}
+                                        />
+                                    </Box>
                                 </Box>
                                 {index < events.length - 1 && <Divider />}
                             </React.Fragment>
