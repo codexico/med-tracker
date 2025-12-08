@@ -6,6 +6,7 @@ export interface MedEvent {
     enabled: boolean;
     completedToday: boolean;
     lastCompletedDate?: string; // ISO Date string YYYY-MM-DD
+    medications?: string[];
 }
 
 export interface UserSettings {

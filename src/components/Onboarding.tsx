@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton } from '@mui/material';
+import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { Medication } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -14,13 +14,36 @@ interface OnboardingProps {
     onToggleEnabled: (id: string) => void;
     onComplete: () => void;
     onUpdateTime: (id: string, newTime: string) => void;
+    onAddMedication: (id: string, medication: string) => void;
 }
 
-export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime }) => {
+export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime, onAddMedication }) => {
     dayjs.locale('pt-br')
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [editingEventId, setEditingEventId] = useState<string | null>(null);
     const [editingValue, setEditingValue] = useState<Dayjs>(dayjs());
+    const [openDialog, setOpenDialog] = useState(false);
+    const [currentEventId, setCurrentEventId] = useState<string | null>(null);
+    const [medicationName, setMedicationName] = useState('');
+
+    const handleOpenDialog = (eventId: string) => {
+        setCurrentEventId(eventId);
+        setMedicationName('');
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setCurrentEventId(null);
+        setMedicationName('');
+    };
+
+    const handleSaveMedication = () => {
+        if (currentEventId && medicationName.trim()) {
+            onAddMedication(currentEventId, medicationName.trim());
+            handleCloseDialog();
+        }
+    };
 
     function handleTimeClick(event: React.MouseEvent<HTMLButtonElement>, eventId: string, eventTime: string) {
         setAnchorEl(event.currentTarget);
@@ -84,12 +107,20 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                                             </Box>
                                             <Box>
                                                 {/* aqui vai a lista de remédios */}
-                                                <Typography variant="body1">remédio 1, remédio 2, remédio 3, remédio 4 </Typography>
+                                                <Typography variant="body1">
+                                                    {event.medications && event.medications.length > 0
+                                                        ? event.medications.join(', ')
+                                                        : ''}
+                                                </Typography>
                                             </Box>
                                         </Box>
                                     </Box>
                                     <Box sx={{ py: 2, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <IconButton color="primary" aria-label="adicionar medicamento" >
+                                        <IconButton
+                                            color="primary"
+                                            aria-label="adicionar medicamento"
+                                            onClick={() => handleOpenDialog(event.id)}
+                                        >
                                             <Medication fontSize="large" />
                                         </IconButton>
 
@@ -132,6 +163,25 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                 >
                     Concluir e Começar
                 </Button>
+
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                    <DialogTitle>Adicionar Medicamento</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            label="Nome do Medicamento"
+                            fullWidth
+                            variant="standard"
+                            value={medicationName}
+                            onChange={(e) => setMedicationName(e.target.value)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog}>Cancelar</Button>
+                        <Button onClick={handleSaveMedication}>Adicionar</Button>
+                    </DialogActions>
+                </Dialog>
             </Container>
         </LocalizationProvider>
     );

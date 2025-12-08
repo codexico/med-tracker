@@ -43,6 +43,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onToggle }) => {
                                 <Typography variant="h6" color="text.secondary">
                                     {event.time}
                                 </Typography>
+                                {event.medications && event.medications.length > 0 && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                        {event.medications.join(', ')}
+                                    </Typography>
+                                )}
                             </Box>
                         </Box>
                     }

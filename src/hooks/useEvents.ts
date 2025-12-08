@@ -98,6 +98,16 @@ export const useEvents = () => {
         }));
     };
 
+    const addMedication = (id: string, medication: string) => {
+        setEvents(prev => prev.map(event => {
+            if (event.id === id) {
+                const currentMeds = event.medications || [];
+                return { ...event, medications: [...currentMeds, medication] };
+            }
+            return event;
+        }));
+    };
+
     return {
         events,
         settings,
@@ -106,6 +116,7 @@ export const useEvents = () => {
         toggleEventEnabled,
         completeOnboarding,
         undoOnboarding,
-        updateEventTime
+        updateEventTime,
+        addMedication
     };
 };

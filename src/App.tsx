@@ -13,7 +13,8 @@ function App() {
         toggleEventEnabled,
         completeOnboarding,
         undoOnboarding,
-        updateEventTime
+        updateEventTime,
+        addMedication
     } = useEvents();
 
     useNotifications(events);
@@ -33,6 +34,7 @@ function App() {
                 onToggleEnabled={toggleEventEnabled}
                 onComplete={completeOnboarding}
                 onUpdateTime={updateEventTime}
+                onAddMedication={addMedication}
             />
         );
     }
