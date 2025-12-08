@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, Stack } from '@mui/material';
 import { Medication } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,9 +15,10 @@ interface OnboardingProps {
     onComplete: () => void;
     onUpdateTime: (id: string, newTime: string) => void;
     onAddMedication: (id: string, medication: string) => void;
+    onRemoveMedication: (id: string, index: number) => void;
 }
 
-export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime, onAddMedication }) => {
+export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime, onAddMedication, onRemoveMedication }) => {
     dayjs.locale('pt-br')
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [editingEventId, setEditingEventId] = useState<string | null>(null);
@@ -106,12 +107,18 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                                                 <Typography variant="body1">{event.label}</Typography>
                                             </Box>
                                             <Box>
-                                                {/* aqui vai a lista de remédios */}
-                                                <Typography variant="body1">
-                                                    {event.medications && event.medications.length > 0
-                                                        ? event.medications.join(', ')
-                                                        : ''}
-                                                </Typography>
+                                                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                                                    {event.medications?.map((med, idx) => (
+                                                        <Chip
+                                                            key={`${event.id}-med-${idx}`}
+                                                            label={med}
+                                                            onDelete={() => onRemoveMedication(event.id, idx)}
+                                                            color="default"
+                                                            variant="outlined"
+                                                            size="small"
+                                                        />
+                                                    ))}
+                                                </Stack>
                                             </Box>
                                         </Box>
                                     </Box>

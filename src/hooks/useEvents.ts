@@ -108,6 +108,16 @@ export const useEvents = () => {
         }));
     };
 
+    const removeMedication = (id: string, indexToRemove: number) => {
+        setEvents(prev => prev.map(event => {
+            if (event.id === id && event.medications) {
+                const newMeds = event.medications.filter((_, index) => index !== indexToRemove);
+                return { ...event, medications: newMeds };
+            }
+            return event;
+        }));
+    };
+
     return {
         events,
         settings,
@@ -117,6 +127,7 @@ export const useEvents = () => {
         completeOnboarding,
         undoOnboarding,
         updateEventTime,
-        addMedication
+        addMedication,
+        removeMedication
     };
 };

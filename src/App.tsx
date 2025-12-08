@@ -14,7 +14,8 @@ function App() {
         completeOnboarding,
         undoOnboarding,
         updateEventTime,
-        addMedication
+        addMedication,
+        removeMedication
     } = useEvents();
 
     useNotifications(events);
@@ -35,6 +36,7 @@ function App() {
                 onComplete={completeOnboarding}
                 onUpdateTime={updateEventTime}
                 onAddMedication={addMedication}
+                onRemoveMedication={removeMedication}
             />
         );
     }
