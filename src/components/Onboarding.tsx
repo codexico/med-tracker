@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, Stack } from '@mui/material';
-import { Medication } from '@mui/icons-material';
+import { ArrowCircleDownSharp, Medication, South } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pt-br';
@@ -66,26 +66,70 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
 
     const open = Boolean(anchorEl);
 
+    const instructions = (
+        <Paper elevation={3} sx={{ px: 2, mt: 0, mb: 4, mx: 0 }}>
+            <Box sx={{ pt: 2, pb: 1, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                <Box sx={{ display: 'flex', alignItems: 'start' }}>
+                    <Box sx={{ mr: 2, display: 'flex', alignItems: 'start', color: 'primary.main' }}>
+                        <ArrowCircleDownSharp fontSize="large" />
+                    </Box>
+                    <Box sx={{
+                        display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'space-between',
+                        mr: 2,
+                    }}>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            sx={{
+                                textTransform: 'none',
+                                width: '9ch', py: 0.2, px: 1
+                            }}
+                        >
+                            <Typography variant="body2">Alterar horário</Typography>
+                        </Button>
+
+                        <South fontSize="large" color='primary' />
+                    </Box>
+                    <Box sx={{ mt: 1 }} >
+                        <Typography variant="body1">Meus remedinhos</Typography>
+                    </Box>
+                </Box>
+
+                <Box sx={{ py: 0, px: 0, display: 'flex', justifyContent: 'end', alignItems: 'start' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'end', flexDirection: 'column' }}>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            sx={{
+                                textTransform: 'none',
+                                width: '14ch',
+                                minWidth: '80px', mx: 0, py: 0.2, px: 1
+                            }}
+                        >
+                            <Typography variant="body2">Adicionar medicamento</Typography>
+                        </Button>
+
+                        <South fontSize="large" color='primary' />
+                    </Box>
+                    <Switch checked />
+                </Box>
+            </Box>
+        </Paper>
+    );
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
             <Container maxWidth="sm" sx={{ py: 4, px: 0 }}>
-                <Box sx={{ mx: 2, my: 0 }}>
 
-                    <Typography variant="h1" component="h1" gutterBottom align="center">
-                        Configuração Inicial
-                    </Typography>
+                {instructions}
 
-                    <Typography variant="body1" sx={{ mb: 4, textAlign: 'center' }}>
-                        Selecione quais horários de medicamentos você utiliza diariamente. Clique no horário para alterar.
-                    </Typography>
-                </Box>
+                <Paper elevation={3} sx={{ px: 2, mb: 4, mx: 0 }}>
 
-                <Paper elevation={3} sx={{ p: 2, mb: 4, mx: 0 }}>
                     {events.map((event, index) => {
                         const IconComponent = iconMap[event.icon] || Medication;
                         return (
                             <React.Fragment key={event.id}>
-                                <Box sx={{ py: 2, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Box sx={{ py: 1, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
                                             <IconComponent fontSize="large" />
@@ -96,30 +140,33 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                                                 size="small"
                                                 onClick={(e) => handleTimeClick(e, event.id, event.time)}
                                                 sx={{
-                                                    minWidth: '80px', mr: 2, py: 0, px: 1
+                                                    width: '9ch',
+                                                    mr: 2, py: 0.2, px: 1
                                                 }}
                                             >
-                                                <Typography variant="body1">{event.time}</Typography>
+                                                <Typography variant="body2">{event.time}</Typography>
                                             </Button>
                                         </Box>
                                         <Box>
                                             <Box>
                                                 <Typography variant="body1">{event.label}</Typography>
                                             </Box>
-                                            <Box>
-                                                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
-                                                    {event.medications?.map((med, idx) => (
-                                                        <Chip
-                                                            key={`${event.id}-med-${idx}`}
-                                                            label={med}
-                                                            onDelete={() => onRemoveMedication(event.id, idx)}
-                                                            color="default"
-                                                            variant="outlined"
-                                                            size="small"
-                                                        />
-                                                    ))}
-                                                </Stack>
-                                            </Box>
+                                            {event.medications &&
+                                                <Box>
+                                                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                                                        {event.medications?.map((med, idx) => (
+                                                            <Chip
+                                                                key={`${event.id}-med-${idx}`}
+                                                                label={med}
+                                                                onDelete={() => onRemoveMedication(event.id, idx)}
+                                                                color="default"
+                                                                variant="outlined"
+                                                                size="small"
+                                                            />
+                                                        ))}
+                                                    </Stack>
+                                                </Box>
+                                            }
                                         </Box>
                                     </Box>
                                     <Box sx={{ py: 2, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
