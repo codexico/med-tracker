@@ -2,7 +2,18 @@ import { useEffect, useRef } from 'react';
 import { MedEvent } from '../types';
 
 export const useNotifications = (events: MedEvent[]) => {
-    const lastCheck = useRef<number>(Date.now());
+    const lastCheck = useRef<number>(0);
+
+    const showNotification = (eventName: string) => {
+        if (!('Notification' in window)) return;
+
+        if (Notification.permission === 'granted') {
+            new Notification('Hora do Remédio!', {
+                body: `Já tomou o remédio: ${eventName}?`,
+                icon: '/pwa-192x192.png', // We need to ensure this exists or use a placeholder
+            });
+        }
+    };
 
     useEffect(() => {
         // Check every minute
@@ -25,16 +36,7 @@ export const useNotifications = (events: MedEvent[]) => {
         return () => clearInterval(interval);
     }, [events]);
 
-    const showNotification = (eventName: string) => {
-        if (!('Notification' in window)) return;
 
-        if (Notification.permission === 'granted') {
-            new Notification('Hora do Remédio!', {
-                body: `Já tomou o remédio: ${eventName}?`,
-                icon: '/pwa-192x192.png', // We need to ensure this exists or use a placeholder
-            });
-        }
-    };
 
     const requestPermission = () => {
         if ('Notification' in window && Notification.permission === 'default') {
