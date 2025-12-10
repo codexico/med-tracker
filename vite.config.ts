@@ -2,10 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import basicSsl from '@vitejs/plugin-basic-ssl'
+import packageJson from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: './',
+    define: {
+        __APP_VERSION__: JSON.stringify(packageJson.version)
+    },
     plugins: [
         react(),
         basicSsl(),

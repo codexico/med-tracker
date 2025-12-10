@@ -236,6 +236,11 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                         <Button onClick={handleSaveMedication}>Adicionar</Button>
                     </DialogActions>
                 </Dialog>
+                <Box sx={{ mt: 4, textAlign: 'center', opacity: 0.5 }}>
+                    <Typography variant="caption">
+                        v{__APP_VERSION__}
+                    </Typography>
+                </Box>
             </Container>
         </LocalizationProvider>
     );
