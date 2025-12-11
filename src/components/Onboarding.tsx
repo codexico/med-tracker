@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, Stack } from '@mui/material';
-import { ArrowCircleDownSharp, Medication, South } from '@mui/icons-material';
+import { Container, Typography, Box, Button, Switch, Paper, Divider, Popover, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, Stack, Avatar } from '@mui/material';
+import { Medication } from '@mui/icons-material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pt-br';
@@ -66,62 +66,33 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
 
     const open = Boolean(anchorEl);
 
-    const instructions = (
-        <Paper elevation={3} sx={{ px: 2, mt: 0, mb: 4, mx: 0 }}>
-            <Box sx={{ pt: 2, pb: 1, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                <Box sx={{ display: 'flex', alignItems: 'start' }}>
-                    <Box sx={{ mr: 2, display: 'flex', alignItems: 'start', color: 'primary.main' }}>
-                        <ArrowCircleDownSharp fontSize="large" />
-                    </Box>
-                    <Box sx={{
-                        display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'space-between',
-                        mr: 2,
-                    }}>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            sx={{
-                                textTransform: 'none',
-                                width: '9ch', py: 0.2, px: 1
-                            }}
-                        >
-                            <Typography variant="body2">Alterar horário</Typography>
-                        </Button>
-
-                        <South fontSize="large" color='primary' />
-                    </Box>
-                    <Box sx={{ mt: 1 }} >
-                        <Typography variant="body1">Meus remedinhos</Typography>
-                    </Box>
-                </Box>
-
-                <Box sx={{ py: 0, px: 0, display: 'flex', justifyContent: 'end', alignItems: 'start' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'end', flexDirection: 'column' }}>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            sx={{
-                                textTransform: 'none',
-                                width: '14ch',
-                                minWidth: '80px', mx: 0, py: 0.2, px: 1
-                            }}
-                        >
-                            <Typography variant="body2">Adicionar medicamento</Typography>
-                        </Button>
-
-                        <South fontSize="large" color='primary' />
-                    </Box>
-                    <Switch checked />
-                </Box>
-            </Box>
-        </Paper>
-    );
-
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
             <Container maxWidth="sm" sx={{ py: 4, px: 0 }}>
 
-                {instructions}
+                <Box sx={{ mb: 4, textAlign: 'center' }}>
+                    <Typography variant="h4" component="h1" gutterBottom color="primary" sx={{ fontWeight: 'bold' }}>
+                        Meus Remedinhos
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                        Configure sua rotina em 3 passos simples:
+                    </Typography>
+
+                    <Stack spacing={2}>
+                        <Paper variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', borderColor: 'primary.light' }}>
+                            <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 32, height: 32, fontSize: '0.9rem' }}>1</Avatar>
+                            <Typography variant="body1">Defina os horários da sua rotina</Typography>
+                        </Paper>
+                        <Paper variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', borderColor: 'primary.light' }}>
+                            <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 32, height: 32, fontSize: '0.9rem' }}>2</Avatar>
+                            <Typography variant="body1">Adicione os remédios de cada horário</Typography>
+                        </Paper>
+                        <Paper variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', borderColor: 'primary.light' }}>
+                            <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 32, height: 32, fontSize: '0.9rem' }}>3</Avatar>
+                            <Typography variant="body1">Ative as notificações diárias</Typography>
+                        </Paper>
+                    </Stack>
+                </Box>
 
                 <Paper elevation={3} sx={{ px: 2, mb: 4, mx: 0 }}>
 
@@ -129,61 +100,68 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                         const IconComponent = iconMap[event.icon] || Medication;
                         return (
                             <React.Fragment key={event.id}>
-                                <Box sx={{ py: 1, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
-                                            <IconComponent fontSize="large" />
-                                        </Box>
-                                        <Box>
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                onClick={(e) => handleTimeClick(e, event.id, event.time)}
-                                                sx={{
-                                                    width: '9ch',
-                                                    mr: 2, py: 0.2, px: 1
-                                                }}
-                                            >
-                                                <Typography variant="body2">{event.time}</Typography>
-                                            </Button>
-                                        </Box>
-                                        <Box>
-                                            <Box>
-                                                <Typography variant="body1">{event.label}</Typography>
+                                <Box sx={{ py: 2 }} >
+                                    <Box sx={{ pt: 0, pb: 0, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
+                                                <IconComponent fontSize="large" />
                                             </Box>
-                                            {event.medications &&
-                                                <Box>
-                                                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
-                                                        {event.medications?.map((med, idx) => (
-                                                            <Chip
-                                                                key={`${event.id}-med-${idx}`}
-                                                                label={med}
-                                                                onDelete={() => onRemoveMedication(event.id, idx)}
-                                                                color="default"
-                                                                variant="outlined"
-                                                                size="small"
-                                                            />
-                                                        ))}
-                                                    </Stack>
-                                                </Box>
-                                            }
+                                            <Box>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    onClick={(e) => handleTimeClick(e, event.id, event.time)}
+                                                    sx={{
+                                                        width: '9ch',
+                                                        mr: 2, py: 0, px: 1
+                                                    }}
+                                                >
+                                                    {event.time}
+                                                </Button>
+                                            </Box>
+                                            <Box>
+
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    sx={{
+                                                        textTransform: 'none',
+                                                        width: '14ch',
+                                                        minWidth: '80px', mx: 0, py: 0.2, px: 1
+                                                    }}
+                                                    onClick={() => handleOpenDialog(event.id)}
+                                                >
+                                                    <Typography variant="body2">Adicionar medicamento</Typography>
+                                                </Button>
+
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{ py: 0, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                                            <Switch
+                                                checked={event.enabled}
+                                                onChange={() => onToggleEnabled(event.id)}
+                                                inputProps={{ 'aria-label': `Habilitar ${event.label}` }}
+                                            />
                                         </Box>
                                     </Box>
-                                    <Box sx={{ py: 2, px: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <IconButton
-                                            color="primary"
-                                            aria-label="adicionar medicamento"
-                                            onClick={() => handleOpenDialog(event.id)}
-                                        >
-                                            <Medication fontSize="large" />
-                                        </IconButton>
 
-                                        <Switch
-                                            checked={event.enabled}
-                                            onChange={() => onToggleEnabled(event.id)}
-                                            inputProps={{ 'aria-label': `Habilitar ${event.label}` }}
-                                        />
-                                    </Box>
+                                    {event.medications &&
+                                        <Box >
+                                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                                                {event.medications?.map((med, idx) => (
+                                                    <Chip
+                                                        key={`${event.id}-med-${idx}`}
+                                                        label={med}
+                                                        onDelete={() => onRemoveMedication(event.id, idx)}
+                                                        color="default"
+                                                        variant="outlined"
+                                                        size="small"
+                                                    />
+                                                ))}
+                                            </Stack>
+                                        </Box>
+                                    }
                                 </Box>
                                 {index < events.length - 1 && <Divider />}
                             </React.Fragment>
