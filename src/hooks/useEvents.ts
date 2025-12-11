@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MedEvent, UserSettings } from '../types';
 import { createInitialEvents } from '../constants';
 import { format } from 'date-fns';
+import { getIconForTime } from '../utils/timeUtils';
 
 const STORAGE_KEY_EVENTS = 'med_tracker_events';
 const STORAGE_KEY_SETTINGS = 'med_tracker_settings';
@@ -95,7 +96,7 @@ export const useEvents = () => {
                 return { ...event, time: newTime };
             }
             return event;
-        }));
+        }).sort((a, b) => a.time.localeCompare(b.time)));
     };
 
     const addMedication = (id: string, medication: string) => {
@@ -118,6 +119,19 @@ export const useEvents = () => {
         }));
     };
 
+    const addEvent = (label: string, time: string) => {
+        const newEvent: MedEvent = {
+            id: crypto.randomUUID(),
+            label,
+            time,
+            icon: getIconForTime(time),
+            enabled: true,
+            completedToday: false,
+            medications: []
+        };
+        setEvents(prev => [...prev, newEvent].sort((a, b) => a.time.localeCompare(b.time)));
+    };
+
     return {
         events,
         settings,
@@ -128,6 +142,7 @@ export const useEvents = () => {
         undoOnboarding,
         updateEventTime,
         addMedication,
-        removeMedication
+        removeMedication,
+        addEvent
     };
 };

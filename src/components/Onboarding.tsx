@@ -16,9 +16,10 @@ interface OnboardingProps {
     onUpdateTime: (id: string, newTime: string) => void;
     onAddMedication: (id: string, medication: string) => void;
     onRemoveMedication: (id: string, index: number) => void;
+    onAddEvent: (label: string, time: string) => void;
 }
 
-export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime, onAddMedication, onRemoveMedication }) => {
+export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled, onComplete, onUpdateTime, onAddMedication, onRemoveMedication, onAddEvent }) => {
     dayjs.locale('pt-br')
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [editingEventId, setEditingEventId] = useState<string | null>(null);
@@ -65,6 +66,19 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
     };
 
     const open = Boolean(anchorEl);
+
+    const [isAddEventOpen, setIsAddEventOpen] = useState(false);
+    const [newEventLabel, setNewEventLabel] = useState('');
+    const [newEventTime, setNewEventTime] = useState<Dayjs | null>(dayjs());
+
+    const handleAddEvent = () => {
+        if (newEventLabel && newEventTime) {
+            onAddEvent(newEventLabel, newEventTime.format('HH:mm'));
+            setIsAddEventOpen(false);
+            setNewEventLabel('');
+            setNewEventTime(dayjs());
+        }
+    };
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
@@ -169,6 +183,12 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                     })}
                 </Paper>
 
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+                    <Button variant="outlined" onClick={() => setIsAddEventOpen(true)} startIcon={<Medication />}>
+                        Adicionar Novo Horário
+                    </Button>
+                </Box>
+
                 <Popover
                     open={open}
                     anchorEl={anchorEl}
@@ -214,6 +234,35 @@ export const Onboarding: React.FC<OnboardingProps> = ({ events, onToggleEnabled,
                         <Button onClick={handleSaveMedication}>Adicionar</Button>
                     </DialogActions>
                 </Dialog>
+
+                <Dialog open={isAddEventOpen} onClose={() => setIsAddEventOpen(false)}>
+                    <DialogTitle>Novo Evento</DialogTitle>
+                    <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2, minWidth: 300 }}>
+                        <TextField
+                            autoFocus
+                            label="Nome do Evento (ex: Lanche)"
+                            fullWidth
+                            value={newEventLabel}
+                            onChange={(e) => setNewEventLabel(e.target.value)}
+                        />
+                        <Typography variant="body2" color="text.secondary">Horário</Typography>
+                        <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                            <DigitalClock
+                                timeStep={30}
+                                value={newEventTime}
+                                onChange={(newValue) => setNewEventTime(newValue)}
+                                sx={{ width: '100%' }}
+                            />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsAddEventOpen(false)}>Cancelar</Button>
+                        <Button onClick={handleAddEvent} variant="contained" disabled={!newEventLabel}>
+                            Criar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
                 <Box sx={{ mt: 4, textAlign: 'center', opacity: 0.5 }}>
                     <Typography variant="caption">
                         v{__APP_VERSION__}
