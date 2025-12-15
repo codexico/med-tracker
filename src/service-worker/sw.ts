@@ -4,18 +4,12 @@ interface PeriodicBackgroundSyncEvent extends ExtendableEvent {
 	tag: string;
 }
 
-import { createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
+import { precacheAndRoute } from 'workbox-precaching';
 
 import { UPDATE_CHECK } from '../constants.ts';
 import { checkForUpdates } from './updates.ts';
 
 precacheAndRoute(self.__WB_MANIFEST || []);
-
-registerRoute(
-	({ request }) => request.mode === 'navigate',
-	createHandlerBoundToURL('/index.html'),
-);
 
 self.addEventListener('install', () => void self.skipWaiting());
 self.addEventListener('activate', () => void self.clients.claim());
