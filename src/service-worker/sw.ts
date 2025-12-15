@@ -4,15 +4,26 @@ interface PeriodicBackgroundSyncEvent extends ExtendableEvent {
 	tag: string;
 }
 
+import { createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching';
+import { registerRoute } from 'workbox-routing';
 
 import { UPDATE_CHECK } from '../constants.ts';
 import { checkForUpdates } from './updates.ts';
 
+precacheAndRoute(self.__WB_MANIFEST || []);
+
+registerRoute(
+	({ request }) => request.mode === 'navigate',
+	createHandlerBoundToURL('/index.html'),
+);
 
 self.addEventListener('install', () => void self.skipWaiting());
 self.addEventListener('activate', () => void self.clients.claim());
 
-
+self.addEventListener('notificationclick', (event) => {
+	event.waitUntil(self.clients.openWindow(event.notification.tag));
+	event.notification.close();
+});
 
 // @ts-expect-error periodicsync is not included in the default SW interface.
 self.addEventListener('periodicsync', (event: PeriodicBackgroundSyncEvent) => {
