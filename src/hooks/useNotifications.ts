@@ -1,35 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { MedEvent } from '../types';
+import { showMedicationNotification } from '../utils/notifications';
+import { UPDATE_CHECK } from '../constants';
 
 export const useNotifications = (events: MedEvent[]) => {
     const lastCheck = useRef<number>(0);
 
     const showNotification = (eventName: string) => {
-        if (!('Notification' in window)) return;
-
-        if (Notification.permission === 'granted') {
-            const title = 'Hora do Remédio!';
-            const options = {
-                body: `Já tomou o remédio: ${eventName}?`,
-                icon: '/pwa-192x192.png',
-                vibrate: [200, 100, 200], // Vibration pattern
-                tag: `med-${eventName}-${Date.now()}` // Unique tag to prevent overwriting
-            };
-
-            // Try to use Service Worker for notifications (required for Android)
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.showNotification(title, options);
-                }).catch(err => {
-                    console.error('Service Worker notification failed:', err);
-                    // Fallback
-                    new Notification(title, options);
-                });
-            } else {
-                // Fallback for browsers without Service Worker support
-                new Notification(title, options);
-            }
-        }
+        showMedicationNotification(eventName);
     };
 
     useEffect(() => {
@@ -52,6 +30,22 @@ export const useNotifications = (events: MedEvent[]) => {
 
         return () => clearInterval(interval);
     }, [events]);
+
+    useEffect(() => {
+        if ('serviceWorker' in navigator && 'periodicSync' in navigator.serviceWorker) {
+            navigator.serviceWorker.ready.then(async (registration) => {
+                try {
+                    // @ts-expect-error periodicSync is not in the default types
+                    await registration.periodicSync.register(UPDATE_CHECK, {
+                        minInterval: 60 * 60 * 1000, // 1 hour (minimum allowed usually)
+                    });
+                    console.log('Periodic sync registered:', UPDATE_CHECK);
+                } catch (error) {
+                    console.error('Periodic sync registration failed:', error);
+                }
+            });
+        }
+    }, []);
 
 
 

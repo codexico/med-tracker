@@ -3,6 +3,7 @@ import { MedEvent, UserSettings } from '../types';
 import { createInitialEvents } from '../constants';
 import { format } from 'date-fns';
 import { getIconForTime } from '../utils/timeUtils';
+import { saveEventsToDB } from '../utils/db';
 
 const STORAGE_KEY_EVENTS = 'med_tracker_events';
 const STORAGE_KEY_SETTINGS = 'med_tracker_settings';
@@ -49,6 +50,7 @@ export const useEvents = () => {
     useEffect(() => {
         if (!loading) {
             localStorage.setItem(STORAGE_KEY_EVENTS, JSON.stringify(events));
+            saveEventsToDB(events);
         }
     }, [events, loading]);
 

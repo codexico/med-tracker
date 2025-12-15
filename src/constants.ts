@@ -1,6 +1,8 @@
 import { MedEvent } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
+export const UPDATE_CHECK = 'update-check';
+
 export const DEFAULT_EVENTS: Omit<MedEvent, 'id' | 'completedToday'>[] = [
     { label: 'Ao acordar', time: '07:00', icon: 'wb_sunny', enabled: true },
     { label: 'Café da manhã', time: '08:00', icon: 'local_cafe', enabled: true },

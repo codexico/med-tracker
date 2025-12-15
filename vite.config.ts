@@ -14,6 +14,9 @@ export default defineConfig({
         react(),
         basicSsl(),
         VitePWA({
+            strategies: 'injectManifest',
+            srcDir: 'src/service-worker',
+            filename: 'sw.ts',
             devOptions: {
                 enabled: true
             },

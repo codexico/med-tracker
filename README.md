@@ -61,6 +61,11 @@ This project is configured to run inside a Docker container using VS Code's Dev 
 7.  Open your browser at `https://localhost:5173` to view the app.
     - **Note:** Since we use a self-signed certificate for local development (required for PWA features), your browser will likely show a security warning ("Your connection is not private"). You can safely proceed by clicking "Advanced" and then "Proceed to localhost (unsafe)" (or similar, depending on your browser).
 
+### New versions
+
+1.  Run `npm version {major|minor|patch}` to create a new version.
+
+
 ## License
 
 MIT
