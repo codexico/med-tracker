@@ -1,6 +1,10 @@
-# MedTracker
+# Meus Remedinhos
 
-MedTracker is a Progressive Web App (PWA) designed to help users track their daily medication intake.
+Meus Remedinhos is a Progressive Web App (PWA) designed to help users track their daily medication intake.
+
+Vários métodos foram tentados para dar as notificações, mas infelizmente o Chrome não permite notificações sem o usuário interagir muitas vezes antes com o app, e mesmo assim não é 100% confiável e nem na frequência necessária.
+
+Vamos tentar uma versão 2 com React Native.
 
 ## Features
 
