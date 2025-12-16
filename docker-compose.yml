@@ -1,11 +1,13 @@
-version: '3.8'
-
 services:
   app:
     build: .
     ports:
       - "5173:5173"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     volumes:
       - .:/app
       - /app/node_modules
+      - /etc/localtime:/etc/localtime:ro
     command: sh -c "npm install && npm run dev -- --host"
