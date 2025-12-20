@@ -73,7 +73,7 @@ export const scheduleEventNotification = async (event: MedEvent): Promise<string
     const minute = parseInt(minuteStr, 10);
 
     // Create content
-    let body = `Está na hora do: ${event.label}`;
+    let body = `${event.label}`;
     if (event.medications && event.medications.length > 0) {
         body += `\nTomar: ${event.medications.join(', ')}`;
     }
@@ -81,7 +81,7 @@ export const scheduleEventNotification = async (event: MedEvent): Promise<string
     try {
         const id = await Notifications.scheduleNotificationAsync({
             content: {
-                title: 'Hora do Remedinho! 💊',
+                title: `${event.time} Hora do Remedinho!`,
                 body: body,
                 sound: true,
                 data: { eventId: event.id },
