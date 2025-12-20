@@ -1,0 +1,515 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Modal, TextInput, Switch } from 'react-native';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { MedEvent } from '@/types';
+import { createInitialEvents } from '@/constants/Events';
+import { saveEvent, getEvents, saveSetting } from '@/services/Database';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from '@expo/vector-icons';
+import { scheduleEventNotification, cancelNotification, requestPermissions } from '@/services/Notifications';
+import { getClockIconName, DEFAULT_ICON_NAMES, getIcon } from '@/constants/ClockIcons';
+
+
+export default function OnboardingScreen() {
+    const colorScheme = useColorScheme();
+    const theme = Colors[colorScheme ?? 'light'];
+    const [events, setEvents] = useState<MedEvent[]>([]);
+    const [showPicker, setShowPicker] = useState<string | null>(null);
+
+    // Modal state for adding medication
+    const [modalVisible, setModalVisible] = useState(false);
+    const [currentEventId, setCurrentEventId] = useState<string | null>(null);
+    const [newMedication, setNewMedication] = useState('');
+
+    // Modal state for creating new event
+    const [createModalVisible, setCreateModalVisible] = useState(false);
+    const [newEventLabel, setNewEventLabel] = useState('');
+    const [newEventTime, setNewEventTime] = useState(new Date());
+    const [showCreateTimePicker, setShowCreateTimePicker] = useState(false);
+
+    // Load on mount
+    useEffect(() => {
+        const load = async () => {
+            await requestPermissions();
+            // Try getting existing events first
+            const stored = await getEvents();
+            if (stored.length > 0) {
+                // Sort by time
+                stored.sort((a, b) => a.time.localeCompare(b.time));
+                setEvents(stored);
+            } else {
+                const initial = createInitialEvents();
+                setEvents(initial);
+                // Initial save
+                for (const e of initial) {
+                    await saveEvent(e);
+                }
+            }
+
+            // Mark onboarding as done immediately to ensure next launch goes to Dashboard
+            saveSetting('hasCompletedOnboarding', 'true');
+        };
+        load();
+    }, []);
+
+    const updateEvent = async (targetEvent: MedEvent) => {
+        const oldEvent = events.find(e => e.id === targetEvent.id);
+        let finalEvent = { ...targetEvent };
+
+        // Logic to determine if we need to reschedule notifications
+        const timeChanged = !oldEvent || oldEvent.time !== finalEvent.time;
+        const enabledChanged = !oldEvent || oldEvent.enabled !== finalEvent.enabled;
+        const medsChanged = !oldEvent || JSON.stringify(oldEvent.medications) !== JSON.stringify(finalEvent.medications);
+        const labelChanged = !oldEvent || oldEvent.label !== finalEvent.label;
+
+        // If any relevant property changed, we refresh the notification
+        if (timeChanged || enabledChanged || medsChanged || labelChanged) {
+            // Always try to cancel the old one if it exists
+            if (oldEvent?.notificationId) {
+                await cancelNotification(oldEvent.notificationId);
+                // Clear ID from temp object just in case
+                finalEvent.notificationId = undefined;
+            }
+
+            // If the event should be active, schedule a new one
+            if (finalEvent.enabled) {
+                const newId = await scheduleEventNotification(finalEvent);
+                if (newId) {
+                    finalEvent.notificationId = newId;
+                }
+            }
+        } else {
+            // Keep existing notification ID if no changes
+            finalEvent.notificationId = oldEvent?.notificationId;
+        }
+
+        // Optimistic Update
+        setEvents(prev => {
+            const updated = prev.map(e => e.id === finalEvent.id ? finalEvent : e);
+            return updated.sort((a, b) => a.time.localeCompare(b.time));
+        });
+
+        // Save to DB
+        await saveEvent(finalEvent);
+    };
+
+    const handleTimeChange = (event: any, selectedDate?: Date, id?: string) => {
+        if (Platform.OS === 'android') {
+            setShowPicker(null);
+        }
+
+        if (selectedDate && id) {
+            const hours = selectedDate.getHours().toString().padStart(2, '0');
+            const minutes = selectedDate.getMinutes().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+
+            const currentEvent = events.find(e => e.id === id);
+            if (currentEvent) {
+                // If the current icon is NOT in the default list, update it to match the time
+                let newIcon = currentEvent.icon;
+                if (!DEFAULT_ICON_NAMES.includes(currentEvent.icon)) {
+                    newIcon = getClockIconName(timeString);
+                }
+                updateEvent({ ...currentEvent, time: timeString, icon: newIcon });
+            }
+        }
+    };
+
+    const toggleEvent = (id: string) => {
+        const currentEvent = events.find(e => e.id === id);
+        if (currentEvent) {
+            updateEvent({ ...currentEvent, enabled: !currentEvent.enabled });
+        }
+    };
+
+    const openAddMedicationModal = (eventId: string) => {
+        setCurrentEventId(eventId);
+        setNewMedication('');
+        setModalVisible(true);
+    };
+
+    const handleAddMedication = () => {
+        if (currentEventId && newMedication.trim()) {
+            const currentEvent = events.find(e => e.id === currentEventId);
+            if (currentEvent) {
+                const updatedMeds = [...(currentEvent.medications || []), newMedication.trim()];
+                updateEvent({ ...currentEvent, medications: updatedMeds });
+            }
+            setModalVisible(false);
+        }
+    };
+
+    const removeMedication = (eventId: string, index: number) => {
+        const currentEvent = events.find(e => e.id === eventId);
+        if (currentEvent && currentEvent.medications) {
+            const updatedMeds = currentEvent.medications.filter((_, i) => i !== index);
+            updateEvent({ ...currentEvent, medications: updatedMeds });
+        }
+    };
+
+    const handleCreateEvent = async () => {
+        if (!newEventLabel.trim()) return;
+
+        const hours = newEventTime.getHours().toString().padStart(2, '0');
+        const minutes = newEventTime.getMinutes().toString().padStart(2, '0');
+        const timeString = `${hours}:${minutes}`;
+
+        // Generate a text ID based on timestamp
+        const newId = `event-${Date.now()}`;
+
+        let newEvent: MedEvent = {
+            id: newId,
+            label: newEventLabel.trim(),
+            time: timeString,
+            icon: getClockIconName(timeString), // Default icon based on time
+            enabled: true,
+            medications: [],
+            completedToday: false
+        };
+
+        // Schedule Notification
+        const notifId = await scheduleEventNotification(newEvent);
+        if (notifId) {
+            newEvent.notificationId = notifId;
+        }
+
+        // Update State & DB
+        setEvents(prev => {
+            const updated = [...prev, newEvent];
+            return updated.sort((a, b) => a.time.localeCompare(b.time));
+        });
+        await saveEvent(newEvent);
+
+        setCreateModalVisible(false);
+        setNewEventLabel('');
+        setNewEventTime(new Date());
+    };
+
+    return (
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            <View style={styles.header}>
+                <Text style={[styles.title, { color: theme.text }]}>Configuração</Text>
+                <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+                    Ajuste seus horários e medicamentos.
+                </Text>
+            </View>
+
+            <ScrollView style={styles.content}>
+                {events.map(event => (
+                    <View key={event.id} style={[styles.card, { backgroundColor: theme.surface }]}>
+                        <View style={styles.cardHeader}>
+
+                            <View style={{ marginLeft: 12, marginRight: 12 }}>
+                                {getIcon(event.icon, theme.text, 24)}
+                            </View>
+
+                            <View style={{ flex: 1 }}>
+                                <Text style={[styles.cardTitle, { color: theme.text }]}>{event.label}</Text>
+                                <Text style={[styles.cardTimeDisplay, { color: theme.textSecondary }]}>{event.time}</Text>
+                            </View>
+
+                            {event.enabled && (
+                                <Pressable
+                                    style={[styles.timeButton, { backgroundColor: theme.background }]}
+                                    onPress={() => setShowPicker(event.id)}
+                                >
+                                    <Text style={[styles.timeText, { color: theme.text }]}>Editar Hora</Text>
+                                </Pressable>
+                            )}
+                            <Switch
+                                style={styles.switch}
+                                value={event.enabled}
+                                onValueChange={() => toggleEvent(event.id)}
+                                trackColor={{ false: '#767577', true: theme.primary }}
+                                ios_backgroundColor="#767577"
+                                thumbColor={Platform.OS === 'ios' ? '#fff' : (event.enabled ? '#fff' : '#f4f3f4')}
+                            />
+                        </View>
+
+                        {event.enabled && (
+                            <View style={styles.medicationSection}>
+                                <View style={styles.medicationList}>
+                                    {event.medications?.map((med, idx) => (
+                                        <View key={idx} style={[styles.chip, { backgroundColor: theme.background, borderColor: theme.icon }]}>
+                                            <Text style={{ color: theme.text, marginRight: 6 }}>{med}</Text>
+                                            <Pressable onPress={() => removeMedication(event.id, idx)}>
+                                                <Ionicons name="close-circle" size={16} color={theme.textSecondary} />
+                                            </Pressable>
+                                        </View>
+                                    ))}
+                                </View>
+                                <Pressable
+                                    style={[styles.addMedButton, { borderColor: theme.primary }]}
+                                    onPress={() => openAddMedicationModal(event.id)}
+                                >
+                                    <Ionicons name="add" size={16} color={theme.primary} />
+                                    <Text style={[styles.addMedText, { color: theme.primary }]}>Adicionar Medicamento</Text>
+                                </Pressable>
+                            </View>
+                        )}
+
+
+                        {showPicker === event.id && (
+                            <DateTimePicker
+                                value={new Date(new Date().setHours(parseInt(event.time.split(':')[0]), parseInt(event.time.split(':')[1])))}
+                                mode="time"
+                                display="spinner"
+                                minuteInterval={30}
+                                onChange={(e, date) => handleTimeChange(e, date, event.id)}
+                            />
+                        )}
+                    </View>
+                ))}
+                <View style={{ paddingHorizontal: 24, paddingBottom: 4, paddingTop: 8 }}>
+                    <Pressable
+                        style={[styles.button, { backgroundColor: theme.primary, width: '100%' }]}
+                        onPress={() => setCreateModalVisible(true)}
+                    >
+                        <Text style={styles.textStyle}>Adicionar Novo Horário</Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
+
+
+            {/* Modal for adding medication */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                    <View style={[styles.modalView, { backgroundColor: theme.surface }]}>
+                        <Text style={[styles.modalTitle, { color: theme.text }]}>Novo Medicamento</Text>
+                        <TextInput
+                            style={[styles.input, { color: theme.text, borderColor: theme.icon, backgroundColor: theme.background }]}
+                            placeholder="Nome do medicamento"
+                            placeholderTextColor={theme.textSecondary}
+                            value={newMedication}
+                            onChangeText={setNewMedication}
+                            autoFocus
+                        />
+                        <View style={styles.modalButtons}>
+                            <Pressable style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModalVisible(false)}>
+                                <Text style={[styles.textStyle, { color: theme.textSecondary }]}>Cancelar</Text>
+                            </Pressable>
+                            <Pressable style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleAddMedication}>
+                                <Text style={styles.textStyle}>Adicionar</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Modal for creating new event */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={createModalVisible}
+                onRequestClose={() => setCreateModalVisible(false)}
+            >
+                <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                    <View style={[styles.modalView, { backgroundColor: theme.surface }]}>
+                        <Text style={[styles.modalTitle, { color: theme.text }]}>Novo Horário</Text>
+
+                        <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>Nome do Horário (ex: Lanche):</Text>
+                        <TextInput
+                            style={[styles.input, { color: theme.text, borderColor: theme.icon, backgroundColor: theme.background }]}
+                            placeholder="Ex: Lanche da Tarde"
+                            placeholderTextColor={theme.textSecondary}
+                            value={newEventLabel}
+                            onChangeText={setNewEventLabel}
+                        />
+
+                        <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4, marginTop: 10 }}>Horário:</Text>
+
+                        <Pressable
+                            style={[styles.input, { justifyContent: 'center', borderColor: theme.icon, backgroundColor: theme.background }]}
+                            onPress={() => setShowCreateTimePicker(true)}
+                        >
+                            <Text style={{ color: theme.text, fontSize: 16 }}>
+                                {newEventTime.getHours().toString().padStart(2, '0')}:{newEventTime.getMinutes().toString().padStart(2, '0')}
+                            </Text>
+                        </Pressable>
+
+                        {showCreateTimePicker && (
+                            <DateTimePicker
+                                value={newEventTime}
+                                mode="time"
+                                display="spinner"
+                                minuteInterval={30}
+                                onChange={(e, date) => {
+                                    if (Platform.OS === 'android') setShowCreateTimePicker(false);
+                                    if (date) setNewEventTime(date);
+                                }}
+                            />
+                        )}
+
+                        <View style={styles.modalButtons}>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setCreateModalVisible(false)}
+                            >
+                                <Text style={[styles.textStyle, { color: theme.textSecondary }]}>Cancelar</Text>
+                            </Pressable>
+                            <Pressable style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleCreateEvent}>
+                                <Text style={styles.textStyle}>Criar</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingTop: 60,
+        paddingBottom: 20
+    },
+    header: {
+        paddingHorizontal: 24,
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    subtitle: {
+        fontSize: 20,
+    },
+    content: {
+        paddingHorizontal: 24,
+    },
+    card: {
+        padding: 16,
+        borderRadius: 16,
+        marginBottom: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 12,
+    },
+    cardTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    cardTimeDisplay: {
+        fontSize: 14,
+    },
+    timeButton: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8
+    },
+    timeText: {
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    switch: {
+        marginLeft: 8,
+    },
+    medicationSection: {
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(0,0,0,0.05)',
+        paddingTop: 12,
+    },
+    medicationList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginBottom: 12,
+    },
+    chip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    addMedButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+    },
+    addMedText: {
+        marginLeft: 6,
+        fontWeight: '600',
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        margin: 20,
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: '80%',
+    },
+    modalTitle: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    input: {
+        height: 40,
+        width: '100%',
+        margin: 12,
+        borderWidth: 1,
+        borderRadius: 8,
+        padding: 10,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        gap: 12,
+        width: '100%',
+        justifyContent: 'center',
+        marginTop: 10,
+    },
+    button: {
+        borderRadius: 10,
+        padding: 10,
+        elevation: 2,
+        minWidth: 100,
+        alignItems: 'center',
+    },
+    buttonClose: {
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#6d5d4b',
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+});
