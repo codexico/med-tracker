@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Modal, TextInp
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MedEvent } from '@/types';
-import { createInitialEvents } from '@/constants/Events';
-import { saveEvent, getEvents, saveSetting } from '@/services/Database';
+// createInitialEvents used internally by Database service now
+import { saveEvent, saveSetting, loadOrInitializeEvents } from '@/services/Database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { scheduleEventNotification, cancelNotification, requestPermissions } from '@/services/Notifications';
@@ -32,20 +32,9 @@ export default function OnboardingScreen() {
     useEffect(() => {
         const load = async () => {
             await requestPermissions();
-            // Try getting existing events first
-            const stored = await getEvents();
-            if (stored.length > 0) {
-                // Sort by time
-                stored.sort((a, b) => a.time.localeCompare(b.time));
-                setEvents(stored);
-            } else {
-                const initial = createInitialEvents();
-                setEvents(initial);
-                // Initial save
-                for (const e of initial) {
-                    await saveEvent(e);
-                }
-            }
+            // Try getting existing events (or initializing if empty) in a safe singleton way
+            const loadedEvents = await loadOrInitializeEvents();
+            setEvents(loadedEvents);
 
             // Mark onboarding as done immediately to ensure next launch goes to Dashboard
             saveSetting('hasCompletedOnboarding', 'true');
@@ -89,7 +78,7 @@ export default function OnboardingScreen() {
             const updated = prev.map(e => e.id === finalEvent.id ? finalEvent : e);
             return updated.sort((a, b) => a.time.localeCompare(b.time));
         });
-
+        console.log('Updated event:', finalEvent.label);
         // Save to DB
         await saveEvent(finalEvent);
     };
@@ -179,6 +168,7 @@ export default function OnboardingScreen() {
             const updated = [...prev, newEvent];
             return updated.sort((a, b) => a.time.localeCompare(b.time));
         });
+        console.log('New event created:', newEvent.label);
         await saveEvent(newEvent);
 
         setCreateModalVisible(false);

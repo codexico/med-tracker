@@ -1,20 +1,41 @@
 import * as SQLite from 'expo-sqlite';
 import { MedEvent } from '@/types';
 
-// Using openDatabaseSync for synchronous-like simplified API where possible, 
-// but async implementation is standard for Expo SQLite now.
-// Note: expo-sqlite next/modern API might require openDatabaseAsync or similiar.
-// Checking docs, openDatabaseSync is valid in recent versions for synchronous access 
-// if WAL is enabled, or use useSQLiteContext. 
-// For simplicity in non-component files, we'll use the imperative API.
+
+import { createInitialEvents } from '@/constants/Events';
 
 let db: SQLite.SQLiteDatabase;
+let initializationPromise: Promise<MedEvent[]> | null = null;
 
 const getDb = async () => {
     if (!db) {
         db = await SQLite.openDatabaseAsync('medtracker.db');
     }
     return db;
+};
+
+export const loadOrInitializeEvents = async (): Promise<MedEvent[]> => {
+    if (initializationPromise) {
+        return initializationPromise;
+    }
+
+    initializationPromise = (async () => {
+        const stored = await getEvents();
+        if (stored.length > 0) {
+            // Sort by time
+            return stored.sort((a, b) => a.time.localeCompare(b.time));
+        } else {
+            const initial = createInitialEvents();
+            // Initial save
+            for (const e of initial) {
+                console.log('Saving initial event:', e.label);
+                await saveEvent(e);
+            }
+            return initial.sort((a, b) => a.time.localeCompare(b.time));
+        }
+    })();
+
+    return initializationPromise;
 };
 
 export const initDatabase = async () => {
@@ -37,16 +58,10 @@ export const initDatabase = async () => {
             value TEXT
         );
     `);
-
-    // Migration: Add notificationId column if it doesn't exist (primitive migration)
-    try {
-        await database.execAsync('ALTER TABLE events ADD COLUMN notificationId TEXT;');
-    } catch (e) {
-        // Column likely exists, ignore
-    }
 };
 
 export const saveEvent = async (event: MedEvent) => {
+    console.log('Saving event:', event.label);
     const database = await getDb();
     await database.runAsync(
         `INSERT OR REPLACE INTO events (id, label, time, icon, enabled, completedToday, lastCompletedDate, medications, notificationId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
