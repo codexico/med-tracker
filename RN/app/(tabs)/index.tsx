@@ -2,16 +2,19 @@ import React, { useCallback, useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MedEvent } from '@/types';
 import { getEvents, toggleEventCompletion } from '@/services/Database';
 import { Ionicons } from '@expo/vector-icons';
 import { getIcon } from '@/constants/ClockIcons';
 
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import i18n from '@/i18n';
+
 export default function DashboardScreen() {
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
+  const insets = useSafeAreaInsets();
+  const theme = Colors.light;
   const [events, setEvents] = useState<MedEvent[]>([]);
 
   const loadEvents = async () => {
@@ -42,9 +45,9 @@ export default function DashboardScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top + 20 }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>Meus Remedinhos</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{i18n.t('appName')}</Text>
       </View>
 
       <ScrollView
@@ -98,7 +101,7 @@ export default function DashboardScreen() {
 
         {events.filter(e => e.enabled).length === 0 && (
           <Text style={{ textAlign: 'center', marginTop: 40, color: theme.textSecondary }}>
-            Nenhum evento configurado.
+            {i18n.t('noEvents')}
           </Text>
         )}
       </ScrollView>
@@ -109,7 +112,6 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
   },
   header: {
     paddingHorizontal: 24,

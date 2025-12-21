@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Modal, TextInput, Switch } from 'react-native';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MedEvent } from '@/types';
 // createInitialEvents used internally by Database service now
 import { saveEvent, saveSetting, loadOrInitializeEvents } from '@/services/Database';
@@ -9,6 +8,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { scheduleEventNotification, cancelNotification, requestPermissions } from '@/services/Notifications';
 import { getClockIconName, DEFAULT_ICON_NAMES, getIcon } from '@/constants/ClockIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import i18n from '@/i18n';
 
 // Helper to get next half hour (e.g. 10:12 -> 10:30, 10:45 -> 11:00)
 const getNextHalfHour = () => {
@@ -23,8 +24,8 @@ const getNextHalfHour = () => {
 };
 
 export default function OnboardingScreen() {
-    const colorScheme = useColorScheme();
-    const theme = Colors[colorScheme ?? 'light'];
+    const insets = useSafeAreaInsets();
+    const theme = Colors.light;
     const [events, setEvents] = useState<MedEvent[]>([]);
     const [showPicker, setShowPicker] = useState<string | null>(null);
 
@@ -197,11 +198,11 @@ export default function OnboardingScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top + 20 }]}>
             <View style={styles.header}>
-                <Text style={[styles.title, { color: theme.text }]}>Configuração</Text>
+                <Text style={[styles.title, { color: theme.text }]}>{i18n.t('config')}</Text>
                 <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-                    Ajuste seus horários e medicamentos.
+                    {i18n.t('configSubtitle')}
                 </Text>
             </View>
 
@@ -253,8 +254,10 @@ export default function OnboardingScreen() {
                                     style={[styles.addMedButton, { borderColor: theme.primary }]}
                                     onPress={() => openAddMedicationModal(event.id)}
                                 >
-                                    <Ionicons name="add" size={16} color={theme.primary} />
-                                    <Text style={[styles.addMedText, { color: theme.primary }]}>Adicionar Medicamento</Text>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="add-circle-outline" size={24} color={theme.primary} />
+                                        <Text style={{ marginLeft: 8, color: theme.primary, fontWeight: '600' }}>{i18n.t('addMedication')}</Text>
+                                    </View>
                                 </Pressable>
                             </View>
                         )}
@@ -280,7 +283,7 @@ export default function OnboardingScreen() {
                             setLabelError(false);
                         }}
                     >
-                        <Text style={styles.textStyle}>Adicionar Novo Horário</Text>
+                        <Text style={styles.textStyle}>{i18n.t('addNewTime')}</Text>
                     </Pressable>
                 </View>
             </ScrollView>
@@ -295,10 +298,10 @@ export default function OnboardingScreen() {
             >
                 <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
                     <View style={[styles.modalView, { backgroundColor: theme.surface }]}>
-                        <Text style={[styles.modalTitle, { color: theme.text }]}>Novo Medicamento</Text>
+                        <Text style={styles.modalTitle}>{i18n.t('newMedication')}</Text>
                         <TextInput
-                            style={[styles.input, { color: theme.text, borderColor: theme.icon, backgroundColor: theme.background }]}
-                            placeholder="Nome do medicamento"
+                            style={[styles.input, { borderColor: theme.icon, backgroundColor: theme.background, color: theme.text }]}
+                            placeholder={i18n.t('medNamePlaceholder')}
                             placeholderTextColor={theme.textSecondary}
                             value={newMedication}
                             onChangeText={setNewMedication}
@@ -307,10 +310,10 @@ export default function OnboardingScreen() {
                         <View style={styles.modalButtons}>
                             <Pressable style={[styles.button, styles.buttonClose]}
                                 onPress={() => setModalVisible(false)}>
-                                <Text style={[styles.textStyle, { color: theme.textSecondary }]}>Cancelar</Text>
+                                <Text style={[styles.textStyle, { color: theme.textSecondary }]}>{i18n.t('cancel')}</Text>
                             </Pressable>
                             <Pressable style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleAddMedication}>
-                                <Text style={styles.textStyle}>Adicionar</Text>
+                                <Text style={styles.textStyle}>{i18n.t('add')}</Text>
                             </Pressable>
                         </View>
                     </View>
@@ -326,9 +329,9 @@ export default function OnboardingScreen() {
             >
                 <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
                     <View style={[styles.modalView, { backgroundColor: theme.surface }]}>
-                        <Text style={[styles.modalTitle, { color: theme.text }]}>Novo Horário</Text>
+                        <Text style={styles.modalTitle}>{i18n.t('newTime')}</Text>
 
-                        <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>Nome do Horário (ex: Lanche):</Text>
+                        <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>{i18n.t('timeNameLabel')}</Text>
                         <TextInput
                             ref={labelInputRef}
                             style={[
@@ -340,8 +343,8 @@ export default function OnboardingScreen() {
                                     borderWidth: labelError ? 2 : 1
                                 }
                             ]}
-                            placeholder={"Ex: Lanche da Tarde"}
-                            placeholderTextColor={labelError ? '#ffcccc' : theme.textSecondary}
+                            placeholder={labelError ? i18n.t('nameRequired') : i18n.t('timeNamePlaceholder')}
+                            placeholderTextColor={labelError ? 'red' : theme.textSecondary}
                             value={newEventLabel}
                             onChangeText={(text) => {
                                 setNewEventLabel(text);
@@ -349,10 +352,10 @@ export default function OnboardingScreen() {
                             }}
                         />
                         {labelError && (
-                            <Text style={{ color: 'red', alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>É bom colocar um nome para lembrar depois.</Text>
+                            <Text style={{ color: 'red', alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>{i18n.t('nameRequiredHint')}</Text>
                         )}
 
-                        <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4, marginTop: 10 }}>Horário:</Text>
+                        <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4, marginTop: 10 }}>{i18n.t('timeLabel')}</Text>
 
                         <View style={[styles.cardHeader, { width: '100%', paddingHorizontal: 12, marginBottom: 20 }]}>
                             <View style={{ flex: 1 }}>
@@ -365,7 +368,7 @@ export default function OnboardingScreen() {
                                 style={[styles.timeButton, { backgroundColor: theme.background, borderWidth: 1, borderColor: theme.icon }]}
                                 onPress={() => setShowCreateTimePicker(true)}
                             >
-                                <Text style={[styles.timeText, { color: theme.text }]}>Editar Hora</Text>
+                                <Text style={[styles.timeText, { color: theme.text }]}>{i18n.t('editTime')}</Text>
                             </Pressable>
                         </View>
 
@@ -387,10 +390,10 @@ export default function OnboardingScreen() {
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setCreateModalVisible(false)}
                             >
-                                <Text style={[styles.textStyle, { color: theme.textSecondary }]}>Cancelar</Text>
+                                <Text style={[styles.textStyle, { color: theme.textSecondary }]}>{i18n.t('cancel')}</Text>
                             </Pressable>
                             <Pressable style={[styles.button, { backgroundColor: theme.primary }]} onPress={handleCreateEvent}>
-                                <Text style={styles.textStyle}>Criar</Text>
+                                <Text style={styles.textStyle}>{i18n.t('create')}</Text>
                             </Pressable>
                         </View>
                     </View>
@@ -403,7 +406,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 60,
+        // paddingTop handled dynamically
         paddingBottom: 20
     },
     header: {
