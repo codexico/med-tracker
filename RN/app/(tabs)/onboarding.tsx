@@ -208,11 +208,11 @@ export default function OnboardingScreen() {
 
             <ScrollView style={styles.content}>
                 {events.map(event => (
-                    <View key={event.id} style={[styles.card, { backgroundColor: theme.surface }]}>
+                    <View key={event.id} style={[styles.card, { backgroundColor: event.enabled ? theme.surface : theme.off }]}>
                         <View style={styles.cardHeader}>
 
-                            <View style={{ marginLeft: 12, marginRight: 12 }}>
-                                {getIcon(event.icon, theme.text, 24)}
+                            <View style={[styles.iconContainer, { backgroundColor: theme.background }]}>
+                                {getIcon(event.icon, theme.primary, 20)}
                             </View>
 
                             <View style={{ flex: 1 }}>
@@ -220,47 +220,42 @@ export default function OnboardingScreen() {
                                 <Text style={[styles.cardTimeDisplay, { color: theme.textSecondary }]}>{event.time}</Text>
                             </View>
 
-                            {event.enabled && (
-                                <Pressable
-                                    style={[styles.timeButton, { backgroundColor: theme.background }]}
-                                    onPress={() => setShowPicker(event.id)}
-                                >
-                                    <Text style={[styles.timeText, { color: theme.text }]}>Editar Hora</Text>
-                                </Pressable>
-                            )}
+                            <Pressable
+                                style={[styles.timeButton, { backgroundColor: theme.background }]}
+                                onPress={() => setShowPicker(event.id)}
+                            >
+                                <Text style={[styles.timeText, { color: theme.text }]}>{i18n.t('editTime')}</Text>
+                            </Pressable>
                             <Switch
                                 style={styles.switch}
                                 value={event.enabled}
                                 onValueChange={() => toggleEvent(event.id)}
-                                trackColor={{ false: '#767577', true: theme.primary }}
-                                ios_backgroundColor="#767577"
-                                thumbColor={Platform.OS === 'ios' ? '#fff' : (event.enabled ? '#fff' : '#f4f3f4')}
+                                trackColor={{ false: theme.backgroundOff, true: theme.primary }}
+                                thumbColor={event.enabled ? '#fff' : theme.off}
                             />
                         </View>
 
-                        {event.enabled && (
-                            <View style={styles.medicationSection}>
-                                <View style={styles.medicationList}>
-                                    {event.medications?.map((med, idx) => (
-                                        <View key={idx} style={[styles.chip, { backgroundColor: theme.background, borderColor: theme.icon }]}>
-                                            <Text style={{ color: theme.text, marginRight: 6 }}>{med}</Text>
-                                            <Pressable onPress={() => removeMedication(event.id, idx)}>
-                                                <Ionicons name="close-circle" size={16} color={theme.textSecondary} />
-                                            </Pressable>
-                                        </View>
-                                    ))}
-                                </View>
-                                <Pressable
-                                    style={[styles.addMedButton, { borderColor: theme.primary }]}
-                                    onPress={() => openAddMedicationModal(event.id)}
-                                >
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Ionicons name="add-circle-outline" size={24} color={theme.primary} />
-                                        <Text style={{ marginLeft: 8, color: theme.primary, fontWeight: '600' }}>{i18n.t('addMedication')}</Text>
+                        <View style={styles.medicationSection}>
+                            <View style={styles.medicationList}>
+                                {event.medications?.map((med, idx) => (
+                                    <View key={idx} style={[styles.chip, { backgroundColor: theme.background, borderColor: theme.icon }]}>
+                                        <Text style={{ color: theme.text, marginRight: 6 }}>{med}</Text>
+                                        <Pressable onPress={() => removeMedication(event.id, idx)}>
+                                            <Ionicons name="close-circle" size={16} color={theme.textSecondary} />
+                                        </Pressable>
                                     </View>
-                                </Pressable>
+                                ))}
                             </View>
-                        )}
+                            <Pressable
+                                style={[styles.addMedButton, { borderColor: theme.primary }]}
+                                onPress={() => openAddMedicationModal(event.id)}
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Ionicons name="add-circle-outline" size={24} color={theme.primary} />
+                                    <Text style={{ marginLeft: 8, color: theme.primary, fontWeight: '600' }}>{i18n.t('addMedication')}</Text>
+                                </View>
+                            </Pressable>
+                        </View>
 
 
                         {showPicker === event.id && (
@@ -440,6 +435,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 12,
     },
+    iconContainer: {
+        padding: 6,
+        borderRadius: 12,
+        marginRight: 12
+    },
     cardTitle: {
         fontSize: 18,
         fontWeight: '600',
@@ -478,6 +478,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#ddd',
+        justifyContent: 'center',
     },
     addMedButton: {
         flexDirection: 'row',
@@ -487,10 +488,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderStyle: 'dashed',
-    },
-    addMedText: {
-        marginLeft: 6,
-        fontWeight: '600',
     },
     modalOverlay: {
         flex: 1,

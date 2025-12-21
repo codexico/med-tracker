@@ -25,6 +25,8 @@ export const Colors = {
     primary: primary,
     secondary: secondary,
     error: '#d32f2f',
+    off: '#f4f3f4',
+    backgroundOff: '#767577',
   },
   dark: {
     // For now, using same as light or similar, as PWA was only light.

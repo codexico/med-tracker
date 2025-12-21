@@ -4,8 +4,8 @@ import { useFocusEffect } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import { MedEvent } from '@/types';
 import { getEvents, toggleEventCompletion } from '@/services/Database';
-import { Ionicons } from '@expo/vector-icons';
 import { getIcon } from '@/constants/ClockIcons';
+import { Checkbox } from 'expo-checkbox';
 
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -63,39 +63,50 @@ export default function DashboardScreen() {
             ]}
             onPress={() => handleToggle(event.id, event.completedToday)}
           >
-            <View style={styles.cardLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: theme.background }]}>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+
+              <View style={[styles.iconContainer, { backgroundColor: theme.background, alignSelf: 'flex-start' }]}>
                 {getIcon(event.icon, theme.primary, 24)}
               </View>
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1, flexShrink: 1 }}>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexShrink: 1 }}>
+
                   <Text style={[
                     styles.cardTitle,
-                    { color: theme.text },
+                    { color: theme.text, flexShrink: 1, paddingHorizontal: 8 },
                     event.completedToday && { textDecorationLine: 'line-through' }
                   ]}>
-                    {event.label}
+                    {event.label} {event.label}
                   </Text>
-                  <Text style={[styles.cardTime, { color: theme.textSecondary }]}>{event.time}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+                    <Text style={[styles.cardTime, { color: theme.textSecondary }]}>{event.time}</Text>
+
+
+                    <Checkbox
+                      value={event.completedToday}
+                      onValueChange={() => handleToggle(event.id, event.completedToday)}
+                      color={event.completedToday ? theme.primary : theme.textSecondary}
+                      style={[{ marginLeft: 10 }]}
+
+                    />
+                  </View>
                 </View>
 
                 {/* Medication List */}
                 {event.medications && event.medications.length > 0 && (
-                  <View style={styles.medicationList}>
-                    {event.medications.map((med, idx) => (
-                      <Text key={idx} style={[styles.medtext, { color: theme.textSecondary }]}>• {med}</Text>
-                    ))}
+                  <View style={{ flex: 1, flexShrink: 1 }}>
+                    <View style={styles.medicationList}>
+                      {event.medications.map((med, idx) => (
+                        <Text key={idx} style={[styles.medtext, { color: theme.textSecondary, flexShrink: 1, paddingHorizontal: 8 }]}>• {med}</Text>
+                      ))}
+                    </View>
                   </View>
                 )}
               </View>
             </View>
-
-            <Ionicons
-              name={event.completedToday ? "checkmark-circle" : "ellipse-outline"}
-              size={32}
-              color={event.completedToday ? theme.primary : theme.textSecondary}
-              style={{ paddingLeft: 8 }}
-            />
           </Pressable>
         ))}
 
@@ -105,7 +116,7 @@ export default function DashboardScreen() {
           </Text>
         )}
       </ScrollView>
-    </View>
+    </View >
   );
 }
 
@@ -143,7 +154,7 @@ const styles = StyleSheet.create({
   },
   cardLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-start', // Top align for list
+    alignItems: 'flex-start',
     gap: 16,
     flex: 1,
   },
