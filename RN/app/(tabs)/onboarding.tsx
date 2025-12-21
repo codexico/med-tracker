@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Modal, TextInput, Switch } from 'react-native';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -10,6 +10,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { scheduleEventNotification, cancelNotification, requestPermissions } from '@/services/Notifications';
 import { getClockIconName, DEFAULT_ICON_NAMES, getIcon } from '@/constants/ClockIcons';
 
+// Helper to get next half hour (e.g. 10:12 -> 10:30, 10:45 -> 11:00)
+const getNextHalfHour = () => {
+    const date = new Date();
+    const minutes = date.getMinutes();
+    if (minutes < 30) {
+        date.setMinutes(30, 0, 0);
+    } else {
+        date.setHours(date.getHours() + 1, 0, 0, 0);
+    }
+    return date;
+};
 
 export default function OnboardingScreen() {
     const colorScheme = useColorScheme();
@@ -25,8 +36,12 @@ export default function OnboardingScreen() {
     // Modal state for creating new event
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [newEventLabel, setNewEventLabel] = useState('');
-    const [newEventTime, setNewEventTime] = useState(new Date());
+    const [newEventTime, setNewEventTime] = useState(getNextHalfHour());
     const [showCreateTimePicker, setShowCreateTimePicker] = useState(false);
+
+    // Validation
+    const [labelError, setLabelError] = useState(false);
+    const labelInputRef = useRef<TextInput>(null);
 
     // Load on mount
     useEffect(() => {
@@ -138,7 +153,11 @@ export default function OnboardingScreen() {
     };
 
     const handleCreateEvent = async () => {
-        if (!newEventLabel.trim()) return;
+        if (!newEventLabel.trim()) {
+            setLabelError(true);
+            labelInputRef.current?.focus();
+            return;
+        }
 
         const hours = newEventTime.getHours().toString().padStart(2, '0');
         const minutes = newEventTime.getMinutes().toString().padStart(2, '0');
@@ -173,7 +192,8 @@ export default function OnboardingScreen() {
 
         setCreateModalVisible(false);
         setNewEventLabel('');
-        setNewEventTime(new Date());
+        setNewEventTime(getNextHalfHour());
+        setLabelError(false);
     };
 
     return (
@@ -254,7 +274,11 @@ export default function OnboardingScreen() {
                 <View style={{ paddingHorizontal: 24, paddingBottom: 4, paddingTop: 8 }}>
                     <Pressable
                         style={[styles.button, { backgroundColor: theme.primary, width: '100%' }]}
-                        onPress={() => setCreateModalVisible(true)}
+                        onPress={() => {
+                            setNewEventTime(getNextHalfHour());
+                            setCreateModalVisible(true);
+                            setLabelError(false);
+                        }}
                     >
                         <Text style={styles.textStyle}>Adicionar Novo Horário</Text>
                     </Pressable>
@@ -306,23 +330,44 @@ export default function OnboardingScreen() {
 
                         <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>Nome do Horário (ex: Lanche):</Text>
                         <TextInput
-                            style={[styles.input, { color: theme.text, borderColor: theme.icon, backgroundColor: theme.background }]}
-                            placeholder="Ex: Lanche da Tarde"
-                            placeholderTextColor={theme.textSecondary}
+                            ref={labelInputRef}
+                            style={[
+                                styles.input,
+                                {
+                                    color: theme.text,
+                                    borderColor: labelError ? 'red' : theme.icon,
+                                    backgroundColor: theme.background,
+                                    borderWidth: labelError ? 2 : 1
+                                }
+                            ]}
+                            placeholder={"Ex: Lanche da Tarde"}
+                            placeholderTextColor={labelError ? '#ffcccc' : theme.textSecondary}
                             value={newEventLabel}
-                            onChangeText={setNewEventLabel}
+                            onChangeText={(text) => {
+                                setNewEventLabel(text);
+                                if (text.trim()) setLabelError(false);
+                            }}
                         />
+                        {labelError && (
+                            <Text style={{ color: 'red', alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4 }}>É bom colocar um nome para lembrar depois.</Text>
+                        )}
 
                         <Text style={{ color: theme.textSecondary, alignSelf: 'flex-start', marginLeft: 12, marginBottom: 4, marginTop: 10 }}>Horário:</Text>
 
-                        <Pressable
-                            style={[styles.input, { justifyContent: 'center', borderColor: theme.icon, backgroundColor: theme.background }]}
-                            onPress={() => setShowCreateTimePicker(true)}
-                        >
-                            <Text style={{ color: theme.text, fontSize: 16 }}>
-                                {newEventTime.getHours().toString().padStart(2, '0')}:{newEventTime.getMinutes().toString().padStart(2, '0')}
-                            </Text>
-                        </Pressable>
+                        <View style={[styles.cardHeader, { width: '100%', paddingHorizontal: 12, marginBottom: 20 }]}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={[styles.cardTitle, { color: theme.text, fontSize: 22 }]}>
+                                    {newEventTime.getHours().toString().padStart(2, '0')}:{newEventTime.getMinutes().toString().padStart(2, '0')}
+                                </Text>
+                            </View>
+
+                            <Pressable
+                                style={[styles.timeButton, { backgroundColor: theme.background, borderWidth: 1, borderColor: theme.icon }]}
+                                onPress={() => setShowCreateTimePicker(true)}
+                            >
+                                <Text style={[styles.timeText, { color: theme.text }]}>Editar Hora</Text>
+                            </Pressable>
+                        </View>
 
                         {showCreateTimePicker && (
                             <DateTimePicker
