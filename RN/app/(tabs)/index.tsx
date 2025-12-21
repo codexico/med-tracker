@@ -6,11 +6,9 @@ import { MedEvent } from '@/types';
 import { getEvents, toggleEventCompletion } from '@/services/Database';
 import { getIcon } from '@/constants/ClockIcons';
 import { Checkbox } from 'expo-checkbox';
-
-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 import i18n from '@/i18n';
+
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();

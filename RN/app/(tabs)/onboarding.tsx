@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Modal, TextInput, Switch } from 'react-native';
 import { Colors } from '@/constants/theme';
 import { MedEvent } from '@/types';
-// createInitialEvents used internally by Database service now
 import { saveEvent, saveSetting, loadOrInitializeEvents } from '@/services/Database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +9,7 @@ import { scheduleEventNotification, cancelNotification, requestPermissions } fro
 import { getClockIconName, DEFAULT_ICON_NAMES, getIcon } from '@/constants/ClockIcons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import i18n from '@/i18n';
+
 
 // Helper to get next half hour (e.g. 10:12 -> 10:30, 10:45 -> 11:00)
 const getNextHalfHour = () => {
@@ -99,7 +99,7 @@ export default function OnboardingScreen() {
         await saveEvent(finalEvent);
     };
 
-    const handleTimeChange = (event: any, selectedDate?: Date, id?: string) => {
+    const handleTimeChange = (selectedDate?: Date, id?: string) => {
         if (Platform.OS === 'android') {
             setShowPicker(null);
         }
@@ -264,7 +264,7 @@ export default function OnboardingScreen() {
                                 mode="time"
                                 display="spinner"
                                 minuteInterval={30}
-                                onChange={(e, date) => handleTimeChange(e, date, event.id)}
+                                onChange={(e, date) => handleTimeChange(date, event.id)}
                             />
                         )}
                     </View>
