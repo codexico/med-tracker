@@ -2,15 +2,15 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Fontisto, Ionicons } from '@expo/vector-icons';
 import i18n from '@/i18n';
-
 import { HapticTab } from '@/components/haptic-tab';
-import { Colors } from '@/constants/theme';
-export default function TabLayout() {
+import { COLORS } from '@/constants/theme';
 
+
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.light.tint,
+        tabBarActiveTintColor: COLORS.tint,
         headerShown: false,
         tabBarButton: HapticTab,
       }}>

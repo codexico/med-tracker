@@ -1,7 +1,6 @@
-import { Image } from 'expo-image';
+import { ClockIcon } from '@/components/ClockIcon';
 import React from 'react';
 import { Fontisto, MaterialIcons } from '@expo/vector-icons';
-
 
 // Map of all clock icons
 export const CLOCK_ICONS: { [key: string]: any } = {
@@ -75,25 +74,7 @@ export const getClockIconName = (time: string): string => {
     return `clock-${hours}${suffix}`;
 };
 
-interface ClockIconProps {
-    iconName: string;
-    size: number;
-    color: string;
-}
 
-export const ClockIcon: React.FC<ClockIconProps> = ({ iconName, size, color }) => {
-    const source = CLOCK_ICONS[iconName];
-    if (!source) return null;
-
-    return (
-        <Image
-            source={source}
-            style={{ width: size, height: size }}
-            tintColor={color}
-            contentFit="contain"
-        />
-    );
-};
 
 // Simple icon mapping fallback
 export const getIcon = (iconName: string, color: string, size: number) => {

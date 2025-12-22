@@ -1,18 +1,21 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
-import { useFocusEffect } from 'expo-router';
-import { Colors } from '@/constants/theme';
-import { MedEvent } from '@/types';
-import { getEvents, toggleEventCompletion } from '@/services/Database';
-import { getIcon } from '@/constants/ClockIcons';
-import { Checkbox } from 'expo-checkbox';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from 'expo-router';
+import { Checkbox } from 'expo-checkbox';
+
+import { MedEvent } from '@/types';
+import { COLORS } from '@/constants/theme';
+import { getIcon } from '@/constants/ClockIcons';
+import { MedicationList } from '@/components/MedicationList';
 import i18n from '@/i18n';
+
+import { getEvents, toggleEventCompletion } from '@/services/Database';
+import { commonStyles } from '@/constants/commonStyles';
 
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
-  const theme = Colors.light;
   const [events, setEvents] = useState<MedEvent[]>([]);
 
   const loadEvents = async () => {
@@ -43,73 +46,65 @@ export default function DashboardScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top + 20 }]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>{i18n.t('appName')}</Text>
+    <View style={[commonStyles.container, { backgroundColor: COLORS.background, paddingTop: insets.top + 20 }]}>
+      <View style={commonStyles.header}>
+        <Text style={[commonStyles.title, { color: COLORS.text }]}>{i18n.t('appName')}</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={commonStyles.content}
       >
         {events.filter(e => e.enabled).map(event => (
           <Pressable
             key={event.id}
             style={[
+              commonStyles.card,
               styles.card,
-              { backgroundColor: theme.surface },
+              { backgroundColor: COLORS.surface },
               event.completedToday && { opacity: 0.7 }
             ]}
             onPress={() => handleToggle(event.id, event.completedToday)}
           >
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={styles.cardContent}>
 
-              <View style={[styles.iconContainer, { backgroundColor: theme.background, alignSelf: 'flex-start' }]}>
-                {getIcon(event.icon, theme.primary, 24)}
+              <View style={[styles.iconContainer, { backgroundColor: COLORS.background, alignSelf: 'flex-start' }]}>
+                {getIcon(event.icon, COLORS.primary, 24)}
               </View>
-              <View style={{ flex: 1, flexShrink: 1 }}>
+              <View style={styles.cardBody}>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexShrink: 1 }}>
+                <View style={commonStyles.cardHeader}>
 
                   <Text style={[
                     styles.cardTitle,
-                    { color: theme.text, flexShrink: 1, paddingHorizontal: 8 },
+                    { color: COLORS.text, flexShrink: 1, paddingHorizontal: 8 },
                     event.completedToday && { textDecorationLine: 'line-through' }
                   ]}>
-                    {event.label} {event.label}
+                    {event.label}
                   </Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={styles.cardActions}>
 
-                    <Text style={[styles.cardTime, { color: theme.textSecondary }]}>{event.time}</Text>
+                    <Text style={[styles.cardTime, { color: COLORS.textSecondary }]}>{event.time}</Text>
 
 
                     <Checkbox
                       value={event.completedToday}
                       onValueChange={() => handleToggle(event.id, event.completedToday)}
-                      color={event.completedToday ? theme.primary : theme.textSecondary}
-                      style={[{ marginLeft: 10 }]}
+                      color={event.completedToday ? COLORS.primary : COLORS.textSecondary}
+                      style={styles.checkbox}
 
                     />
                   </View>
                 </View>
 
-                {/* Medication List */}
-                {event.medications && event.medications.length > 0 && (
-                  <View style={{ flex: 1, flexShrink: 1 }}>
-                    <View style={styles.medicationList}>
-                      {event.medications.map((med, idx) => (
-                        <Text key={idx} style={[styles.medtext, { color: theme.textSecondary, flexShrink: 1, paddingHorizontal: 8 }]}>• {med}</Text>
-                      ))}
-                    </View>
-                  </View>
-                )}
+                <MedicationList medications={event.medications} />
               </View>
             </View>
           </Pressable>
         ))}
 
         {events.filter(e => e.enabled).length === 0 && (
-          <Text style={{ textAlign: 'center', marginTop: 40, color: theme.textSecondary }}>
+          <Text style={styles.emptyText}>
             {i18n.t('noEvents')}
           </Text>
         )}
@@ -119,42 +114,10 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: 24,
-    marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  content: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
   card: {
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  cardLeft: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 16,
-    flex: 1,
   },
   iconContainer: {
     padding: 10,
@@ -168,11 +131,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  medicationList: {
-    marginTop: 4,
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  medtext: {
-    fontSize: 14,
-    lineHeight: 20,
-  }
+  cardBody: {
+    flex: 1,
+  },
+  cardActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    marginLeft: 10,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 40,
+    color: COLORS.textSecondary,
+  },
 });
