@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import React from 'react';
-import { CLOCK_ICONS } from '@/constants/ClockIcons';
+import { CLOCK_ICONS } from '@/constants/IconAssets';
 
 interface ClockIconProps {
     iconName: string;
