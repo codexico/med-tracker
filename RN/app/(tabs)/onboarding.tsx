@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, ScrollView, Platform, Pressable, Switch } from 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { router } from 'expo-router';
 import { getClockIconName, DEFAULT_ICON_NAMES, getIcon } from '@/constants/ClockIcons';
 import { COLORS } from '@/constants/theme';
 import { commonStyles } from '@/constants/commonStyles';
 import { MedEvent } from '@/types';
 
-import { saveEvent, saveSetting, loadOrInitializeEvents } from '@/services/Database';
+import { saveEvent, saveSetting, getSetting, loadOrInitializeEvents } from '@/services/Database';
 import { scheduleEventNotification, cancelNotification, requestPermissions } from '@/services/Notifications';
 import i18n from '@/i18n';
 
@@ -28,20 +29,35 @@ export default function OnboardingScreen() {
 
     // Modal state for creating new event
     const [createModalVisible, setCreateModalVisible] = useState(false);
+    const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
     // Load on mount
     useEffect(() => {
         const load = async () => {
-            await requestPermissions();
+            // Check if this is the first launch (onboarding flow)
+            const onboarded = await getSetting('hasCompletedOnboarding');
+            if (onboarded !== 'true') {
+                setIsFirstLaunch(true);
+            }
+
             // Try getting existing events (or initializing if empty) in a safe singleton way
             const loadedEvents = await loadOrInitializeEvents();
             setEvents(loadedEvents);
-
-            // Mark onboarding as done immediately to ensure next launch goes to Dashboard
-            saveSetting('hasCompletedOnboarding', 'true');
         };
         load();
     }, []);
+
+    const handleFinishOnboarding = async () => {
+        // Request permissions only when finishing
+        await requestPermissions();
+
+        // Mark as done
+        await saveSetting('hasCompletedOnboarding', 'true');
+        setIsFirstLaunch(false);
+
+        // Navigate to dashboard
+        router.replace('/(tabs)/index' as any);
+    };
 
     const updateEvent = async (targetEvent: MedEvent) => {
         const oldEvent = events.find(e => e.id === targetEvent.id);
@@ -236,6 +252,15 @@ export default function OnboardingScreen() {
                     >
                         <Text style={commonStyles.textStyle}>{i18n.t('addNewTime')}</Text>
                     </Pressable>
+
+                    {isFirstLaunch && (
+                        <Pressable
+                            style={[commonStyles.button, { backgroundColor: COLORS.secondary, width: '100%', marginBottom: 24 }]}
+                            onPress={handleFinishOnboarding}
+                        >
+                            <Text style={commonStyles.textStyle}>{i18n.t('finishOnboarding')}</Text>
+                        </Pressable>
+                    )}
                 </View>
             </ScrollView>
 

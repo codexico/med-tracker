@@ -21,6 +21,7 @@ const i18n = new I18n({
         nameRequired: 'Nome é obrigatório!',
         nameRequiredHint: 'É bom colocar um nome para lembrar depois.',
         noEvents: 'Nenhum evento configurado.',
+        finishOnboarding: 'Concluir',
 
         // Default Events
         wakeUp: 'Ao acordar',
@@ -50,6 +51,7 @@ const i18n = new I18n({
         nameRequired: 'Name is required!',
         nameRequiredHint: 'Good to have a name to remember later.',
         noEvents: 'No events configured.',
+        finishOnboarding: 'Finish',
 
         // Default Events
         wakeUp: 'Wake up',
