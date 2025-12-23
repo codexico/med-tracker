@@ -11,7 +11,7 @@ import i18n from '@/i18n';
 import { AddEventModal } from '@/components/AddEventModal';
 import { AddMedicationModal } from '@/components/AddMedicationModal';
 import { MedicationList } from '@/components/MedicationList';
-import { useEventManagement } from '@/hooks/useEventManagement';
+import { useEventContext } from '@/context/EventContext';
 
 
 interface EventConfigurationViewProps {
@@ -33,7 +33,7 @@ export const EventConfigurationView: React.FC<EventConfigurationViewProps> = ({
         addMedication,
         removeMedication,
         createEvent
-    } = useEventManagement();
+    } = useEventContext();
 
     const [showPicker, setShowPicker] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);

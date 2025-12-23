@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
 import { Checkbox } from 'expo-checkbox';
 
 import { COLORS } from '@/constants/theme';
@@ -10,18 +9,12 @@ import { MedicationList } from '@/components/MedicationList';
 import i18n from '@/i18n';
 
 import { commonStyles } from '@/constants/commonStyles';
-import { useEventManagement } from '@/hooks/useEventManagement';
+import { useEventContext } from '@/context/EventContext';
 
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
-  const { events, loadEvents, toggleEventCompletion } = useEventManagement();
-
-  useFocusEffect(
-    useCallback(() => {
-      loadEvents();
-    }, [loadEvents])
-  );
+  const { events, toggleEventCompletion } = useEventContext();
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
     await toggleEventCompletion(id, !currentStatus);

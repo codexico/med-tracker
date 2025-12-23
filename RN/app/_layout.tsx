@@ -1,5 +1,5 @@
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Redirect, router, Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { Suspense, useEffect } from 'react';
@@ -7,6 +7,7 @@ import { View, ActivityIndicator } from 'react-native';
 
 import { SQLiteProvider } from 'expo-sqlite';
 import { initializeDatabase, getSetting } from '@/services/Database';
+import { EventProvider } from '@/context/EventContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -49,7 +50,9 @@ export default function RootLayout() {
   return (
     <Suspense fallback={<Fallback />}>
       <SQLiteProvider databaseName="medtracker.db" onInit={initializeDatabase} useSuspense>
-        <AppContent />
+        <EventProvider>
+          <AppContent />
+        </EventProvider>
       </SQLiteProvider>
     </Suspense>
   );

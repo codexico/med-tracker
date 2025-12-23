@@ -1,13 +1,23 @@
-import { useState, useCallback, useEffect } from 'react';
-
+import React, { createContext, useState, useCallback, useEffect, useContext } from 'react';
 import { MedEvent } from '@/types';
 import { getClockIconName, DEFAULT_ICON_NAMES } from '@/constants/ClockIcons';
-
 import { getEvents, saveEvent, toggleEventCompletion as dbToggleEventCompletion } from '@/services/Database';
 import { scheduleEventNotification, cancelNotification } from '@/services/Notifications';
 
+interface EventContextType {
+    events: MedEvent[];
+    loadEvents: () => Promise<void>;
+    updateEventTime: (id: string, selectedDate: Date) => void;
+    toggleEvent: (id: string) => void;
+    toggleEventCompletion: (id: string, completed: boolean) => Promise<void>;
+    addMedication: (id: string, medName: string) => void;
+    removeMedication: (id: string, index: number) => void;
+    createEvent: (label: string, time: Date) => Promise<void>;
+}
 
-export const useEventManagement = () => {
+export const EventContext = createContext<EventContextType>({} as EventContextType);
+
+export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [events, setEvents] = useState<MedEvent[]>([]);
 
     const loadEvents = useCallback(async () => {
@@ -15,6 +25,7 @@ export const useEventManagement = () => {
         setEvents(loadedEvents);
     }, []);
 
+    // Initial load when provider mounts
     useEffect(() => {
         loadEvents();
     }, [loadEvents]);
@@ -46,6 +57,7 @@ export const useEventManagement = () => {
 
         setEvents(prev => {
             const updated = prev.map(e => e.id === finalEvent.id ? finalEvent : e);
+            // Optimistic sorting
             return updated.sort((a, b) => a.time.localeCompare(b.time));
         });
 
@@ -127,14 +139,20 @@ export const useEventManagement = () => {
         await dbToggleEventCompletion(id, completed);
     };
 
-    return {
-        events,
-        loadEvents,
-        updateEventTime,
-        toggleEvent,
-        toggleEventCompletion,
-        addMedication,
-        removeMedication,
-        createEvent
-    };
+    return (
+        <EventContext.Provider value={{
+            events,
+            loadEvents,
+            updateEventTime,
+            toggleEvent,
+            toggleEventCompletion,
+            addMedication,
+            removeMedication,
+            createEvent
+        }}>
+            {children}
+        </EventContext.Provider>
+    );
 };
+
+export const useEventContext = () => useContext(EventContext);
