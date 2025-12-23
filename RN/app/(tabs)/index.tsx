@@ -1,48 +1,30 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { Checkbox } from 'expo-checkbox';
 
-import { MedEvent } from '@/types';
 import { COLORS } from '@/constants/theme';
 import { getIcon } from '@/constants/ClockIcons';
 import { MedicationList } from '@/components/MedicationList';
 import i18n from '@/i18n';
 
-import { getEvents, toggleEventCompletion } from '@/services/Database';
 import { commonStyles } from '@/constants/commonStyles';
+import { useEventManagement } from '@/hooks/useEventManagement';
 
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
-  const [events, setEvents] = useState<MedEvent[]>([]);
-
-  const loadEvents = async () => {
-    const loaded = await getEvents();
-    // Sort by time
-    loaded.sort((a, b) => a.time.localeCompare(b.time));
-    setEvents(loaded);
-  };
+  const { events, loadEvents, toggleEventCompletion } = useEventManagement();
 
   useFocusEffect(
     useCallback(() => {
       loadEvents();
-    }, [])
+    }, [loadEvents])
   );
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
-    try {
-      // Optimistic update
-      setEvents(prev => prev.map(e =>
-        e.id === id ? { ...e, completedToday: !currentStatus } : e
-      ));
-      await toggleEventCompletion(id, !currentStatus);
-    } catch (e) {
-      console.error(e);
-      // Revert on error
-      loadEvents();
-    }
+    await toggleEventCompletion(id, !currentStatus);
   };
 
   return (

@@ -1,11 +1,10 @@
 import * as SQLite from 'expo-sqlite';
+
 import { MedEvent } from '@/types';
-
-
 import { createInitialEvents } from '@/constants/Events';
 
+
 let db: SQLite.SQLiteDatabase;
-let initializationPromise: Promise<MedEvent[]> | null = null;
 
 const getDb = async () => {
     if (!db) {
@@ -14,32 +13,9 @@ const getDb = async () => {
     return db;
 };
 
-export const loadOrInitializeEvents = async (): Promise<MedEvent[]> => {
-    if (initializationPromise) {
-        return initializationPromise;
-    }
-
-    initializationPromise = (async () => {
-        const stored = await getEvents();
-        if (stored.length > 0) {
-            // Sort by time
-            return stored.sort((a, b) => a.time.localeCompare(b.time));
-        } else {
-            const initial = createInitialEvents();
-            // Initial save
-            for (const e of initial) {
-                console.log('Saving initial event:', e.label);
-                await saveEvent(e);
-            }
-            return initial.sort((a, b) => a.time.localeCompare(b.time));
-        }
-    })();
-
-    return initializationPromise;
-};
-
-export const initDatabase = async () => {
-    const database = await getDb();
+// This function will be called by SQLiteProvider's onInit
+export const initializeDatabase = async (database: SQLite.SQLiteDatabase) => {
+    // 1. Create Tables
     await database.execAsync(`
         PRAGMA journal_mode = WAL;
         CREATE TABLE IF NOT EXISTS events (
@@ -58,6 +34,31 @@ export const initDatabase = async () => {
             value TEXT
         );
     `);
+
+    // 2. Check and Seed Data
+    const result = await database.getFirstAsync<{ count: number }>('SELECT COUNT(*) as count FROM events');
+    const count = result?.count ?? 0;
+    console.log('Database count:', count);
+    if (count === 0) {
+        console.log('Seeding initial events...');
+        const initialEvents = createInitialEvents();
+        for (const event of initialEvents) {
+            await database.runAsync(
+                `INSERT OR REPLACE INTO events (id, label, time, icon, enabled, completedToday, lastCompletedDate, medications, notificationId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                event.id,
+                event.label,
+                event.time,
+                event.icon,
+                1, // enabled   
+                0, // completedToday
+                null, // lastCompletedDate   
+                JSON.stringify([]), // medications
+                null // notificationId
+            );
+        }
+    } else {
+        console.log('Database already initialized with events.');
+    }
 };
 
 export const saveEvent = async (event: MedEvent) => {
@@ -79,7 +80,7 @@ export const saveEvent = async (event: MedEvent) => {
 
 export const getEvents = async (): Promise<MedEvent[]> => {
     const database = await getDb();
-    const rows = await database.getAllAsync<any>('SELECT * FROM events');
+    const rows = await database.getAllAsync<any>('SELECT * FROM events ORDER BY time ASC');
     const today = new Date().toISOString().split('T')[0];
 
     // Check for resets needed
@@ -107,6 +108,7 @@ export const getEvents = async (): Promise<MedEvent[]> => {
     });
 
     await Promise.all(updates);
+
     return events;
 };
 

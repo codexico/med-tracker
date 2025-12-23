@@ -22,6 +22,12 @@ const i18n = new I18n({
         nameRequiredHint: 'É bom colocar um nome para lembrar depois.',
         noEvents: 'Nenhum evento configurado.',
         finishOnboarding: 'Concluir',
+        welcome: 'Bem-vindo(a)!',
+        initialScreenSubtitle: 'Vamos configurar sua rotina.',
+        initialInstructionsStep1: '📅 Defina seus horários de referência (Acordar, Almoço, etc).',
+        initialInstructionsStep2: '💊 Adicione os medicamentos em cada horário.',
+        initialInstructionsStep3: '⚙️ Não se preocupe! Você pode alterar tudo depois nas configurações.',
+        initialInstructionsNote: 'Toque nos horários abaixo para editar ou ativar/desativar.',
 
         // Default Events
         wakeUp: 'Ao acordar',
@@ -52,6 +58,12 @@ const i18n = new I18n({
         nameRequiredHint: 'Good to have a name to remember later.',
         noEvents: 'No events configured.',
         finishOnboarding: 'Finish',
+        welcome: 'Welcome!',
+        initialScreenSubtitle: 'Let\'s set up your schedule.',
+        initialInstructionsStep1: '📅 Define your reference times (Wake up, Lunch, etc).',
+        initialInstructionsStep2: '💊 Add medications to each time slot.',
+        initialInstructionsStep3: '⚙️ Don\'t worry! You can change everything later in settings.',
+        initialInstructionsNote: 'Tap on the times below to edit or toggle them.',
 
         // Default Events
         wakeUp: 'Wake up',

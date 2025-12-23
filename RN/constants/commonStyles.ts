@@ -6,7 +6,7 @@ export const commonStyles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        paddingHorizontal: 24,
+        paddingHorizontal: 8,
         marginBottom: 20,
         flexDirection: 'column',
     },

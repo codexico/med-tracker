@@ -22,7 +22,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="onboarding"
+        name="config"
         options={{
           title: i18n.t('config'),
           tabBarIcon: ({ color }) => <Ionicons size={28} name="settings-sharp" color={color} />,

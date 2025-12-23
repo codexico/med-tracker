@@ -1,52 +1,57 @@
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack, router } from 'expo-router';
+import { Redirect, router, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 
-import { initDatabase, getSetting } from '@/services/Database';
+import { SQLiteProvider } from 'expo-sqlite';
+import { initializeDatabase, getSetting } from '@/services/Database';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
-  const [isReady, setIsReady] = useState(false);
+const Fallback = () => {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator />
+    </View>
+  );
+};
 
+const AppContent = () => {
   useEffect(() => {
-    const prepare = async () => {
-      try {
-        await initDatabase();
-        const onboarded = await getSetting('hasCompletedOnboarding');
-
-        if (onboarded !== 'true') { // go to onboarding on app first launch
-          router.replace('/onboarding' as any);
-        }
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setIsReady(true);
+    const checkOnboarding = async () => {
+      const onboarded = await getSetting('hasCompletedOnboarding');
+      console.log('Onboarded:', onboarded);
+      if (onboarded !== 'true') {
+        console.log('Redirecting to initial');
+        router.replace('/initial' as any);
       }
     };
-
-    prepare();
+    checkOnboarding();
   }, []);
 
-  if (!isReady) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
 
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="initial" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
+};
+
+export default function RootLayout() {
+  return (
+    <Suspense fallback={<Fallback />}>
+      <SQLiteProvider databaseName="medtracker.db" onInit={initializeDatabase} useSuspense>
+        <AppContent />
+      </SQLiteProvider>
+    </Suspense>
+  );
 }
+
