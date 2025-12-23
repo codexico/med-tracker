@@ -20,7 +20,7 @@
         "simulator": true
       }
     },
-    "preview": {
+    "previewold": {
       "distribution": "internal",
       "channel": "main",
       "android": {
@@ -29,6 +29,22 @@
       "ios": {
         "image": "latest"
       }
+    },
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
+      "distribution": "internal"
     },
     "production": {
       "channel": "production",
