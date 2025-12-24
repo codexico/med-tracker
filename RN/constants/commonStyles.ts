@@ -5,14 +5,21 @@ export const commonStyles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    headerFixed: {
+        marginHorizontal: 24,
+    },
     header: {
         paddingHorizontal: 8,
-        marginBottom: 20,
+        marginBottom: 10,
         flexDirection: 'column',
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
+    },
+    headerLogo: {
+        width: 150,
+        height: 40,
     },
     content: {
         paddingHorizontal: 24,

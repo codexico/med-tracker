@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Pressable, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Checkbox } from 'expo-checkbox';
 
@@ -22,8 +22,14 @@ export default function DashboardScreen() {
 
   return (
     <View style={[commonStyles.container, { backgroundColor: COLORS.background, paddingTop: insets.top + 20 }]}>
-      <View style={commonStyles.header}>
-        <Text style={[commonStyles.title, { color: COLORS.text }]}>{i18n.t('appName')}</Text>
+      <View style={[commonStyles.header, commonStyles.headerFixed]}>
+        <Image
+          accessibilityLabel={i18n.t('appName')}
+          source={i18n.locale.includes('pt')
+            ? require('@/assets/images/med-logo-header-pt.png')
+            : require('@/assets/images/med-logo-header.png')}
+          style={commonStyles.headerLogo}
+        />
       </View>
 
       <ScrollView
