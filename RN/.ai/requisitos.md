@@ -32,15 +32,15 @@ Devido ao público diverso, o app deve ser simples de usar e ter uma interface i
 
 ### Funcionalidades:
 
-- [ ]   Notificação de Evento na hora do medicamento
-- [ ]   Mostar lista de Eventos contendo o horário e a lista de medicamentos de cada Evento
-- [ ]   Adicionar novos Eventos
-- [ ]   Editar Eventos
-- [ ]   Remover Eventos
-- [ ]   Adicionar Medicamento ao Evento
-- [ ]   Remover Medicamento do Evento (não é necessário Editar Medicamento)
-- [ ]   Usuário marcar o Evento como executado
-- [ ]   Mostrar o Evento como executado
+- [x]   Notificação de Evento na hora do medicamento
+- [x]   Mostar lista de Eventos contendo o horário e a lista de medicamentos de cada Evento
+- [x]   Adicionar novos Eventos
+- [x]   Editar Eventos
+- [x]   Remover Eventos
+- [x]   Adicionar Medicamento ao Evento
+- [x]   Remover Medicamento do Evento
+- [x]   Usuário marcar o Evento como executado
+- [x]   Mostrar o Evento como executado
 - [ ]   Mostrar o Evento como atrasado
 - [ ]   Parabenizar o usuário quando ele tomar o medicamento e também ao término do dia
 

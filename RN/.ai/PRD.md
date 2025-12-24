@@ -100,5 +100,6 @@ A **React Native (Expo)** mobile application that works **offline-first**, provi
 ## 7. Milestones
 - [x] **Phase 1: Migration:** Port PWA logic to Expo, setup Navigation & Database.
 - [x] **Phase 2: Core Features:** CRUD Events, Persistent Storage, Basic UI.
-- [ ] **Phase 3: Notifications:** Reliable local scheduling, daily repeats, smart updates.
+- [x] **Phase 3: Notifications:** Reliable local scheduling, daily repeats.
+- [ ] **Phase 4: Polish:** Smart updates, History tracking, Accessibility improvements.
 - [ ] **Phase 4: Polish:** Accessibility improvements, rigorous testing on devices.
