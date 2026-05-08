@@ -30,6 +30,9 @@ const AppContent = () => {
         console.log('Redirecting to initial');
         router.replace('/initial' as any);
       }
+      if (__DEV__) {
+        router.replace('/(tabs)/HelloWidgetPreviewScreen' as any);
+      }
     };
     checkOnboarding();
   }, []);

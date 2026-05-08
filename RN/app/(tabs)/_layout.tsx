@@ -1,3 +1,4 @@
+'use no memo';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Fontisto, Ionicons } from '@expo/vector-icons';
@@ -9,11 +10,21 @@ import { COLORS } from '@/constants/theme';
 export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName={__DEV__ ? 'HelloWidgetPreviewScreen' : 'index'}
       screenOptions={{
         tabBarActiveTintColor: COLORS.tint,
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
+      {__DEV__ && (
+        <Tabs.Screen
+          name="HelloWidgetPreviewScreen"
+          options={{
+            title: 'Development',
+            tabBarIcon: ({ color }) => <Ionicons size={28} name="desktop-outline" color={color} />,
+          }}
+        />
+      )}
       <Tabs.Screen
         name="index"
         options={{
@@ -28,7 +39,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Ionicons size={28} name="settings-sharp" color={color} />,
         }}
       />
-
+      <Tabs.Screen
+        name="about"
+        options={{
+          title: i18n.t('about'),
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="information-circle-outline" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

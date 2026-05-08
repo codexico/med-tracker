@@ -2,12 +2,11 @@
   "expo": {
     "name": "MeusRemedinhos",
     "slug": "MeusRemedinhos",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "meusremedinhos",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.franciscokahil.appMeusRemedinhos"
@@ -19,7 +18,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.franciscokahil.appMeusRemedinhos"
     },
@@ -29,6 +27,13 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-pill.png",
+          "color": "#8b6f47"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -41,7 +46,45 @@
           }
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "react-native-android-widget",
+        {
+          "fonts": [
+            "./assets/fonts/material.ttf"
+          ],
+          "widgets": [
+            {
+              "name": "DailyList",
+              "label": "Lista Diária",
+              "targetCellWidth": 4,
+              "minWidth": "218dp",
+              "maxWidth": "624dp",
+              "targetCellHeight": 2,
+              "minHeight": "56dp",
+              "maxHeight": "800dp",
+              "resizeMode": "horizontal|vertical",
+              "description": "Lista de medicamentos diária",
+              "previewImage": "./assets/widget-preview/daily-list-preview.png",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "NextEvent",
+              "label": "Próximo Medicamento",
+              "targetCellWidth": 2,
+              "minWidth": "109dp",
+              "maxWidth": "218dp",
+              "targetCellHeight": 1,
+              "minHeight": "56dp",
+              "maxHeight": "80dp",
+              "resizeMode": "horizontal",
+              "description": "Próximo medicamento a tomar",
+              "previewImage": "./assets/widget-preview/next-event-preview.png",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

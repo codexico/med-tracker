@@ -3,6 +3,10 @@ import { MedEvent } from '@/types';
 import { getClockIconName, DEFAULT_ICON_NAMES } from '@/constants/ClockIcons';
 import { getEvents, saveEvent, toggleEventCompletion as dbToggleEventCompletion } from '@/services/Database';
 import { scheduleEventNotification, cancelNotification } from '@/services/Notifications';
+import { AppState } from 'react-native';
+import { requestWidgetUpdate } from 'react-native-android-widget';
+import { DailyListWidget } from '../widgets/DailyListWidget';
+import { NextEventWidget } from '../widgets/NextEventWidget';
 
 interface EventContextType {
     events: MedEvent[];
@@ -28,6 +32,19 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Initial load when provider mounts
     useEffect(() => {
         loadEvents();
+    }, [loadEvents]);
+
+    // Refresh when app comes to foreground (sync with widget changes)
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'active') {
+                loadEvents();
+            }
+        });
+
+        return () => {
+            subscription.remove();
+        };
     }, [loadEvents]);
 
     const updateEvent = async (targetEvent: MedEvent) => {
@@ -62,6 +79,16 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
 
         await saveEvent(finalEvent);
+        
+        const updatedEvents = events.map(e => e.id === finalEvent.id ? finalEvent : e);
+        requestWidgetUpdate({ 
+            widgetName: 'DailyList',
+            renderWidget: () => <DailyListWidget events={updatedEvents} />
+        });
+        requestWidgetUpdate({ 
+            widgetName: 'NextEvent',
+            renderWidget: () => <NextEventWidget events={updatedEvents} />
+        });
     };
 
     const updateEventTime = (id: string, selectedDate: Date) => {
@@ -128,6 +155,16 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             return updated.sort((a, b) => a.time.localeCompare(b.time));
         });
         await saveEvent(newEvent);
+        
+        const updatedEvents = [...events, newEvent];
+        requestWidgetUpdate({ 
+            widgetName: 'DailyList',
+            renderWidget: () => <DailyListWidget events={updatedEvents} />
+        });
+        requestWidgetUpdate({ 
+            widgetName: 'NextEvent',
+            renderWidget: () => <NextEventWidget events={updatedEvents} />
+        });
     };
 
     const toggleEventCompletion = async (id: string, completed: boolean) => {
@@ -137,6 +174,16 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ));
 
         await dbToggleEventCompletion(id, completed);
+        
+        const updatedEvents = events.map(e => e.id === id ? { ...e, completedToday: completed } : e);
+        requestWidgetUpdate({ 
+            widgetName: 'DailyList',
+            renderWidget: () => <DailyListWidget events={updatedEvents} />
+        });
+        requestWidgetUpdate({ 
+            widgetName: 'NextEvent',
+            renderWidget: () => <NextEventWidget events={updatedEvents} />
+        });
     };
 
     return (

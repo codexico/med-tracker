@@ -21,6 +21,7 @@ const i18n = new I18n({
         nameRequired: 'Nome é obrigatório!',
         nameRequiredHint: 'É bom colocar um nome para lembrar depois.',
         noEvents: 'Nenhum evento configurado.',
+        noEventsToday: 'Sem eventos hoje',
         finishOnboarding: 'Concluir',
         welcome: 'Bem-vindo(a)!',
         initialScreenSubtitle: 'Vamos configurar sua rotina.',
@@ -37,6 +38,17 @@ const i18n = new I18n({
         afternoon: 'Tarde',
         dinner: 'Janta',
         sleep: 'Antes de dormir',
+
+        // About Tab
+        about: 'Sobre',
+        appDescription: 'O Meus Remedinhos é o seu assistente pessoal para nunca mais esquecer de tomar seus medicamentos. Cadastre seus horários, adicione seus remédios e deixe o resto com a gente.',
+        widgetPromoTitle: 'Adicione nossos Widgets!',
+        widgetPromoDesc: 'Acompanhe seus remédios diretamente da sua tela, sem precisar abrir o aplicativo.',
+        widgetPromoStep1: '1. Pressione e segure em um espaço vazio na sua tela do celular.',
+        widgetPromoStep2: '2. Toque em "Widgets".',
+        widgetPromoStep3: '3. Encontre o "Meus Remedinhos", escolha o seu favorito e arraste-o para a tela.',
+        githubLink: 'Código Fonte no GitHub',
+        version: 'Versão',
     },
     'en-US': {
         appName: 'My Meds',
@@ -57,6 +69,7 @@ const i18n = new I18n({
         nameRequired: 'Name is required!',
         nameRequiredHint: 'Good to have a name to remember later.',
         noEvents: 'No events configured.',
+        noEventsToday: 'No events today',
         finishOnboarding: 'Finish',
         welcome: 'Welcome!',
         initialScreenSubtitle: 'Let\'s set up your schedule.',
@@ -73,6 +86,17 @@ const i18n = new I18n({
         afternoon: 'Afternoon',
         dinner: 'Dinner',
         sleep: 'Before sleep',
+
+        // About Tab
+        about: 'About',
+        appDescription: 'My Meds is your personal assistant so you never forget to take your medications again. Set your schedules, add your meds, and leave the rest to us.',
+        widgetPromoTitle: 'Add our Widgets!',
+        widgetPromoDesc: 'Keep track of your medications directly from your home screen, without opening the app.',
+        widgetPromoStep1: '1. Long press on an empty space on your home screen.',
+        widgetPromoStep2: '2. Tap on "Widgets".',
+        widgetPromoStep3: '3. Find "My Meds", choose your favorite, and drag it to your home screen.',
+        githubLink: 'Source Code on GitHub',
+        version: 'Version',
     }
 });
 

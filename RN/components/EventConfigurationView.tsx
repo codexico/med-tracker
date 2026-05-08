@@ -61,8 +61,8 @@ export const EventConfigurationView: React.FC<EventConfigurationViewProps> = ({
     };
 
     return (
-        <ScrollView style={[commonStyles.container, { backgroundColor: COLORS.background, paddingTop: insets.top + 20 }]}>
-            <View style={commonStyles.content}>
+        <ScrollView style={[commonStyles.container, { backgroundColor: COLORS.background, paddingTop: insets.top + 20, paddingBottom: insets.bottom + 20 }]}>
+            <View style={[commonStyles.content, { paddingBottom: insets.bottom + 20 }]}>
                 <View style={commonStyles.header}>
                     <Text style={[commonStyles.title, { color: COLORS.text }]}>{title}</Text>
                     <Text style={[styles.subtitle, { color: COLORS.textSecondary }]}>

@@ -8,7 +8,7 @@ let db: SQLite.SQLiteDatabase;
 
 const getDb = async () => {
     if (!db) {
-        db = await SQLite.openDatabaseAsync('medtracker.db');
+        db = await SQLite.openDatabaseAsync('medtracker.db', { useNewConnection: true } as any);
     }
     return db;
 };
