@@ -11,6 +11,7 @@ import i18n from '@/i18n';
 import { AddEventModal } from '@/components/AddEventModal';
 import { AddMedicationModal } from '@/components/AddMedicationModal';
 import { MedicationList } from '@/components/MedicationList';
+import { FAB } from '@/components/FAB';
 import { useEventContext } from '@/context/EventContext';
 
 
@@ -61,7 +62,8 @@ export const EventConfigurationView: React.FC<EventConfigurationViewProps> = ({
     };
 
     return (
-        <ScrollView style={[commonStyles.container, { backgroundColor: COLORS.background, paddingTop: insets.top + 20, paddingBottom: insets.bottom + 20 }]}>
+        <View style={{ flex: 1 }}>
+            <ScrollView style={[commonStyles.container, { backgroundColor: COLORS.background, paddingTop: insets.top + 20, paddingBottom: insets.bottom + 20 }]}>
             <View style={[commonStyles.content, { paddingBottom: insets.bottom + 20 }]}>
                 <View style={commonStyles.header}>
                     <Text style={[commonStyles.title, { color: COLORS.text }]}>{title}</Text>
@@ -116,32 +118,28 @@ export const EventConfigurationView: React.FC<EventConfigurationViewProps> = ({
                 ))}
 
                 <View style={styles.footerButtonContainer}>
-                    <Pressable
-                        style={[commonStyles.button, { backgroundColor: COLORS.primary, width: '100%', marginBottom: 12 }]}
-                        onPress={() => setCreateModalVisible(true)}
-                    >
-                        <Text style={commonStyles.textStyle}>{i18n.t('addNewTime')}</Text>
-                    </Pressable>
-
                     {footerContent}
                 </View>
-
-                <AddMedicationModal
-                    visible={modalVisible}
-                    onClose={() => setModalVisible(false)}
-                    onAdd={handleAddMedicationSubmit}
-                />
-
-                <AddEventModal
-                    visible={createModalVisible}
-                    onClose={() => setCreateModalVisible(false)}
-                    onAdd={async (label, time) => {
-                        await createEvent(label, time);
-                        setCreateModalVisible(false);
-                    }}
-                />
             </View>
         </ScrollView>
+
+        <FAB onPress={() => setCreateModalVisible(true)} />
+
+        <AddMedicationModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            onAdd={handleAddMedicationSubmit}
+        />
+
+        <AddEventModal
+            visible={createModalVisible}
+            onClose={() => setCreateModalVisible(false)}
+            onAdd={async (label, time) => {
+                await createEvent(label, time);
+                setCreateModalVisible(false);
+            }}
+        />
+    </View>
     );
 };
 

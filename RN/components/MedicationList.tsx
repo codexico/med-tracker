@@ -20,18 +20,20 @@ export const MedicationList: React.FC<MedicationListProps> = ({ medications, onR
 
     return (
         <View style={styles.medicationSection}>
-            <View style={styles.medicationList}>
-                {medications && medications.map((med, idx) => (
-                    <View key={idx} style={styles.chip}>
-                        <Text style={styles.chipText}>{med}</Text>
-                        {onRemove && (
-                            <Pressable onPress={() => onRemove(idx)}>
-                                <Ionicons name="close-circle" size={16} color={COLORS.textSecondary} />
-                            </Pressable>
-                        )}
-                    </View>
-                ))}
-            </View>
+            {medications && medications.length > 0 &&
+                <View style={styles.medicationList}>
+                    {medications.map((med, idx) => (
+                        <View key={idx} style={styles.chip}>
+                            <Text style={styles.chipText}>{med}</Text>
+                            {onRemove && (
+                                <Pressable onPress={() => onRemove(idx)}>
+                                    <Ionicons name="close-circle" size={16} color={COLORS.textSecondary} />
+                                </Pressable>
+                            )}
+                        </View>
+                    ))}
+                </View>
+            }
             {onAdd && (
                 <Pressable
                     style={[styles.addMedButton, { borderColor: COLORS.primary }]}
@@ -66,13 +68,12 @@ const styles = StyleSheet.create({
     medicationSection: {
         borderTopWidth: 1,
         borderTopColor: COLORS.separator,
-        paddingTop: 12,
     },
     medicationList: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 8,
-        marginBottom: 12,
+        paddingVertical: 8,
     },
     addMedButton: {
         flexDirection: 'row',

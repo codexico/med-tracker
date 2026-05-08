@@ -42,7 +42,7 @@ const i18n = new I18n({
         // About Tab
         about: 'Sobre',
         appDescription: 'O Meus Remedinhos é o seu assistente pessoal para nunca mais esquecer de tomar seus medicamentos. Cadastre seus horários, adicione seus remédios e deixe o resto com a gente.',
-        widgetPromoTitle: 'Adicione nossos Widgets!',
+        widgetPromoTitle: 'Adicione os Widgets!',
         widgetPromoDesc: 'Acompanhe seus remédios diretamente da sua tela, sem precisar abrir o aplicativo.',
         widgetPromoStep1: '1. Pressione e segure em um espaço vazio na sua tela do celular.',
         widgetPromoStep2: '2. Toque em "Widgets".',
@@ -90,7 +90,7 @@ const i18n = new I18n({
         // About Tab
         about: 'About',
         appDescription: 'My Meds is your personal assistant so you never forget to take your medications again. Set your schedules, add your meds, and leave the rest to us.',
-        widgetPromoTitle: 'Add our Widgets!',
+        widgetPromoTitle: 'Add the Widgets!',
         widgetPromoDesc: 'Keep track of your medications directly from your home screen, without opening the app.',
         widgetPromoStep1: '1. Long press on an empty space on your home screen.',
         widgetPromoStep2: '2. Tap on "Widgets".',

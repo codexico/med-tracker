@@ -79,11 +79,13 @@ npx eas build --profile development --platform android --local
 
 4. instalar o apk no emulador
 ```bash
-adb install {path do priojeto}/med-tracker/RN/build-{build_number}.apk
+adb install {path do projeto}/med-tracker/RN/build-{build_number}.apk
 ```
 
-5. rodar o app no emulador:
+5. iniciar e rodar o app no emulador:
 ```bash
+emulator -list-avds
+emulator {device_name}
 npx expo start --dev-client
 ```
 Escolher a opção 'a' para Android.
