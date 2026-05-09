@@ -16,15 +16,14 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
-      {__DEV__ && (
-        <Tabs.Screen
-          name="HelloWidgetPreviewScreen"
-          options={{
-            title: 'Development',
-            tabBarIcon: ({ color }) => <Ionicons size={28} name="desktop-outline" color={color} />,
-          }}
-        />
-      )}
+      <Tabs.Screen
+        name="HelloWidgetPreviewScreen"
+        options={{
+          title: 'Development',
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="desktop-outline" color={color} />,
+          href: __DEV__ ? '/(tabs)/HelloWidgetPreviewScreen' : null,
+        }}
+      />
       <Tabs.Screen
         name="index"
         options={{
