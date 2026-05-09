@@ -1,0 +1,38 @@
+PRIVACY POLICY FOR Meus Remedinhos
+
+
+Meus Remedinhos (package name: `com.franciscokahil.appMeusRemedinhos`) is provided by codexico (). This Privacy Policy explains how we collect, use, and protect information when you use the app. By using Meus Remedinhos, you agree to this Policy.
+
+
+
+INFORMATION WE COLLECT
+
+• None.
+
+
+
+CHILDREN’S PRIVACY
+
+The app is not directed to children under 13 (or the minimum age in your jurisdiction). If you believe a child provided personal information, contact us to delete it.
+
+
+
+CHANGES TO THIS POLICY
+
+We may update this Policy to reflect changes to the app or applicable laws. We will post the updated Policy with a new “Effective date”.
+
+
+
+CONTACT US
+
+If you have questions about this Policy or privacy practices, contact us:
+
+- Website: https://codexico.com.br
+- Issues: https://github.com/codexico/med-tracker/issues
+- Country/Region: Brasil
+
+
+
+EFFECTIVE DATE
+
+2026-05-09
