@@ -27,7 +27,7 @@ const i18n = new I18n({
         initialScreenSubtitle: 'Vamos configurar sua rotina.',
         initialInstructionsStep1: '📅 Defina seus horários de referência (Acordar, Almoço, etc).',
         initialInstructionsStep2: '💊 Adicione os medicamentos em cada horário.',
-        initialInstructionsStep3: '⚙️ Não se preocupe! Você pode alterar tudo depois nas configurações.',
+        initialInstructionsStep3: '⚙️ Não se preocupe! Você pode alterar tudo depois a qualquer momento.',
         initialInstructionsNote: 'Toque nos horários abaixo para editar ou ativar/desativar.',
 
         // Default Events
@@ -75,7 +75,7 @@ const i18n = new I18n({
         initialScreenSubtitle: 'Let\'s set up your schedule.',
         initialInstructionsStep1: '📅 Define your reference times (Wake up, Lunch, etc).',
         initialInstructionsStep2: '💊 Add medications to each time slot.',
-        initialInstructionsStep3: '⚙️ Don\'t worry! You can change everything later in settings.',
+        initialInstructionsStep3: '⚙️ Don\'t worry! You can change everything later at any time.',
         initialInstructionsNote: 'Tap on the times below to edit or toggle them.',
 
         // Default Events

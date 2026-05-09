@@ -30,7 +30,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/notification-pill.png",
+          "icon": "./assets/images/app-pill-notification.png",
           "color": "#8b6f47"
         }
       ],

@@ -25,9 +25,10 @@ export default function DashboardScreen() {
         <Image
           accessibilityLabel={i18n.t('appName')}
           source={i18n.locale.includes('pt')
-            ? require('@/assets/images/med-logo-header-pt.png')
-            : require('@/assets/images/med-logo-header.png')}
+            ? require('@/assets/images/med-logo-header-pt-alt.png')
+            : require('@/assets/images/med-logo-header-alt.png')}
           style={commonStyles.headerLogo}
+          resizeMode="contain"
         />
       </View>
 
@@ -44,7 +45,7 @@ export default function DashboardScreen() {
           </Text>
         )}
       </ScrollView>
-
+      {/* 
       <FAB onPress={() => setCreateModalVisible(true)} />
 
       <AddEventModal
@@ -54,7 +55,7 @@ export default function DashboardScreen() {
           await createEvent(label, time);
           setCreateModalVisible(false);
         }}
-      />
+      /> */}
     </View >
   );
 }
