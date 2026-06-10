@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class DashboardViewModel(private val repository: EventRepository) : ViewModel() {
     val events: StateFlow<List<EventEntity>> = repository.allEvents.stateIn(
@@ -20,6 +21,17 @@ class DashboardViewModel(private val repository: EventRepository) : ViewModel() 
     fun toggleEventStatus(event: EventEntity, isTaken: Boolean) {
         viewModelScope.launch {
             repository.updateEvent(event.copy(isTakenToday = isTaken))
+        }
+    }
+
+    fun addEvent(label: String, time: String) {
+        viewModelScope.launch {
+            val newEvent = EventEntity(
+                id = UUID.randomUUID().toString(),
+                title = label,
+                time = time
+            )
+            repository.insertEvent(newEvent)
         }
     }
 }

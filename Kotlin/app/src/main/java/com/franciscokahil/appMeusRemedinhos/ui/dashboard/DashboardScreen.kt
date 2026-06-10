@@ -26,6 +26,7 @@ fun DashboardScreen() {
     val viewModel: DashboardViewModel = viewModel(factory = factory)
     
     val events by viewModel.events.collectAsState()
+    var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -39,7 +40,7 @@ fun DashboardScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: Open Add Dialog */ },
+                onClick = { showAddDialog = true },
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
             ) {
@@ -47,6 +48,16 @@ fun DashboardScreen() {
             }
         }
     ) { paddingValues ->
+        if (showAddDialog) {
+            AddEventDialog(
+                onDismiss = { showAddDialog = false },
+                onConfirm = { label, time ->
+                    viewModel.addEvent(label, time)
+                    showAddDialog = false
+                }
+            )
+        }
+
         if (events.isEmpty()) {
             Box(
                 modifier = Modifier
