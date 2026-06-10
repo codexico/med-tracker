@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Meus Remedinhos</string>
+    <string name="onboarding_title">Bem-vindo ao Meus Remedinhos</string>
+    <string name="onboarding_desc">Organize seus medicamentos e nunca mais esqueça uma dose. Simples, prático e feito para você.</string>
+    <string name="onboarding_btn">Começar Agora</string>
 </resources>
