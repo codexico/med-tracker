@@ -34,6 +34,30 @@ class DashboardViewModel(private val repository: EventRepository) : ViewModel() 
             repository.insertEvent(newEvent)
         }
     }
+
+    fun addMedication(eventId: String, medicationName: String) {
+        viewModelScope.launch {
+            val currentEvents = events.value
+            val event = currentEvents.find { it.id == eventId }
+            event?.let {
+                val updatedMeds = it.medications.toMutableList().apply { add(medicationName) }
+                repository.updateEvent(it.copy(medications = updatedMeds))
+            }
+        }
+    }
+
+    fun removeMedication(eventId: String, index: Int) {
+        viewModelScope.launch {
+            val currentEvents = events.value
+            val event = currentEvents.find { it.id == eventId }
+            event?.let {
+                val updatedMeds = it.medications.toMutableList().apply { 
+                    if (index in indices) removeAt(index) 
+                }
+                repository.updateEvent(it.copy(medications = updatedMeds))
+            }
+        }
+    }
 }
 
 class DashboardViewModelFactory(private val repository: EventRepository) : ViewModelProvider.Factory {

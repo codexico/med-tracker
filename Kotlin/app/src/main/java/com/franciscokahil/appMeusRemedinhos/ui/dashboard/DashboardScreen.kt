@@ -27,6 +27,7 @@ fun DashboardScreen() {
     
     val events by viewModel.events.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
+    var eventIdForMedication by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -58,6 +59,16 @@ fun DashboardScreen() {
             )
         }
 
+        eventIdForMedication?.let { eventId ->
+            AddMedicationDialog(
+                onDismiss = { eventIdForMedication = null },
+                onConfirm = { medicationName ->
+                    viewModel.addMedication(eventId, medicationName)
+                    eventIdForMedication = null
+                }
+            )
+        }
+
         if (events.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -75,7 +86,7 @@ fun DashboardScreen() {
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(events) { event ->
+                items(events, key = { it.id }) { event ->
                     EventCard(
                         time = event.time,
                         title = event.title,
@@ -83,6 +94,12 @@ fun DashboardScreen() {
                         isTaken = event.isTakenToday,
                         onCheckedChange = { isTaken ->
                             viewModel.toggleEventStatus(event, isTaken)
+                        },
+                        onAddMedication = {
+                            eventIdForMedication = event.id
+                        },
+                        onRemoveMedication = { index ->
+                            viewModel.removeMedication(event.id, index)
                         }
                     )
                 }
