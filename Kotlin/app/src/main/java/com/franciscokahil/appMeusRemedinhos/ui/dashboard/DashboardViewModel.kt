@@ -1,7 +1,5 @@
 package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -15,11 +13,9 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class DashboardViewModel(
-    application: Application,
-    private val repository: EventRepository
-) : AndroidViewModel(application) {
-
-    private val alarmScheduler = AlarmScheduler(application)
+    private val repository: EventRepository,
+    private val alarmScheduler: AlarmScheduler
+) : ViewModel() {
 
     val events: StateFlow<List<EventEntity>> = repository.allEvents.stateIn(
         scope = viewModelScope,
@@ -110,13 +106,13 @@ class DashboardViewModel(
 }
 
 class DashboardViewModelFactory(
-    private val application: Application,
-    private val repository: EventRepository
+    private val repository: EventRepository,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DashboardViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return DashboardViewModel(application, repository) as T
+            return DashboardViewModel(repository, alarmScheduler) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

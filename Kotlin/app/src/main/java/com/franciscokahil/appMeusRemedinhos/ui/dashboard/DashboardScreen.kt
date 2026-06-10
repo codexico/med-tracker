@@ -13,17 +13,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.franciscokahil.appMeusRemedinhos.R
+import com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImpl
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
-import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
+import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen() {
     val context = LocalContext.current
-    val application = context.applicationContext as android.app.Application
     val database = remember { AppDatabase.getDatabase(context) }
-    val repository = remember { EventRepository(context, database.eventDao()) }
-    val factory = remember { DashboardViewModelFactory(application, repository) }
+    val repository = remember { EventRepositoryImpl(context, database.eventDao()) }
+    val alarmScheduler = remember { AlarmSchedulerImpl(context) }
+    val factory = remember { DashboardViewModelFactory(repository, alarmScheduler) }
     val viewModel: DashboardViewModel = viewModel(factory = factory)
     
     val events by viewModel.events.collectAsState()

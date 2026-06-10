@@ -7,10 +7,15 @@ import android.content.Intent
 import android.os.Build
 import java.util.Calendar
 
-class AlarmScheduler(private val context: Context) {
+interface AlarmScheduler {
+    fun scheduleAlarm(id: String, title: String, message: String, hour: Int, minute: Int)
+    fun cancelAlarm(id: String)
+}
+
+class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun scheduleAlarm(id: String, title: String, message: String, hour: Int, minute: Int) {
+    override fun scheduleAlarm(id: String, title: String, message: String, hour: Int, minute: Int) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("EXTRA_TITLE", title)
             putExtra("EXTRA_MESSAGE", message)
@@ -48,7 +53,7 @@ class AlarmScheduler(private val context: Context) {
         }
     }
 
-    fun cancelAlarm(id: String) {
+    override fun cancelAlarm(id: String) {
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
