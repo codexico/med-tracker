@@ -10,27 +10,29 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    secondary = SecondaryDark,
-    tertiary = TertiaryDark,
-    background = BackgroundDark,
-    surface = BackgroundDark
-)
-
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    secondary = SecondaryLight,
-    tertiary = TertiaryLight,
-    background = BackgroundLight,
-    surface = BackgroundLight
+    primary = Primary,
+    onPrimary = Surface,
+    secondary = Secondary,
+    onSecondary = Surface,
+    background = Background,
+    onBackground = TextPrimary,
+    surface = Surface,
+    onSurface = TextPrimary,
+    surfaceVariant = Off,
+    onSurfaceVariant = TextSecondary,
+    error = Error,
+    onError = Surface,
+    outline = TextSecondary,
+    outlineVariant = BackgroundOff
 )
 
+// App fixed to Light mode as per RN app.json "userInterfaceStyle": "light"
 @Composable
 fun MeusRemedinhosTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Dynamic color is disabled by default to maintain branding
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -38,8 +40,7 @@ fun MeusRemedinhosTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> DarkColorScheme
+        // Force light color scheme for now as per app.json
         else -> LightColorScheme
     }
 

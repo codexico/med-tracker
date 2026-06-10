@@ -2,12 +2,12 @@ package com.franciscokahil.appMeusRemedinhos.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PrimaryLight = Color(0xFF8B6F47)
-val SecondaryLight = Color(0xFF6F5B40)
-val TertiaryLight = Color(0xFF566541)
-val BackgroundLight = Color(0xFFF0D4BD)
-
-val PrimaryDark = Color(0xFFDDB88C)
-val SecondaryDark = Color(0xFFD3C3A8)
-val TertiaryDark = Color(0xFFB1C497)
-val BackgroundDark = Color(0xFF2A2015)
+val Primary = Color(0xFF8B6F47)
+val Secondary = Color(0xFFD4A574)
+val Background = Color(0xFFF0D4BD)
+val Surface = Color(0xFFFFFFFF)
+val TextPrimary = Color(0xFF2D241B)
+val TextSecondary = Color(0xFF6D5D4B)
+val Error = Color(0xFFD32F2F)
+val Off = Color(0xFFF4F3F4)
+val BackgroundOff = Color(0xFF767577)

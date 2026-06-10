@@ -2,10 +2,7 @@ package com.franciscokahil.appMeusRemedinhos.ui.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,20 +26,22 @@ fun OnboardingScreen(onFinish: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .background(MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.large),
-            contentAlignment = Alignment.Center
+        Surface(
+            modifier = Modifier.size(140.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 4.dp
         ) {
-            Text(text = "💊", fontSize = 60.sp)
+            Box(contentAlignment = Alignment.Center) {
+                Text(text = "💊", fontSize = 72.sp)
+            }
         }
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(48.dp))
         
         Text(
             text = stringResource(id = R.string.onboarding_title),
-            fontSize = 24.sp,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center
@@ -52,26 +51,26 @@ fun OnboardingScreen(onFinish: () -> Unit) {
         
         Text(
             text = stringResource(id = R.string.onboarding_desc),
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             textAlign = TextAlign.Center,
-            lineHeight = 24.sp
+            lineHeight = 26.sp
         )
         
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(64.dp))
         
         Button(
             onClick = onFinish,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD97757))
+            shape = MaterialTheme.shapes.medium,
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.onboarding_btn),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
         }
     }

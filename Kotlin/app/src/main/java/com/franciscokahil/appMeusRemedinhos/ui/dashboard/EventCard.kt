@@ -24,11 +24,15 @@ fun EventCard(
     onRemoveMedication: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isTaken) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) 
-                             else MaterialTheme.colorScheme.surfaceVariant
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = if (isTaken) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f) 
+                             else MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 2.dp
         )
     ) {
         Column(
@@ -43,26 +47,33 @@ fun EventCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = time,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = if (isTaken) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = if (isTaken) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Checkbox(
                     checked = isTaken,
-                    onCheckedChange = onCheckedChange
+                    onCheckedChange = onCheckedChange,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = MaterialTheme.colorScheme.outline
+                    )
                 )
             }
 
             if (medications.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider(
+                    thickness = 0.5.dp, 
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 medications.forEachIndexed { index, med ->
@@ -74,7 +85,7 @@ fun EventCard(
                         Text(
                             text = med,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = if (isTaken) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                         IconButton(
@@ -84,7 +95,7 @@ fun EventCard(
                             Icon(
                                 Icons.Default.Clear,
                                 contentDescription = "Remover",
-                                tint = MaterialTheme.colorScheme.error,
+                                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -96,12 +107,18 @@ fun EventCard(
             
             TextButton(
                 onClick = onAddMedication,
-                contentPadding = PaddingValues(0.dp),
-                modifier = Modifier.align(Alignment.Start)
+                contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
+                modifier = Modifier.align(Alignment.Start),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.secondary
+                )
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = stringResource(R.string.add_medication))
+                Text(
+                    text = stringResource(R.string.add_medication),
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }
