@@ -3,4 +3,40 @@
     <string name="onboarding_title">Bem-vindo ao Meus Remedinhos</string>
     <string name="onboarding_desc">Organize seus medicamentos e nunca mais esqueça uma dose. Simples, prático e feito para você.</string>
     <string name="onboarding_btn">Começar Agora</string>
+
+    <!-- RN Migrated Strings -->
+    <string name="config">Configuração</string>
+    <string name="config_subtitle">Ajuste seus horários e medicamentos.</string>
+    <string name="edit_time">Editar Hora</string>
+    <string name="add_medication">Adicionar Medicamento</string>
+    <string name="new_medication">Novo Medicamento</string>
+    <string name="med_name_placeholder">Nome do medicamento</string>
+    <string name="cancel">Cancelar</string>
+    <string name="add">Adicionar</string>
+    <string name="new_time">Novo Horário</string>
+    <string name="time_name_label">Nome do Horário (ex: Lanche):</string>
+    <string name="time_name_placeholder">Ex: Lanche da Tarde</string>
+    <string name="time_label">Horário:</string>
+    <string name="create">Criar</string>
+    <string name="add_new_time">Adicionar Novo Horário</string>
+    <string name="name_required">Nome é obrigatório!</string>
+    <string name="name_required_hint">É bom colocar um nome para lembrar depois.</string>
+    <string name="no_events">Nenhum evento configurado.</string>
+    <string name="no_events_today">Sem eventos hoje</string>
+    <string name="finish_onboarding">Concluir</string>
+    <string name="welcome">Bem-vindo(a)!</string>
+    <string name="initial_screen_subtitle">Vamos configurar sua rotina.</string>
+    <string name="initial_instructions_step1">📅 Defina seus horários de referência (Acordar, Almoço, etc).</string>
+    <string name="initial_instructions_step2">💊 Adicione os medicamentos em cada horário.</string>
+    <string name="initial_instructions_step3">⚙️ Não se preocupe! Você pode alterar tudo depois a qualquer momento.</string>
+    <string name="initial_instructions_note">Toque nos horários abaixo para editar ou ativar/desativar.</string>
+
+    <!-- Default Events -->
+    <string name="wake_up">Ao acordar</string>
+    <string name="breakfast">Café da manhã</string>
+    <string name="morning">Manhã</string>
+    <string name="lunch">Almoço</string>
+    <string name="afternoon">Tarde</string>
+    <string name="dinner">Janta</string>
+    <string name="sleep">Antes de dormir</string>
 </resources>
