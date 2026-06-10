@@ -22,7 +22,7 @@ fun DashboardScreen() {
     val context = LocalContext.current
     val application = context.applicationContext as android.app.Application
     val database = remember { AppDatabase.getDatabase(context) }
-    val repository = remember { EventRepository(database.eventDao()) }
+    val repository = remember { EventRepository(context, database.eventDao()) }
     val factory = remember { DashboardViewModelFactory(application, repository) }
     val viewModel: DashboardViewModel = viewModel(factory = factory)
     
