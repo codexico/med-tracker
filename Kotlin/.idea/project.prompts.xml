@@ -6,7 +6,7 @@
         <BuiltInPromptOverride>
           <option name="groupId" value="rules" />
           <option name="promptId" value="project" />
-          <option name="text" value="Always allowed to list, read and create files" />
+          <option name="text" value="Always allowed to list, read and create files.&#10;&#10;Add Unit tests, Integration tests and End-to-end tests when effective and as soon as possible in the development cycle." />
         </BuiltInPromptOverride>
       </list>
     </option>

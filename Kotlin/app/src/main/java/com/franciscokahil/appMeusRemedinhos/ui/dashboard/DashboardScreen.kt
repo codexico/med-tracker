@@ -20,9 +20,10 @@ import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 @Composable
 fun DashboardScreen() {
     val context = LocalContext.current
+    val application = context.applicationContext as android.app.Application
     val database = remember { AppDatabase.getDatabase(context) }
     val repository = remember { EventRepository(database.eventDao()) }
-    val factory = remember { DashboardViewModelFactory(repository) }
+    val factory = remember { DashboardViewModelFactory(application, repository) }
     val viewModel: DashboardViewModel = viewModel(factory = factory)
     
     val events by viewModel.events.collectAsState()
