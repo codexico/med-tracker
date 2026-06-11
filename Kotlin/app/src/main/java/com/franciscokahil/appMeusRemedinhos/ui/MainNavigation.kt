@@ -10,7 +10,7 @@ import com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardScreen
 import com.franciscokahil.appMeusRemedinhos.ui.onboarding.OnboardingScreen
 
 @Composable
-fun MainNavigation() {
+fun MainNavigation(highlightedId: String? = null) {
     val context = LocalContext.current
     val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     val hasSeenOnboarding = sharedPrefs.getBoolean("has_seen_onboarding", false)
@@ -28,7 +28,7 @@ fun MainNavigation() {
             })
         }
         composable("dashboard") {
-            DashboardScreen()
+            DashboardScreen(highlightedId = highlightedId)
         }
     }
 }

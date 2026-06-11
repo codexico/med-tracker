@@ -19,9 +19,12 @@ import androidx.glance.background
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.GlanceTheme
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.text.TextDecoration
+import com.franciscokahil.appMeusRemedinhos.MainActivity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import kotlinx.coroutines.flow.first
 
@@ -33,6 +36,7 @@ class MedicationWidget : GlanceAppWidget() {
     private val colorSurface = Color(0xFFFFFFFF)
     private val colorTextPrimary = Color(0xFF2D241B)
     private val colorTextSecondary = Color(0xFF6D5D4B)
+    private val colorPrimaryContainer = Color(0xFFF0D4BD)
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val database = AppDatabase.getDatabase(context)
@@ -59,7 +63,9 @@ class MedicationWidget : GlanceAppWidget() {
                             fontSize = 16.sp
                         )
                     )
+                    
                     Spacer(modifier = GlanceModifier.height(8.dp))
+                    
                     if (events.isEmpty()) {
                         Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(
@@ -81,6 +87,8 @@ class MedicationWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetEventItem(event: EventEntity) {
+        val action = actionStartActivity<MainActivity>() 
+
         Column(
             modifier = GlanceModifier
                 .fillMaxWidth()
@@ -88,11 +96,24 @@ class MedicationWidget : GlanceAppWidget() {
                 .background(ColorProvider(colorSurface))
                 .cornerRadius(8.dp)
                 .padding(8.dp)
+                .clickable(action)
         ) {
             Row(
                 modifier = GlanceModifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Box(
+                    modifier = GlanceModifier
+                        .size(32.dp)
+                        .background(ColorProvider(colorPrimaryContainer))
+                        .cornerRadius(4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = event.icon, style = TextStyle(fontSize = 16.sp))
+                }
+
+                Spacer(modifier = GlanceModifier.width(8.dp))
+
                 Text(
                     text = event.time,
                     style = TextStyle(
@@ -109,16 +130,6 @@ class MedicationWidget : GlanceAppWidget() {
                         textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
                     ),
                     modifier = GlanceModifier.defaultWeight()
-                )
-            }
-            if (event.medications.isNotEmpty() && !event.isTakenToday) {
-                Text(
-                    text = event.medications.joinToString(", "),
-                    style = TextStyle(
-                        color = ColorProvider(colorTextSecondary),
-                        fontSize = 12.sp
-                    ),
-                    modifier = GlanceModifier.padding(top = 2.dp)
                 )
             }
         }

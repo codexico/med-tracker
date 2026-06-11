@@ -47,10 +47,32 @@ class DashboardViewModel(
                 id = UUID.randomUUID().toString(),
                 title = label,
                 time = time,
-                isEnabled = true
+                isEnabled = true,
+                icon = getClockEmoji(time)
             )
             repository.insertEvent(newEvent)
             scheduleEventAlarm(newEvent)
+        }
+    }
+
+    fun updateEvent(event: EventEntity, newTitle: String, newTime: String) {
+        viewModelScope.launch {
+            val updatedEvent = event.copy(
+                title = newTitle,
+                time = newTime,
+                icon = getClockEmoji(newTime)
+            )
+            repository.updateEvent(updatedEvent)
+            if (updatedEvent.isEnabled) {
+                scheduleEventAlarm(updatedEvent)
+            }
+        }
+    }
+
+    fun deleteEvent(event: EventEntity) {
+        viewModelScope.launch {
+            alarmScheduler.cancelAlarm(event.id)
+            repository.deleteEvent(event)
         }
     }
 
@@ -101,6 +123,32 @@ class DashboardViewModel(
                 hour,
                 minute
             )
+        }
+    }
+
+    private fun getClockEmoji(time: String): String {
+        val parts = time.split(":")
+        if (parts.size != 2) return "💊"
+        val hour = parts[0].toIntOrNull() ?: return "💊"
+        val minute = parts[1].toIntOrNull() ?: return "💊"
+        
+        val h12 = if (hour % 12 == 0) 12 else hour % 12
+        val isHalf = minute >= 15 && minute < 45
+
+        return when (h12) {
+            1 -> if (isHalf) "🕜" else "🕐"
+            2 -> if (isHalf) "🕝" else "🕑"
+            3 -> if (isHalf) "🕞" else "🕒"
+            4 -> if (isHalf) "🕟" else "🕓"
+            5 -> if (isHalf) "🕠" else "🕔"
+            6 -> if (isHalf) "🕡" else "🕕"
+            7 -> if (isHalf) "🕢" else "🕖"
+            8 -> if (isHalf) "🕣" else "🕗"
+            9 -> if (isHalf) "🕤" else "🕘"
+            10 -> if (isHalf) "🕥" else "🕙"
+            11 -> if (isHalf) "🕦" else "🕚"
+            12 -> if (isHalf) "🕧" else "🕛"
+            else -> "💊"
         }
     }
 }

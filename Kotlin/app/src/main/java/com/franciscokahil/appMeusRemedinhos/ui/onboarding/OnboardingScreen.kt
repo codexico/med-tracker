@@ -34,8 +34,9 @@ fun OnboardingScreen(onFinish: () -> Unit) {
             shadowElevation = 2.dp
         ) {
             Box(contentAlignment = Alignment.Center) {
+                // Use a safe drawable that is definitely a raster or vector (not mipmap/alias)
                 Image(
-                    painter = painterResource(id = R.mipmap.ic_launcher),
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground_img),
                     contentDescription = null,
                     modifier = Modifier.size(100.dp)
                 )
