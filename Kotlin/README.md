@@ -48,7 +48,7 @@ _(Nota: Para usuários Linux, recomendamos o uso de um container Distrobox com U
 ## 🚀 Como Rodar Localmente
 
 > [!IMPORTANT]
-> Se você está usando o ambiente **Distrobox** configurado neste projeto, consulte o [**DISTROBOX_GUIDE.md**](DISTROBOX_GUIDE.md) para instruções específicas de caminhos e comandos.
+> Se você está usando o ambiente **Distrobox** configurado neste projeto, consulte o [**DISTROBOX_GUIDE.md**](docs/DISTROBOX_GUIDE.md) para instruções específicas de caminhos e comandos.
 
 1. **Clone o repositório e navegue até a pasta:**
    ```bash
@@ -72,7 +72,7 @@ _(Nota: Para usuários Linux, recomendamos o uso de um container Distrobox com U
 Temos testes cobrindo Camada de Dados (Room), Camada de UI (Compose) e ViewModel.
 
 > [!TIP]
-> No ambiente Distrobox, use os comandos detalhados em [**DISTROBOX_GUIDE.md**](DISTROBOX_GUIDE.md).
+> No ambiente Distrobox, use os comandos detalhados em [**DISTROBOX_GUIDE.md**](docs/DISTROBOX_GUIDE.md).
 
 - **Para rodar Testes Unitários (Rápidos, rodam na JVM Local):**
   ```bash
