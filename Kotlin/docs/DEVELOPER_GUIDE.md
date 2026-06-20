@@ -865,9 +865,18 @@ sudo apt install qemu-kvm libvirt-bin
 
 ---
 
-## 9. Git Workflow & PRs
+## 9. Git Workflow & Best Practices
 
-### 9.1 Feature Branch
+### 9.1 Commit Early and Often
+
+> [!IMPORTANT]
+> **Core Rule:** Always commit your changes as soon as a logical unit of work is completed and verified by tests. Never accumulate a large number of changes across multiple features without committing.
+
+- **Granular Commits:** Each commit should represent a single fix, feature, or refactor.
+- **Test Before Commit:** Always run relevant unit or instrumented tests to ensure the codebase remains stable.
+- **Clear Messages:** Use descriptive commit messages following the Conventional Commits format (e.g., `feat:`, `fix:`, `docs:`, `refactor:`).
+
+### 9.2 Feature Branch
 
 ```bash
 # Create feature branch

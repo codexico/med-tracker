@@ -53,6 +53,8 @@ Se você (Agente) receber a ordem para escrever testes:
 
 ## 📝 5. Prompting Behaviors
 
+- **Commit early and often:** As an AI agent, you must commit your changes as soon as a logical unit of work is completed and verified by tests. Use descriptive commit messages following the Conventional Commits format.
+
 - O ambiente do host de desenvolvimento preferencial é o **Ubuntu LTS no Distrobox**, `distrobox enter ubuntu22-android` contendo dependências C++ (lib32z1). Nunca use comandos `apt-get` ou assuma privilégios de root, a menos que autorizado explicitamente.
 
 - O Android Studio roda no distrobox ubuntu22-android, e o emulador no ambiente host.
