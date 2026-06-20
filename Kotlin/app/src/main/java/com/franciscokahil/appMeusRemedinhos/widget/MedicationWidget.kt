@@ -1,6 +1,8 @@
 package com.franciscokahil.appMeusRemedinhos.widget
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.net.toUri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -19,8 +21,8 @@ import androidx.glance.background
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.GlanceTheme
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.text.TextDecoration
@@ -30,13 +32,11 @@ import kotlinx.coroutines.flow.first
 
 class MedicationWidget : GlanceAppWidget() {
     
-    // Hex colors from theme.ts
     private val colorPrimary = Color(0xFF8B6F47)
-    private val colorBackground = Color(0xFFFDFBF7)
+    private val colorBackground = Color(0xFFF0D4BD)
     private val colorSurface = Color(0xFFFFFFFF)
     private val colorTextPrimary = Color(0xFF2D241B)
     private val colorTextSecondary = Color(0xFF6D5D4B)
-    private val colorPrimaryContainer = Color(0xFFF0D4BD)
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val database = AppDatabase.getDatabase(context)
@@ -76,7 +76,7 @@ class MedicationWidget : GlanceAppWidget() {
                     } else {
                         LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
                             items(events) { event ->
-                                WidgetEventItem(event)
+                                WidgetEventItem(context, event)
                             }
                         }
                     }
@@ -86,16 +86,21 @@ class MedicationWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun WidgetEventItem(event: EventEntity) {
-        val action = actionStartActivity<MainActivity>() 
+    private fun WidgetEventItem(context: Context, event: EventEntity) {
+        // Explicit intent for Deep Link
+        val intent = Intent(Intent.ACTION_VIEW, "meusremedinhos://event/${event.id}".toUri()).apply {
+            setClass(context, MainActivity::class.java)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        val action = actionStartActivity(intent)
 
         Column(
             modifier = GlanceModifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
                 .background(ColorProvider(colorSurface))
-                .cornerRadius(8.dp)
-                .padding(8.dp)
+                .cornerRadius(12.dp)
+                .padding(12.dp)
                 .clickable(action)
         ) {
             Row(
@@ -105,32 +110,34 @@ class MedicationWidget : GlanceAppWidget() {
                 Box(
                     modifier = GlanceModifier
                         .size(32.dp)
-                        .background(ColorProvider(colorPrimaryContainer))
-                        .cornerRadius(4.dp),
+                        .background(ColorProvider(colorPrimary.copy(alpha = 0.1f)))
+                        .cornerRadius(6.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = event.icon, style = TextStyle(fontSize = 16.sp))
                 }
 
-                Spacer(modifier = GlanceModifier.width(8.dp))
+                Spacer(modifier = GlanceModifier.width(12.dp))
 
-                Text(
-                    text = event.time,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = ColorProvider(colorPrimary),
-                        textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                Column(modifier = GlanceModifier.defaultWeight()) {
+                    Text(
+                        text = event.title,
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = if (event.isTakenToday) ColorProvider(colorTextSecondary) else ColorProvider(colorTextPrimary),
+                            fontSize = 14.sp,
+                            textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                        )
                     )
-                )
-                Spacer(modifier = GlanceModifier.width(8.dp))
-                Text(
-                    text = event.title,
-                    style = TextStyle(
-                        color = ColorProvider(colorTextPrimary),
-                        textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
-                    ),
-                    modifier = GlanceModifier.defaultWeight()
-                )
+                    Text(
+                        text = event.time,
+                        style = TextStyle(
+                            color = ColorProvider(colorTextSecondary),
+                            fontSize = 12.sp,
+                            textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                        )
+                    )
+                }
             }
         }
     }

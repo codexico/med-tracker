@@ -8,6 +8,7 @@ import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -23,32 +24,26 @@ class DashboardViewModel(
         initialValue = emptyList()
     )
 
+    val shouldShowOnboarding: StateFlow<Boolean> = events.map { it.isEmpty() }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = true
+    )
+
     fun toggleEventStatus(event: EventEntity, isTaken: Boolean) {
         viewModelScope.launch {
             repository.updateEvent(event.copy(isTakenToday = isTaken))
         }
     }
 
-    fun toggleEventEnabled(event: EventEntity, isEnabled: Boolean) {
-        viewModelScope.launch {
-            val updatedEvent = event.copy(isEnabled = isEnabled)
-            repository.updateEvent(updatedEvent)
-            if (isEnabled) {
-                scheduleEventAlarm(updatedEvent)
-            } else {
-                alarmScheduler.cancelAlarm(updatedEvent.id)
-            }
-        }
-    }
-
-    fun addEvent(label: String, time: String) {
+    fun addEvent(label: String, time: String, icon: String? = null) {
         viewModelScope.launch {
             val newEvent = EventEntity(
                 id = UUID.randomUUID().toString(),
                 title = label,
                 time = time,
                 isEnabled = true,
-                icon = getClockEmoji(time)
+                icon = icon ?: getClockEmoji(time)
             )
             repository.insertEvent(newEvent)
             scheduleEventAlarm(newEvent)
@@ -126,29 +121,35 @@ class DashboardViewModel(
         }
     }
 
-    private fun getClockEmoji(time: String): String {
+    fun getClockEmoji(time: String): String {
         val parts = time.split(":")
-        if (parts.size != 2) return "💊"
-        val hour = parts[0].toIntOrNull() ?: return "💊"
-        val minute = parts[1].toIntOrNull() ?: return "💊"
+        if (parts.size != 2) return "\uD83D\uDC8A"
+        var hour = parts[0].toIntOrNull() ?: return "\uD83D\uDC8A"
+        val minute = parts[1].toIntOrNull() ?: return "\uD83D\uDC8A"
+        
+        var isHalf = false
+        if (minute in 15..44) {
+            isHalf = true
+        } else if (minute >= 45) {
+            hour = (hour + 1) % 24
+        }
         
         val h12 = if (hour % 12 == 0) 12 else hour % 12
-        val isHalf = minute >= 15 && minute < 45
 
         return when (h12) {
-            1 -> if (isHalf) "🕜" else "🕐"
-            2 -> if (isHalf) "🕝" else "🕑"
-            3 -> if (isHalf) "🕞" else "🕒"
-            4 -> if (isHalf) "🕟" else "🕓"
-            5 -> if (isHalf) "🕠" else "🕔"
-            6 -> if (isHalf) "🕡" else "🕕"
-            7 -> if (isHalf) "🕢" else "🕖"
-            8 -> if (isHalf) "🕣" else "🕗"
-            9 -> if (isHalf) "🕤" else "🕘"
-            10 -> if (isHalf) "🕥" else "🕙"
-            11 -> if (isHalf) "🕦" else "🕚"
-            12 -> if (isHalf) "🕧" else "🕛"
-            else -> "💊"
+            1 -> if (isHalf) "\uD83D\uDD60" else "\uD83D\uDD50"
+            2 -> if (isHalf) "\uD83D\uDD61" else "\uD83D\uDD51"
+            3 -> if (isHalf) "\uD83D\uDD62" else "\uD83D\uDD52"
+            4 -> if (isHalf) "\uD83D\uDD63" else "\uD83D\uDD53"
+            5 -> if (isHalf) "\uD83D\uDD64" else "\uD83D\uDD54"
+            6 -> if (isHalf) "\uD83D\uDD65" else "\uD83D\uDD55"
+            7 -> if (isHalf) "\uD83D\uDD66" else "\uD83D\uDD56"
+            8 -> if (isHalf) "\uD83D\uDD67" else "\uD83D\uDD57"
+            9 -> if (isHalf) "\uD83D\uDD68" else "\uD83D\uDD58"
+            10 -> if (isHalf) "\uD83D\uDD69" else "\uD83D\uDD59"
+            11 -> if (isHalf) "\uD83D\uDD6A" else "\uD83D\uDD5A"
+            12 -> if (isHalf) "\uD83D\uDD6B" else "\uD83D\uDD5B"
+            else -> "\uD83D\uDC8A"
         }
     }
 }

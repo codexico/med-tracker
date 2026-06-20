@@ -1,51 +1,54 @@
 package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.ui.components.M3TimePickerDialog
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventDialog(
     eventToEdit: EventEntity? = null,
+    initialLabel: String = "",
+    initialTimeStr: String = "12:00",
+    initialIcon: String? = null,
     onDismiss: () -> Unit,
-    onConfirm: (String, String) -> Unit,
-    onDelete: (() -> Unit)? = null
+    onConfirm: (String, String, String?) -> Unit
 ) {
-    var label by remember { mutableStateOf(eventToEdit?.title ?: "") }
+    var label by remember { mutableStateOf(eventToEdit?.title ?: initialLabel) }
     
-    val initialTime = eventToEdit?.time?.split(":")
-    val initialHour = initialTime?.get(0)?.toIntOrNull() ?: 12
-    val initialMinute = initialTime?.get(1)?.toIntOrNull() ?: 0
+    val timeParts = (eventToEdit?.time ?: initialTimeStr).split(":")
+    val initialHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 12
+    val initialMinute = timeParts.getOrNull(1)?.toIntOrNull() ?: 0
     
     var hour by remember { mutableIntStateOf(initialHour) }
     var minute by remember { mutableIntStateOf(initialMinute) }
     var labelError by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    val timePickerDialog = TimePickerDialog(
-        context,
-        { _, h, m ->
-            hour = h
-            // Snapping to half hour intervals
-            minute = if (m < 15) 0 else if (m < 45) 30 else 0
-            if (m >= 45) {
-                hour = (hour + 1) % 24
-            }
-        },
-        hour,
-        minute,
-        true
-    )
+    if (showTimePicker) {
+        M3TimePickerDialog(
+            onDismissRequest = { showTimePicker = false },
+            onConfirm = { state ->
+                hour = state.hour
+                minute = state.minute
+                showTimePicker = false
+            },
+            initialHour = hour,
+            initialMinute = minute
+        )
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -83,7 +86,7 @@ fun AddEventDialog(
                             if (it.isNotBlank()) labelError = false
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("event_title_input"),
                     placeholder = { Text(stringResource(R.string.time_name_placeholder)) },
                     isError = labelError,
                     singleLine = true,
@@ -113,12 +116,13 @@ fun AddEventDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    val locale = LocalLocale.current.platformLocale
                     Text(
-                        text = String.format("%02d:%02d", hour, minute),
+                        text = String.format(locale, "%02d:%02d", hour, minute),
                         style = MaterialTheme.typography.headlineMedium
                     )
                     Button(
-                        onClick = { timePickerDialog.show() },
+                        onClick = { showTimePicker = true },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.onSecondaryContainer)
                     ) {
                         Text(stringResource(R.string.edit_time))
@@ -131,16 +135,6 @@ fun AddEventDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    if (eventToEdit != null && onDelete != null) {
-                        TextButton(
-                            onClick = onDelete,
-                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-                        ) {
-                            Text("Remover")
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
-                    
                     TextButton(onClick = onDismiss) {
                         Text(stringResource(R.string.cancel))
                     }
@@ -149,9 +143,13 @@ fun AddEventDialog(
                         if (label.isBlank()) {
                             labelError = true
                         } else {
-                            onConfirm(label, String.format("%02d:%02d", hour, minute))
+                            onConfirm(
+                                label, 
+                                String.format(Locale.getDefault(), "%02d:%02d", hour, minute),
+                                eventToEdit?.icon ?: initialIcon
+                            )
                         }
-                    }) {
+                    }, modifier = Modifier.testTag("confirm_add_event")) {
                         Text(if (eventToEdit == null) stringResource(R.string.create) else "Salvar")
                     }
                 }

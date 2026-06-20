@@ -4,30 +4,28 @@
 
 ---
 
-## 1. Onboarding (First-Run Experience)
+## 1. Onboarding (Empty State Experience)
 
 ### Description
-When a user opens the app for the first time, they are guided through initial setup to establish their medication schedule.
+UX 2.0 starts users with a clean dashboard, using interactive tooltips and an empty state message to guide their first actions.
 
 ### User Story
-> As a new user, I want the app to guide me through setting up my daily medication schedule so I can start receiving reminders immediately.
+> As a new user, I want a clear starting point with helpful guidance so I can manually create a schedule that fits my specific needs.
 
 ### Capabilities
 
 | Feature | Behavior | Status |
 |---------|----------|--------|
-| **Welcome Screen** | Display app introduction with logo and brief explanation | ✅ Implemented |
-| **Default Schedule** | Pre-populate 7 default meal times (Acordar, Café, Manhã, Almoço, Tarde, Janta, Antes de Dormir) | ✅ Implemented |
-| **Skip Setup** | User can skip detailed onboarding and use defaults immediately | ✅ Implemented |
-| **Permission Request** | Request notification permissions from OS during onboarding or first alarm attempt | ✅ Implemented |
-| **Completion** | Mark onboarding as complete in SharedPreferences to prevent re-triggering | ✅ Implemented |
-| **Navigation** | Auto-navigate to Dashboard after onboarding completion | ✅ Implemented |
+| **Empty State** | Display friendly message and illustration when no events exist | ✅ Implemented |
+| **Pulsating Tooltips** | Guide user toward the FAB and preset menu with animations | ✅ Implemented |
+| **Manual Presets** | Offer quick-add options for common times (Acordar, Café, etc.) via FAB menu | ✅ Implemented |
+| **Permission Just-in-Time** | Request notification permissions only when the first event is created | ✅ Implemented |
+| **Dynamic Guidance** | Tooltips automatically disappear once the first event is added | ✅ Implemented |
 
 ### Technical Implementation
-- **Location:** `ui/onboarding/OnboardingScreen.kt`
-- **Navigation Host:** `MainNavigation.kt` checks `SharedPreferences` for `has_seen_onboarding` flag
-- **Default Events:** Defined in `strings.xml` (wake_up, breakfast, morning, lunch, afternoon, dinner, sleep)
-- **State Management:** Simple boolean flag, no complex database operations
+- **Location:** `ui/dashboard/DashboardScreen.kt` (OnboardingEmptyState)
+- **Tooltip Logic:** `rememberTooltipState` with `LaunchedEffect` monitoring event count.
+- **Permission Flow:** Handled in `DashboardScreen` confirm action via `ActivityResultLauncher`.
 
 ---
 
@@ -55,9 +53,9 @@ The primary screen where users view today's medication schedule and manage event
 - **Location:** `ui/dashboard/DashboardScreen.kt`
 - **ViewModel:** `DashboardViewModel.kt` (exposes `events: StateFlow<List<EventEntity>>`)
 - **Components:** 
-  - `EventCard.kt` - Individual event display (immutable, callback-driven)
-  - `AddEventDialog.kt` - Floating action button for adding events
-- **Reactive Binding:** Compose automatically recomposes on StateFlow emission
+  - `EventCard.kt` - Individual event display. Uses an **Edge-to-Edge Expanded Card** architecture (full screen, no borders) for editing and medication management.
+  - `AddEventDialog.kt` - Used for creating *new* events with validation.
+- **Reactive Binding:** Compose automatically recomposes on StateFlow emission.
 
 ---
 
@@ -106,16 +104,16 @@ Within each event, users can maintain a list of medications they need to take at
 
 | Feature | Behavior | Status |
 |---------|----------|--------|
-| **Add Medication** | Input free-text medication name to an event | ✅ Implemented |
-| **Display Medications** | Show medication list as chips/tags under event name | ✅ Implemented |
-| **Remove Medication** | Tap "X" on medication chip to remove it | ✅ Implemented |
+| **Add Medication** | Input free-text medication name directly inside the expanded event card | ✅ Implemented |
+| **Input Chips** | Medications displayed as interactive `InputChip` (expanded) or `AssistChip` (compact) | ✅ Implemented |
+| **Validation** | Prevent empty names and enforce 30-character limit with character counter | ✅ Implemented |
+| **Remove Medication** | Tap "Close" icon on medication chip in the expanded card | ✅ Implemented |
 | **Empty Med List** | Event can have zero medications (icon alone serves as reminder) | ✅ Implemented |
-| **Medication Count** | Show count of medications in event card | ⚠️ Partial |
+| **Medication Count** | Visual counter shown during input (e.g. 12/30) | ✅ Implemented |
 | **Sorting** | No specific medication sort order (maintained as insertion order) | ⚠️ By Design |
 | **Persistence** | Medication list serialized as `List<String>` in Room via TypeConverter | ✅ Implemented |
 
 ### Technical Implementation
-- **Location:** `ui/dashboard/AddMedicationModal.tsx` (from RN reference) → Kotlin equivalent TBD
 - **ViewModel Methods:**
   - `addMedication(eventId: String, medicationName: String)`
   - `removeMedication(eventId: String, index: Int)`
@@ -201,29 +199,13 @@ Channel:  "notifications" (important priority)
 
 ## 6. ~~Toggle Events (Enable/Disable)~~
 
-> Esta funcionalidade não passou nos testes de usabilidade e está sendo replanejada.
+> This feature failed usability testing and is being redesigned.
 
 ### Description
 Users can temporarily disable events without deleting them, pausing notifications while keeping configuration intact.
 
 ### User Story
 > As a user, I want to disable a medication reminder on weekends or temporarily pause it without losing my setup.
-
-### Capabilities
-
-| Feature | Behavior | Status |
-|---------|----------|--------|
-| **Visual Toggle** | Switch component shows on/off state | ✅ Implemented |
-| **Disable Event** | Setting `isEnabled = false` cancels the associated alarm | ✅ Implemented |
-| **Re-Enable Event** | Setting `isEnabled = true` reschedules the alarm | ✅ Implemented |
-| **Data Preservation** | Medications and time remain intact when toggled | ✅ Implemented |
-| **High-Contrast Colors** | OFF state uses grey (#767577), ON state uses primary color (#8B6F47) | ✅ Implemented |
-| **Persistent State** | Toggle state persists across app restarts | ✅ Implemented |
-
-### Technical Implementation
-- **Location:** Event cards in Dashboard (state mutation via `updateEvent()`)
-- **Entity Field:** `isEnabled: Boolean = true`
-- **Side Effect:** Toggling `isEnabled` triggers alarm reschedule in ViewModel
 
 ---
 
@@ -309,6 +291,9 @@ Device Home Screen Widget
 ### Description
 The app requests necessary OS permissions for notifications and alarm scheduling.
 
+> [!IMPORTANT]  
+> **Alarm Permission Policy:** We strictly use `SCHEDULE_EXACT_ALARM`. The more restrictive `USE_EXACT_ALARM` was intentionally removed because it is restricted by Google Play to core alarm/calendar apps. Using it without meeting strict criteria results in Store rejection. Our implementation includes logic to fallback to inexact alarms if the exact permission is not granted.
+
 ### Capabilities
 
 | Feature | Behavior | Status |
@@ -373,11 +358,12 @@ The app is designed to be usable by diverse populations, including elderly users
 
 | Feature | Behavior | Status |
 |---------|----------|--------|
+| **Screen Reader Support** | High-quality semantic descriptions for TalkBack, including merged card status | ✅ Implemented |
 | **High Contrast** | Text colors meet WCAG AA standards (dark on light) | ✅ Implemented |
-| **Large Touch Targets** | Event cards and buttons sized for accessibility | ✅ Implemented |
+| **Large Touch Targets** | Event cards and buttons sized for accessibility (minimum 48dp) | ✅ Implemented |
 | **Text Sizing** | System text scaling respected (device-level font size settings) | ✅ Implemented |
 | **Icon Clarity** | Emojis (🕐, 💊) used alongside text (not text-only) | ✅ Implemented |
-| **Screen Reader Support** | (Future) Semantic descriptions for TalkBack | ⚠️ Planned |
+| **Deep-Linking** | Automated scrolling and visual highlight when opening from widget or notification | ✅ Implemented |
 | **Haptic Feedback** | Vibration on alarm to alert users even if sound is off | ✅ Implemented |
 
 ---

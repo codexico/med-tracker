@@ -7,10 +7,12 @@ import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -22,11 +24,12 @@ class DashboardViewModelTest {
     private val alarmScheduler = mockk<AlarmScheduler>(relaxed = true)
     
     private val testDispatcher = StandardTestDispatcher()
+    private val eventsFlow = MutableStateFlow<List<EventEntity>>(emptyList())
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        every { repository.allEvents } returns flowOf(emptyList())
+        every { repository.allEvents } returns eventsFlow
         viewModel = DashboardViewModel(repository, alarmScheduler)
     }
 
@@ -39,6 +42,27 @@ class DashboardViewModelTest {
     fun `initial state should be empty`() = runTest {
         viewModel.events.test {
             assertEquals(emptyList<EventEntity>(), awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `shouldShowOnboarding should be true when events is empty`() = runTest {
+        viewModel.shouldShowOnboarding.test {
+            assertTrue(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `shouldShowOnboarding should be false when events is not empty`() = runTest {
+        viewModel.shouldShowOnboarding.test {
+            assertTrue(awaitItem()) // Initial empty state
+            
+            // Emit a non-empty list
+            eventsFlow.value = listOf(EventEntity("1", "Teste", "08:00"))
+            
+            assertFalse(awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
     }

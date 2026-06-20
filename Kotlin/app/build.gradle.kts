@@ -2,15 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    jacoco
 }
 
 android {
     namespace = "com.franciscokahil.appMeusRemedinhos"
-    compileSdk {
-        version = release(37) {
-            minorApiLevel = 0
-        }
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.franciscokahil.appMeusRemedinhos"
@@ -28,6 +25,10 @@ android {
                 enable = false
             }
         }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
     }
     packaging {
         resources {
@@ -43,6 +44,13 @@ android {
     buildFeatures {
         compose = true
     }
+    buildToolsVersion = "37.0.0"
+    ndkVersion = "27.1.12297006"
+}
+
+// Disable symbol stripping to resolve missing llvm-strip in the environment
+tasks.withType<com.android.build.gradle.internal.tasks.StripDebugSymbolsTask>().configureEach {
+    enabled = false
 }
 
 dependencies {
@@ -54,6 +62,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.room.runtime)
@@ -64,14 +74,45 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlinxCoroutinesTest)
     testImplementation(libs.turbine)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.mockk.android)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.kotlinxCoroutinesCore)
+    androidTestImplementation(libs.kotlinxCoroutinesAndroid)
+    androidTestImplementation(libs.kotlinxCoroutinesTest)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*"
+    )
+    val debugTree = project.layout.buildDirectory.dir("tmp/kotlin-classes/debug").map {
+        fileTree(it) { exclude(fileFilter) }
+    }
+    val mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(files(mainSrc))
+    classDirectories.setFrom(debugTree)
+    executionData.setFrom(project.layout.buildDirectory.dir("jacoco").map {
+        fileTree(it) { include("testDebugUnitTest.exec") }
+    })
 }

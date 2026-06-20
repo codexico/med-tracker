@@ -74,16 +74,17 @@
 
 ## 🎨 Visual Identity
 
-Inherited from the original React Native implementation (`constants/theme.ts`):
+Inherited from the original React Native implementation (`constants/theme.ts`), with refinements for contrast:
 
 ```
 Primary Color:       #8B6F47 (Warm Earth Tone)
 Secondary Color:     #D4A574 (Light Gold)
-Background:          #F0D4BD (Cream/Beige)
+Background:          #FDFBF7 (Light Cream for better contrast)
+Background Seeded:   #F0D4BD (The original beige for specific areas)
 Surface:             #FFFFFF (White)
 Text Primary:        #2D241B (Dark Brown)
 Text Secondary:      #6D5D4B (Medium Brown)
-Status Off:          #767577 (Grey)
+Status Off:          #F4F3F4 (Light Grey)
 Error:               #D32F2F (Red)
 ```
 
@@ -168,8 +169,8 @@ Kotlin/
 ## 🚀 Key Capabilities
 
 ### For Users
-1. **Onboarding:** First-time setup with pre-populated default meal times
-2. **Dashboard:** View today's medication schedule at a glance
+1. **Onboarding:** First-run experience starting from an empty state with helpful tooltips and manual setup.
+2. **Dashboard:** View today's medication schedule at a glance with edge-to-edge expanded editing.
 3. **Event Management:** Add/edit/delete medication reminders
 4. **Medication Tracking:** Add multiple medications per event
 5. **Toggle Events:** Enable/disable reminders without deleting data

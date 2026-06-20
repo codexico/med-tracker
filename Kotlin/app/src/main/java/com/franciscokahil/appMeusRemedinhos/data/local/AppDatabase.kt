@@ -1,22 +1,19 @@
 package com.franciscokahil.appMeusRemedinhos.data.local
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.franciscokahil.appMeusRemedinhos.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.UUID
 
 @Database(entities = [EventEntity::class], version = 3, exportSchema = false)
 @TypeConverters(MedicationTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
+
+    fun ensureSeeded() {
+        // Seeding removed for UX 2.0. Users start with an empty state.
+    }
 
     companion object {
         private const val TAG = "AppDatabase"
@@ -31,42 +28,11 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "med_tracker_database"
                 )
-                .fallbackToDestructiveMigration()
-                .addCallback(AppDatabaseCallback(context))
+                .fallbackToDestructiveMigration(true)
                 .build()
                 INSTANCE = instance
                 instance
             }
-        }
-    }
-
-    private class AppDatabaseCallback(
-        private val context: Context
-    ) : RoomDatabase.Callback() {
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            Log.d(TAG, "Database created, seeding...")
-            INSTANCE?.let { database ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    seedDatabase(database.eventDao(), context)
-                }
-            }
-        }
-
-        private suspend fun seedDatabase(eventDao: EventDao, context: Context) {
-            val defaultEvents = listOf(
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.wake_up), "07:00", icon = "☀️"),
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.breakfast), "08:00", icon = "☕"),
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.morning), "10:00", icon = "🌤️"),
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.lunch), "12:00", icon = "🍴"),
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.afternoon), "16:00", icon = "🌅"),
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.dinner), "20:00", icon = "🍲"),
-                EventEntity(UUID.randomUUID().toString(), context.getString(R.string.sleep), "22:00", icon = "🛌")
-            )
-            for (event in defaultEvents) {
-                eventDao.insertEvent(event)
-            }
-            Log.d(TAG, "Database seeded successfully")
         }
     }
 }

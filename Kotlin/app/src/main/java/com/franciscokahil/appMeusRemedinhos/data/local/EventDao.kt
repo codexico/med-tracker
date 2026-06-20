@@ -24,4 +24,10 @@ interface EventDao {
 
     @Query("UPDATE events SET isTakenToday = 0")
     suspend fun resetAllTakenStatus()
+
+    @Query("SELECT COUNT(*) FROM events")
+    suspend fun getEventCount(): Int
+
+    @Query("DELETE FROM events")
+    suspend fun deleteAll()
 }

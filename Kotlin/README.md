@@ -26,7 +26,7 @@ Este aplicativo foi concebido inicialmente como um PWA e posteriormente reescrit
 O projeto adota o padrão moderno do ecossistema Android:
 
 - **Linguagem:** [Kotlin](https://kotlinlang.org/docs/home.html)
-- **UI Toolkit:** [Jetpack Compose](https://developer.android.com/jetpack/compose) & Navigation3
+- **UI Toolkit:** [Jetpack Compose](https://developer.android.com/jetpack/compose) 
 - **Widgets:** [Jetpack Glance ](https://developer.android.com/develop/ui/compose/glance)
 - **Persistência Local:** [Room Database](https://developer.android.com/training/data-storage/room) com [KSP](https://kotlinlang.org/docs/ksp-overview.html)
 - **Arquitetura:** MVVM (Model-View-ViewModel) via [`StateFlow`](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-state-flow/)
@@ -69,17 +69,13 @@ _(Nota: Para usuários Linux, recomendamos o uso de um container Distrobox com U
 
 ## 🧪 Como Rodar os Testes
 
-Temos testes cobrindo Camada de Dados (Room), Camada de UI (Compose) e ViewModel.
+O projeto possui uma suíte robusta de testes cobrindo a lógica de negócio, persistência e interface do usuário.
 
-> [!TIP]
-> No ambiente Distrobox, use os comandos detalhados em [**DISTROBOX_GUIDE.md**](docs/DISTROBOX_GUIDE.md).
-
-- **Para rodar Testes Unitários (Rápidos, rodam na JVM Local):**
+- **Testes Unitários (58 testes):** Rápidos, rodam na JVM e utilizam **MockK** e **Turbine** para validar ViewModels e Repositórios.
   ```bash
   ./gradlew testDebugUnitTest
   ```
-- **Para rodar Testes Instrumentados (Necessita de Emulador Ativo):**
-  _(Testa o SQLite do Android e o Compose UI Rendering)_
+- **Testes Instrumentados (27 testes):** Rodam em um emulador ou dispositivo real, validando o banco de dados Room e a UI com **Compose UI Test**. Incluem testes de acessibilidade e deep-linking.
   ```bash
   ./gradlew connectedAndroidTest
   ```

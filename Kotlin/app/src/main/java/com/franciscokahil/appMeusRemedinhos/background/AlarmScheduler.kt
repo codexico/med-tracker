@@ -13,9 +13,16 @@ interface AlarmScheduler {
 }
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
-    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private val alarmManager by lazy {
+        try {
+            context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        } catch (_: Exception) {
+            null
+        }
+    }
 
     override fun scheduleAlarm(id: String, title: String, message: String, hour: Int, minute: Int) {
+        val manager = alarmManager ?: return
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("EXTRA_TITLE", title)
             putExtra("EXTRA_MESSAGE", message)
@@ -38,14 +45,14 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            alarmManager.setAndAllowWhileIdle(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !manager.canScheduleExactAlarms()) {
+            manager.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
                 pendingIntent
             )
         } else {
-            alarmManager.setExactAndAllowWhileIdle(
+            manager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
                 pendingIntent
@@ -54,6 +61,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
     }
 
     override fun cancelAlarm(id: String) {
+        val manager = alarmManager ?: return
         val intent = Intent(context, AlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -61,6 +69,6 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.cancel(pendingIntent)
+        manager.cancel(pendingIntent)
     }
 }

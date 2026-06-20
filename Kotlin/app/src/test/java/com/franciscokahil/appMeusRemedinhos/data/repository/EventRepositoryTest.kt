@@ -36,4 +36,11 @@ class EventRepositoryTest {
 
         coVerify { eventDao.deleteEvent(event) }
     }
+
+    @Test
+    fun `resetDailyStatus should call DAO reset`() = runTest {
+        repository.resetDailyStatus()
+
+        coVerify { eventDao.resetAllTakenStatus() }
+    }
 }

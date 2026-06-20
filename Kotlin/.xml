@@ -1,0 +1,2195 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/AccessibilityTest.kt</file>
+  <line>20</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.AccessibilityTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/AccessibilityTest.kt</file>
+  <line>49</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.AccessibilityTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/AccessibilityTest.kt</file>
+  <line>64</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.AccessibilityTest void testEventCardHasSemanticDescriptions()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/AccessibilityTest.kt</file>
+  <line>86</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.AccessibilityTest void testExpandedCardAccessibility()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DailyResetTest.kt</file>
+  <line>20</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.DailyResetTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DailyResetTest.kt</file>
+  <line>71</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DailyResetTest void testMarkMedicationAsTaken()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DailyResetTest.kt</file>
+  <line>81</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DailyResetTest void testMultipleMedicationsMarkedAsComplete()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DailyResetTest.kt</file>
+  <line>140</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DailyResetTest void testResetDateTrackingInSharedPreferences()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DailyResetTest.kt</file>
+  <line>155</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DailyResetTest void testEventStatePreservesAcrossClosing()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DashboardRefinementTest.kt</file>
+  <line>19</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.DashboardRefinementTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DashboardRefinementTest.kt</file>
+  <line>47</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DashboardRefinementTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DashboardRefinementTest.kt</file>
+  <line>63</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DashboardRefinementTest void testOnboardingTooltipsVisibleOnlyWhenEmpty()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DashboardRefinementTest.kt</file>
+  <line>101</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DashboardRefinementTest void testFabHidesOnExpansion()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DashboardRefinementTest.kt</file>
+  <line>124</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DashboardRefinementTest void testMedicationAutoSaveOnSaveClick()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DashboardRefinementTest.kt</file>
+  <line>146</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DashboardRefinementTest void testExpandedCardFillsScreenAndHidesOthers()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>21</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>76</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest void testDeepLinkScrollsToLastEvent()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>97</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest void testDeepLinkHighlightFeedback()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>113</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest void testMultipleDeepLinksScrollCorrectly()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>136</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest void testDeepLinkWithNonExistentEventDoesNotCrash()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>149</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest void testDeepLinkScrollPreservesUIState()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkScrollTest.kt</file>
+  <line>169</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkScrollTest void testDeepLinkScrollPositionAfterListUpdate()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkTest.kt</file>
+  <line>18</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/DeepLinkTest.kt</file>
+  <line>24</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.DeepLinkTest void testDeepLinkHighlightsEvent()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ExampleInstrumentedTest.kt</file>
+  <line>11</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.ExampleInstrumentedTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ExampleInstrumentedTest.kt</file>
+  <line>18</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ExampleInstrumentedTest void useAppContext()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/FullUserFlowTest.kt</file>
+  <line>20</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.FullUserFlowTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/FullUserFlowTest.kt</file>
+  <line>50</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.FullUserFlowTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/FullUserFlowTest.kt</file>
+  <line>55</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.FullUserFlowTest void fullAppFlow()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>20</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>49</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>62</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest void testCreateEventWithExactTime()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>78</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest void testMedicationVisibilityInCollapsedAndExpandedState()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>103</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest void testRemoveMedicationInExpandedState()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>124</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest void testMedicationNameValidation()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/ScheduleFlowTest.kt</file>
+  <line>157</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ScheduleFlowTest void testDeleteEventFlow()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/data/local/EventDaoTest.kt</file>
+  <line>15</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.EventDaoTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>30</length>
+  <highlighted_element>@RunWith(AndroidJUnit4::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/data/local/EventDaoTest.kt</file>
+  <line>21</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.EventDaoTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/data/local/EventDaoTest.kt</file>
+  <line>30</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.EventDaoTest void teardown()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+  <highlighted_element>@After</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/data/local/EventDaoTest.kt</file>
+  <line>35</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.EventDaoTest void insertAndGetEvents()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/data/local/EventDaoTest.kt</file>
+  <line>52</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.EventDaoTest void updateEvent()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/com/franciscokahil/appMeusRemedinhos/data/local/EventDaoTest.kt</file>
+  <line>63</line>
+  <module>Meus_Remedinhos.app.androidTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.EventDaoTest void resetAllTakenStatus()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/MainActivity.kt</file>
+  <line>27</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.MainActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>42</length>
+  <highlighted_element>class MainActivity : ComponentActivity() {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/background/AlarmReceiver.kt</file>
+  <line>7</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>43</length>
+  <highlighted_element>class AlarmReceiver : BroadcastReceiver() {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardScreen.kt</file>
+  <line>386</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardScreenKt void DashboardPreview()" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>31</length>
+  <highlighted_element>@Preview(showBackground = true)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/EventCard.kt</file>
+  <line>480</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.EventCardKt void EventCardPreview()" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>31</length>
+  <highlighted_element>@Preview(showBackground = true)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/EventCard.kt</file>
+  <line>506</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.EventCardKt void EventCardTakenPreview()" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>31</length>
+  <highlighted_element>@Preview(showBackground = true)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/EventCard.kt</file>
+  <line>532</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.EventCardKt void EventCardExpandedPreview()" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>31</length>
+  <highlighted_element>@Preview(showBackground = true)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/FabMenu.kt</file>
+  <line>178</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.FabMenuKt void FabMenuExpandedPreview()" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>39</length>
+  <highlighted_element>@OptIn(ExperimentalMaterial3Api::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/FabMenu.kt</file>
+  <line>195</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.FabMenuKt void FabMenuInteractivePreview()" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>39</length>
+  <highlighted_element>@OptIn(ExperimentalMaterial3Api::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/franciscokahil/appMeusRemedinhos/widget/MedicationWidgetReceiver.kt</file>
+  <line>6</line>
+  <module>Meus_Remedinhos.app.main</module>
+  <package>com.franciscokahil.appMeusRemedinhos.widget</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.widget.MedicationWidgetReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>60</length>
+  <highlighted_element>class MedicationWidgetReceiver : GlanceAppWidgetReceiver() {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ExampleUnitTest.kt</file>
+  <line>7</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.ExampleUnitTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ExampleUnitTest.kt</file>
+  <line>13</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ExampleUnitTest void addition_isCorrect()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>14</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>24</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>36</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void tearDown()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+  <highlighted_element>@After</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>41</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void scheduleAlarm should call setExactAndAllowWhileIdle on Android 11 or earlier()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>71</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void scheduleAlarm should use next day if time has passed()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>93</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void cancelAlarm should call alarmManager cancel()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>107</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void cancelAlarm should use event ID hash as request code()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>126</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void scheduleAlarm with exact permission should use setExactAndAllowWhileIdle()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>146</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void scheduleAlarm without exact permission should fall back to setAndAllowWhileIdle()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>166</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void scheduleAlarm should use RTC_WAKEUP to wake device from Doze Mode()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerImplTest.kt</file>
+  <line>190</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImplTest void multiple scheduleAlarm calls should use FLAG_UPDATE_CURRENT to replace previous()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerTest.kt</file>
+  <line>8</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>26</length>
+  <highlighted_element>class AlarmSchedulerTest {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerTest.kt</file>
+  <line>12</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerTest void AlarmSchedulerImpl should not crash when AlarmManager is null()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/AlarmSchedulerTest.kt</file>
+  <line>24</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerTest void AlarmSchedulerImpl should not crash when AlarmManager throws exception()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>12</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>22</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>35</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void tearDown()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+  <highlighted_element>@After</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>40</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void createNotificationChannel should call notificationManager on Android 8+()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>53</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void showNotification should call notify()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>68</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void notification title should match provided title()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>83</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void multiple notifications should use different IDs()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/background/NotificationHelperTest.kt</file>
+  <line>99</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.background</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.background.NotificationHelperTest void showNotification with empty message should still work()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>7</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>15</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>20</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void fromList should convert list to CSV string()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>36</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void fromString should convert CSV back to list()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>49</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void empty list should serialize to empty string()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>61</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void empty string should deserialize to empty list()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>73</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void single medication item should roundtrip correctly()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>86</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void medicament with spaces should preserve data()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/local/MedicationTypeConverterTest.kt</file>
+  <line>103</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.local</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.local.MedicationTypeConverterTest void large list should serialize efficiently()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>14</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>25</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>31</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void insertEvent should trigger widget update()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>46</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void updateEvent should trigger widget update()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>59</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void deleteEvent should trigger widget update()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>72</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void widget update exception should not crash app()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>82</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void resetDailyStatus should call DAO reset method()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryExtendedTest.kt</file>
+  <line>89</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryExtendedTest void multiple inserts should batch update widget()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryTest.kt</file>
+  <line>11</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>27</length>
+  <highlighted_element>class EventRepositoryTest {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryTest.kt</file>
+  <line>17</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryTest.kt</file>
+  <line>22</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryTest void insertEvent should call DAO()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryTest.kt</file>
+  <line>31</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryTest void deleteEvent should call DAO()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/data/repository/EventRepositoryTest.kt</file>
+  <line>40</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.data.repository</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryTest void resetDailyStatus should call DAO reset()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>18</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>30</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>37</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void tearDown()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+  <highlighted_element>@After</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>45</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void updateEvent should call repository and reschedule alarm()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>56</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void updateEvent when disabled should not reschedule alarm()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>67</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void updateEvent should preserve medications()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>80</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void deleteEvent should cancel alarm before removing from repo()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>91</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void deleteEvent should work even if alarm cancellation fails()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>105</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void addMedication should append to existing list()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>128</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void addMedication to empty list should create single-item list()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>148</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void removeMedication should remove by index()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>168</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void removeMedication with invalid index should not crash()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>182</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void getClockEmoji should return correct emoji for each hour()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>207</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void getClockEmoji with 24-hour format returns correct emoji()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>213</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void getClockEmoji with invalid format returns pill emoji()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>220</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void getClockEmoji with minutes 45-59 should round up hour()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>226</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void getClockEmoji with minutes 15-44 should show half-past()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>234</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void toggleEventStatus on event without ID should not crash()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>244</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void addEventWithIcon should persist provided icon()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>253</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void addEventWithEmptyName should not create alarm with null message()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>262</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void addEventWithInvalidTime should not schedule alarm()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>274</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void addEventWithNegativeHour should not schedule alarm()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>284</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void events state should emit updates from repository()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelExtendedTest.kt</file>
+  <line>311</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelExtendedTest void events should remain empty if no events in repo()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>19</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="class" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>40</length>
+  <highlighted_element>@OptIn(ExperimentalCoroutinesApi::class)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>29</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void setup()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>7</length>
+  <highlighted_element>@Before</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>36</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void tearDown()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>6</length>
+  <highlighted_element>@After</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>41</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void initial state should be empty()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>49</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void shouldShowOnboarding should be true when events is empty()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>57</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void shouldShowOnboarding should be false when events is not empty()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>70</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void addEvent should call repository()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/com/franciscokahil/appMeusRemedinhos/ui/dashboard/DashboardViewModelTest.kt</file>
+  <line>82</line>
+  <module>Meus_Remedinhos.app.unitTest</module>
+  <package>com.franciscokahil.appMeusRemedinhos.ui.dashboard</package>
+  <entry_point TYPE="method" FQNAME="com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardViewModelTest void toggleEventStatus should call repository update()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>5</length>
+  <highlighted_element>@Test</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+</problems>
