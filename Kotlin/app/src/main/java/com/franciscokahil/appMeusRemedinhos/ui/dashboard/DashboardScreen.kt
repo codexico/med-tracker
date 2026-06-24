@@ -196,8 +196,7 @@ fun DashboardScreen(
                         showAddDialog = true
                     },
                     tooltipState = tooltipState,
-                    tooltipOffsetX = tooltipOffsetX,
-                    modifier = Modifier.testTag("add_event_fab")
+                    tooltipOffsetX = tooltipOffsetX
                 )
             }
         },

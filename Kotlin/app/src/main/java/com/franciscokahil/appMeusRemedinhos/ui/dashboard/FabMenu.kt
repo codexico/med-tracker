@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -118,7 +119,8 @@ fun FabMenu(
                 ) {
                     Column(
                         horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.spacedBy(6.dp) // Slightly more space
+                        verticalArrangement = Arrangement.spacedBy(6.dp), // Slightly more space
+                        modifier = Modifier.testTag("fab_menu_presets")
                     ) {
                         presets.forEach { preset ->
                             PresetFabItem(preset) { onOptionSelected(preset) }
@@ -132,7 +134,8 @@ fun FabMenu(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     shape = CircleShape,
-                    elevation = FloatingActionButtonDefaults.elevation(8.dp, 12.dp)
+                    elevation = FloatingActionButtonDefaults.elevation(8.dp, 12.dp),
+                    modifier = Modifier.testTag("add_event_fab")
                 ) {
                     Icon(
                         if (isExpanded) Icons.Default.Close else Icons.Default.Add,

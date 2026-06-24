@@ -56,13 +56,15 @@ class DailyResetTest {
         val emptyState = composeTestRule.onAllNodesWithTag("empty_state")
         if (emptyState.fetchSemanticsNodes().isNotEmpty()) {
             composeTestRule.onNodeWithTag("add_event_fab").performClick()
-            composeTestRule.onNodeWithText("Ao acordar", substring = true).performClick()
+            // Try matching "Ao acordar" or "Wake up"
+            composeTestRule.onNode(hasText("acordar", substring = true, ignoreCase = true) or hasText("Wake", substring = true, ignoreCase = true)).performClick()
             composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         }
 
         composeTestRule.waitUntil(15000) {
             composeTestRule.onAllNodesWithTag("event_list").fetchSemanticsNodes().isNotEmpty() &&
-            composeTestRule.onAllNodesWithText("acordar", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty()
+            (composeTestRule.onAllNodesWithText("acordar", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() ||
+             composeTestRule.onAllNodesWithText("Wake", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty())
         }
         
         composeTestRule.waitForIdle()
@@ -72,10 +74,12 @@ class DailyResetTest {
     fun testMarkMedicationAsTaken() {
         ensureInDashboard()
 
-        composeTestRule.onAllNodesWithText("acordar", substring = true).onFirst().performClick()
+        composeTestRule.onAllNodesWithTag("event_checkbox").onFirst().performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onAllNodesWithText("acordar", substring = true).onFirst().assertIsDisplayed()
+        // Verify status in card content description
+        val takenStatus = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.status_taken)
+        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).onFirst().assertIsDisplayed()
     }
 
     @Test
@@ -84,57 +88,25 @@ class DailyResetTest {
         
         // Add more events if needed for "Multiple" test
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
-        composeTestRule.onNodeWithText("Café da manhã", substring = true).performClick()
+        composeTestRule.onNode(hasText("Café", substring = true, ignoreCase = true) or hasText("Breakfast", substring = true, ignoreCase = true)).performClick()
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
-        composeTestRule.onNodeWithText("Almoço", substring = true).performClick()
+        composeTestRule.onNode(hasText("Almoço", substring = true, ignoreCase = true) or hasText("Lunch", substring = true, ignoreCase = true)).performClick()
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
 
-        // Match substrings to avoid encoding/case issues
-        val events = listOf("acordar", "Caf", "Almo")
-
-        events.forEach { event ->
-            // Reliable way to scroll in LazyColumn without performScrollToNode (which can be flaky)
-            var found = false
-            for (i in 1..8) {
-                if (composeTestRule.onAllNodesWithText(event, substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty()) {
-                    found = true
-                    break
-                }
-                composeTestRule.onNodeWithTag("event_list").performTouchInput { swipeUp() }
-                composeTestRule.waitForIdle()
-            }
-            
-            if (found) {
-                composeTestRule.onAllNodesWithText(event, substring = true, ignoreCase = true).onFirst().performClick()
-                composeTestRule.waitForIdle()
-            } else {
-                // If not found, it might be an encoding issue or app state. Log it.
-                android.util.Log.e("DailyResetTest", "Failed to find event: $event after multiple swipes")
-            }
+        // Click all visible checkboxes
+        val checkboxes = composeTestRule.onAllNodesWithTag("event_checkbox", useUnmergedTree = true)
+        val count = checkboxes.fetchSemanticsNodes().size
+        
+        for (i in 0 until count) {
+            composeTestRule.onAllNodesWithTag("event_checkbox", useUnmergedTree = true).get(i).performClick()
+            composeTestRule.waitForIdle()
         }
 
-        // Reset scroll to top
-        for (i in 1..5) {
-            composeTestRule.onNodeWithTag("event_list").performTouchInput { swipeDown() }
-        }
-
-        events.forEach { event ->
-            var found = false
-            for (i in 1..8) {
-                if (composeTestRule.onAllNodesWithText(event, substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty()) {
-                    found = true
-                    break
-                }
-                composeTestRule.onNodeWithTag("event_list").performTouchInput { swipeUp() }
-                composeTestRule.waitForIdle()
-            }
-            
-            if (found) {
-                composeTestRule.onAllNodesWithText(event, substring = true, ignoreCase = true).onFirst().assertIsDisplayed()
-            }
-        }
+        // Verify all are now in "Taken" state (in semantics content description)
+        val takenStatus = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.status_taken)
+        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).assertCountEquals(count)
     }
 
     @Test
@@ -156,12 +128,13 @@ class DailyResetTest {
     fun testEventStatePreservesAcrossClosing() {
         ensureInDashboard()
 
-        composeTestRule.onAllNodesWithText("acordar", substring = true).onFirst().performClick()
+        composeTestRule.onAllNodesWithTag("event_checkbox", useUnmergedTree = true).onFirst().performClick()
         composeTestRule.waitForIdle()
 
         composeTestRule.activityRule.scenario.recreate()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onAllNodesWithText("acordar", substring = true).onFirst().assertIsDisplayed()
+        val takenStatus = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.status_taken)
+        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).onFirst().assertIsDisplayed()
     }
 }

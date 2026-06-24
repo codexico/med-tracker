@@ -43,4 +43,11 @@
     <string name="cd_medications_list">Lista de medicamentos para %1$s</string>
     <string name="status_taken">Tomado</string>
     <string name="status_pending">Pendente</string>
+    <string name="ok">OK</string>
+    <string name="delete_confirm_title">Remover horário?</string>
+    <string name="delete_confirm_desc">Tem certeza que deseja remover este horário e todos os medicamentos associados?</string>
+    <string name="remove">Remover</string>
+    <string name="save">Salvar</string>
+    <string name="medications_label">Medicamentos</string>
+    <string name="add_medication_hint">Adicionar medicamento</string>
 </resources>

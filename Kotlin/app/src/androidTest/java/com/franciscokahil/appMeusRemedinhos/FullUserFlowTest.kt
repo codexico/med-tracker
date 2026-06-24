@@ -61,19 +61,19 @@ class FullUserFlowTest {
         }
 
         // If it's empty, we might see the onboarding title
-        val emptyTitle = composeTestRule.onAllNodesWithText("Nunca esqueça seus remédios", substring = true)
+        val emptyTitle = composeTestRule.onAllNodesWithText("esqueça seus remédios", substring = true)
         if (emptyTitle.fetchSemanticsNodes().isNotEmpty()) {
             emptyTitle[0].assertIsDisplayed()
         }
 
         // 2. Click FAB to open menu
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
 
-        // 3. Select "Outro" preset
-        composeTestRule.onNodeWithText("Outro").performClick()
+        // 3. Select "Outro" preset (Other in English)
+        composeTestRule.onNode(hasText("Outro", substring = true) or hasText("Other", substring = true)).performClick()
         
         // 4. Fill and Create
-        composeTestRule.onNodeWithText("Novo Horário").assertIsDisplayed()
+        composeTestRule.onNode(hasText("Novo Horário", substring = true) or hasText("New Reminder", substring = true)).assertIsDisplayed()
         
         val testLabel = "Teste Automatizado"
         composeTestRule.onNodeWithTag("event_title_input").performTextInput(testLabel)
@@ -90,9 +90,11 @@ class FullUserFlowTest {
         composeTestRule.onAllNodesWithTag("event_checkbox").onFirst().performClick()
         
         // Verify taken status (semantics usually merge text into content description)
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val takenStatus = targetContext.getString(R.string.status_taken)
         composeTestRule.waitUntil(10000) {
-            composeTestRule.onAllNodesWithContentDescription("Tomado", substring = true).fetchSemanticsNodes().isNotEmpty()
+            composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).fetchSemanticsNodes().isNotEmpty()
         }
-        composeTestRule.onAllNodesWithContentDescription("Tomado", substring = true).onFirst().assertIsDisplayed()
+        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).onFirst().assertIsDisplayed()
     }
 }

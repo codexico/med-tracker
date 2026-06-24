@@ -48,8 +48,11 @@ class DashboardRefinementTest {
     fun setup() { }
 
     private fun addTestEvent(title: String) {
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
-        composeTestRule.onNodeWithText("Outro").performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val otherText = targetContext.getString(R.string.preset_other)
+
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
+        composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
         
         // Use the new test tag
         composeTestRule.onNodeWithTag("event_title_input").performTextInput(title)
@@ -62,24 +65,28 @@ class DashboardRefinementTest {
 
     @Test
     fun testOnboardingTooltipsVisibleOnlyWhenEmpty() {
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val startTooltip = targetContext.getString(R.string.onboarding_fab_tooltip)
+        val chooseTimeTooltip = targetContext.getString(R.string.onboarding_fab_menu_tooltip)
+        val otherText = targetContext.getString(R.string.preset_other)
+
         // 1. Initially empty, tooltip should be visible
-        // We need to wait for the 500ms delay in DashboardScreen
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onAllNodesWithText("Toque aqui para começar", substring = true).fetchSemanticsNodes().isNotEmpty()
+        composeTestRule.waitUntil(15000) {
+            composeTestRule.onAllNodesWithText(startTooltip, substring = true).fetchSemanticsNodes().isNotEmpty()
         }
-        composeTestRule.onNodeWithText("Toque aqui para começar", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(startTooltip, substring = true).assertIsDisplayed()
 
         // 2. Open FAB Menu
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
         
         // 3. Menu tooltip should be visible
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onAllNodesWithText("escolha\num horário", substring = true).fetchSemanticsNodes().isNotEmpty()
+        composeTestRule.waitUntil(15000) {
+            composeTestRule.onAllNodesWithText(chooseTimeTooltip, substring = true).fetchSemanticsNodes().isNotEmpty()
         }
-        composeTestRule.onNodeWithText("escolha\num horário", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(chooseTimeTooltip, substring = true).assertIsDisplayed()
 
         // 4. Add an event
-        composeTestRule.onNodeWithText("Outro").performClick()
+        composeTestRule.onNodeWithText(otherText, substring = true).performClick()
         composeTestRule.onNodeWithTag("event_title_input").performTextInput("Remedio de Teste")
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         
@@ -90,12 +97,10 @@ class DashboardRefinementTest {
         composeTestRule.waitForIdle()
 
         // 5. Tooltip should DISAPPEAR as we now have an event
-        // Small sleep to account for tooltip dismiss animation/logic delay in DashboardScreen
         Thread.sleep(1000)
 
-        // Use assertIsNotDisplayed as tooltips might linger in the semantics tree but be off-screen
-        composeTestRule.onNodeWithText("Toque aqui para começar", substring = true).assertIsNotDisplayed()
-        composeTestRule.onNodeWithText("escolha\num horário", substring = true).assertIsNotDisplayed()
+        composeTestRule.onNodeWithText(startTooltip, substring = true).assertIsNotDisplayed()
+        composeTestRule.onNodeWithText(chooseTimeTooltip, substring = true).assertIsNotDisplayed()
     }
 
     @Test
@@ -104,21 +109,23 @@ class DashboardRefinementTest {
         addTestEvent(testTitle)
         
         // FAB should be visible
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("add_event_fab").assertIsDisplayed()
         
         // Expand card
         composeTestRule.onNodeWithText(testTitle, substring = true).performClick()
         composeTestRule.waitForIdle()
         
         // FAB should be hidden
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("add_event_fab").assertDoesNotExist()
         
         // Collapse
-        composeTestRule.onNodeWithText("Cancelar").performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val cancelText = targetContext.getString(R.string.cancel)
+        composeTestRule.onNodeWithText(cancelText, substring = true).performClick()
         composeTestRule.waitForIdle()
         
         // FAB should return
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("add_event_fab").assertIsDisplayed()
     }
 
     @Test
@@ -156,6 +163,6 @@ class DashboardRefinementTest {
         composeTestRule.onNodeWithText("Evento 2", substring = true).assertDoesNotExist()
         
         // Verify we are indeed expanded
-        composeTestRule.onNode(hasStateDescription("Expandido")).assertIsDisplayed()
+        composeTestRule.onNode(hasStateDescription("Expandido") or hasStateDescription("Expanded")).assertIsDisplayed()
     }
 }

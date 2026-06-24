@@ -50,8 +50,11 @@ class ScheduleFlowTest {
     fun setup() { }
 
     private fun addTestEvent(title: String) {
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
-        composeTestRule.onNodeWithText("Outro").performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val otherText = targetContext.getString(R.string.preset_other)
+
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
+        composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
         composeTestRule.onNodeWithTag("event_title_input").performTextInput(title)
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         composeTestRule.waitUntil(10000) {
@@ -61,8 +64,11 @@ class ScheduleFlowTest {
 
     @Test
     fun testCreateEventWithExactTime() {
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
-        composeTestRule.onNodeWithText("Outro").performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val otherText = targetContext.getString(R.string.preset_other)
+
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
+        composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
 
         val testName = "Lanche Exato 10:12"
         composeTestRule.onNodeWithTag("event_title_input").performTextInput(testName)
@@ -87,7 +93,9 @@ class ScheduleFlowTest {
         composeTestRule.onNodeWithTag("medication_input").performTextInput(medName)
         
         // Use a more specific finder for the Add medication button
-        composeTestRule.onNodeWithContentDescription("Adicionar", substring = true).performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val addText = targetContext.getString(R.string.add)
+        composeTestRule.onNodeWithContentDescription(addText, substring = true).performClick()
         
         // 2. Save and collapse
         composeTestRule.onNodeWithTag("save_event_button").performClick()
@@ -115,7 +123,9 @@ class ScheduleFlowTest {
         composeTestRule.onNodeWithText(medName).assertIsDisplayed()
         
         // 3. Remove it
-        composeTestRule.onNodeWithContentDescription("Remover medicamento $medName", substring = true).performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val cdRemove = targetContext.getString(R.string.cd_remove_medication, medName)
+        composeTestRule.onNodeWithContentDescription(cdRemove, substring = true).performClick()
         
         // 4. Verify it's gone
         composeTestRule.onNodeWithText(medName).assertDoesNotExist()
@@ -160,9 +170,12 @@ class ScheduleFlowTest {
         addTestEvent(toDelete)
         
         composeTestRule.onNodeWithText(toDelete, substring = true).performClick()
-        composeTestRule.onNodeWithContentDescription("Excluir horário $toDelete", substring = true).performClick()
+        
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val cdDelete = targetContext.getString(R.string.cd_delete_event, toDelete)
+        composeTestRule.onNodeWithContentDescription(cdDelete, substring = true).performClick()
 
-        composeTestRule.onNode(hasText("Remover") and hasClickAction()).performClick()
+        composeTestRule.onNodeWithTag("confirm_delete_button").performClick()
 
         composeTestRule.onNodeWithText(toDelete).assertDoesNotExist()
     }

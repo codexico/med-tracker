@@ -52,8 +52,12 @@ class AccessibilityTest {
     }
 
     private fun addTestEvent(title: String) {
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
-        composeTestRule.onNodeWithText("Outro").performClick()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val otherText = targetContext.getString(R.string.preset_other)
+
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
+        // Use unmerged tree to find the preset item inside the merged menu
+        composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
         composeTestRule.onNodeWithTag("event_title_input").performTextInput(title)
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         composeTestRule.waitUntil(10000) {
@@ -74,7 +78,9 @@ class AccessibilityTest {
         ).assertExists()
 
         // Check icon description
-        composeTestRule.onAllNodesWithContentDescription("Ícone do horário", useUnmergedTree = true).onFirst().assertExists()
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val cdIcon = targetContext.getString(R.string.cd_event_icon)
+        composeTestRule.onAllNodesWithContentDescription(cdIcon, useUnmergedTree = true).onFirst().assertExists()
 
         // Check edit button description
         composeTestRule.onAllNodesWithTag("edit_event_button").onFirst().assertIsDisplayed()
@@ -92,13 +98,15 @@ class AccessibilityTest {
         composeTestRule.waitForIdle()
 
         // Verify expanded state in semantics
-        composeTestRule.onNode(hasStateDescription("Expandido")).assertExists()
+        composeTestRule.onNode(hasStateDescription("Expandido") or hasStateDescription("Expanded")).assertExists()
 
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         // Verify "Novo medicamento" description exists
-        composeTestRule.onNodeWithText("Nome do medicamento", useUnmergedTree = true, substring = true).assertIsDisplayed()
+        val medNamePlaceholder = targetContext.getString(R.string.med_name_placeholder)
+        composeTestRule.onNodeWithText(medNamePlaceholder, useUnmergedTree = true, substring = true).assertIsDisplayed()
         
         // Verify delete event description
-        // Use substring and onFirst to handle potential merged tree issues
-        composeTestRule.onAllNodesWithContentDescription("Excluir horário", substring = true, useUnmergedTree = true).onFirst().assertExists()
+        val cdDeleteEvent = targetContext.getString(R.string.cd_delete_event, testTitle)
+        composeTestRule.onAllNodesWithContentDescription(cdDeleteEvent, substring = true, useUnmergedTree = true).onFirst().assertExists()
     }
 }

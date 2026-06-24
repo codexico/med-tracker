@@ -56,18 +56,25 @@ class DeepLinkScrollTest {
         val emptyState = composeTestRule.onAllNodesWithTag("empty_state")
         if (emptyState.fetchSemanticsNodes().isNotEmpty()) {
             // Add a few events manually to test scrolling
-            val presets = listOf("Ao acordar", "Café da manhã", "Almoço", "Janta", "Antes de dormir")
-            presets.forEach { preset ->
+            // Using a mix of PT and EN substrings to handle either locale
+            val presets = listOf("acordar", "Caf", "Almo", "Janta", "dormir", "Wake", "Break", "Lunch", "Dinner", "Sleep")
+            presets.forEach { presetSub ->
                 composeTestRule.onNodeWithTag("add_event_fab").performClick()
-                composeTestRule.onNodeWithText(preset, substring = true).performClick()
-                composeTestRule.onNodeWithTag("confirm_add_event").performClick()
-                composeTestRule.waitForIdle()
+                val presetNodes = composeTestRule.onAllNodes(hasText(presetSub, substring = true, ignoreCase = true))
+                if (presetNodes.fetchSemanticsNodes().isNotEmpty()) {
+                    presetNodes.onFirst().performClick()
+                    composeTestRule.onNodeWithTag("confirm_add_event").performClick()
+                    composeTestRule.waitForIdle()
+                } else {
+                    // If this preset didn't exist in current locale, just close FAB
+                    composeTestRule.onNodeWithTag("add_event_fab").performClick()
+                    composeTestRule.waitForIdle()
+                }
             }
         }
 
         composeTestRule.waitUntil(15000) {
-            composeTestRule.onAllNodesWithTag("event_list").fetchSemanticsNodes().isNotEmpty() &&
-            composeTestRule.onAllNodesWithText("acordar", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty()
+            composeTestRule.onAllNodesWithTag("event_list").fetchSemanticsNodes().isNotEmpty()
         }
 
         composeTestRule.waitForIdle()
@@ -88,10 +95,11 @@ class DeepLinkScrollTest {
         composeTestRule.waitForIdle()
         Thread.sleep(1000)
 
+        // Try to scroll to "dormir" (PT) or "Sleep" (EN)
         composeTestRule.onNodeWithTag("event_list")
-            .performScrollToNode(hasText("dormir", substring = true, ignoreCase = true))
+            .performScrollToNode(hasText("dormir", substring = true, ignoreCase = true) or hasText("Sleep", substring = true, ignoreCase = true))
 
-        composeTestRule.onAllNodesWithText("dormir", substring = true, ignoreCase = true).onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("dormir", substring = true, ignoreCase = true) or hasText("Sleep", substring = true, ignoreCase = true)).assertIsDisplayed()
     }
 
     @Test
@@ -107,7 +115,7 @@ class DeepLinkScrollTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onAllNodesWithText("acordar", substring = true, ignoreCase = true).onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("acordar", substring = true, ignoreCase = true) or hasText("Wake", substring = true, ignoreCase = true)).assertIsDisplayed()
     }
 
     @Test
@@ -119,7 +127,7 @@ class DeepLinkScrollTest {
         }
         composeTestRule.activityRule.scenario.onActivity { it.onNewIntent(intent1) }
         composeTestRule.waitForIdle()
-        composeTestRule.onAllNodesWithText("acordar", substring = true, ignoreCase = true).onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("acordar", substring = true, ignoreCase = true) or hasText("Wake", substring = true, ignoreCase = true)).assertIsDisplayed()
 
         val intent2 = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse("meusremedinhos://event/second")
@@ -128,9 +136,9 @@ class DeepLinkScrollTest {
         composeTestRule.waitForIdle()
         
         composeTestRule.onNodeWithTag("event_list")
-            .performScrollToNode(hasText("Almo", substring = true, ignoreCase = true))
+            .performScrollToNode(hasText("Almo", substring = true, ignoreCase = true) or hasText("Lunch", substring = true, ignoreCase = true))
         
-        composeTestRule.onAllNodesWithText("Almo", substring = true, ignoreCase = true).onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("Almo", substring = true, ignoreCase = true) or hasText("Lunch", substring = true, ignoreCase = true)).assertIsDisplayed()
     }
 
     @Test
@@ -143,19 +151,18 @@ class DeepLinkScrollTest {
         composeTestRule.activityRule.scenario.onActivity { it.onNewIntent(intent) }
         composeTestRule.waitForIdle()
 
-        composeTestRule.onAllNodesWithText("acordar", substring = true, ignoreCase = true).onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("acordar", substring = true, ignoreCase = true) or hasText("Wake", substring = true, ignoreCase = true)).assertIsDisplayed()
     }
 
     @Test
     fun testDeepLinkScrollPreservesUIState() {
         ensureInDashboard()
 
-        val target = "Caf"
-        composeTestRule.onNodeWithTag("event_list").performScrollToNode(hasText(target, substring = true, ignoreCase = true))
-        composeTestRule.onAllNodesWithText(target, substring = true, ignoreCase = true).onFirst().performClick()
+        composeTestRule.onNodeWithTag("event_list").performScrollToNode(hasText("Caf", substring = true, ignoreCase = true) or hasText("Break", substring = true, ignoreCase = true))
+        composeTestRule.onNode(hasText("Caf", substring = true, ignoreCase = true) or hasText("Break", substring = true, ignoreCase = true)).performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onAllNodesWithText("Salvar").onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("Salvar", substring = true, ignoreCase = true) or hasText("Save", substring = true, ignoreCase = true)).assertIsDisplayed()
 
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse("meusremedinhos://event/reset")
@@ -163,15 +170,15 @@ class DeepLinkScrollTest {
         composeTestRule.activityRule.scenario.onActivity { it.onNewIntent(intent) }
         composeTestRule.waitForIdle()
 
-        composeTestRule.onAllNodesWithTag("add_event_fab").onFirst().assertIsDisplayed()
+        composeTestRule.onNodeWithTag("add_event_fab").assertIsDisplayed()
     }
 
     @Test
     fun testDeepLinkScrollPositionAfterListUpdate() {
         ensureInDashboard()
 
-        composeTestRule.onNodeWithContentDescription("Adicionar Novo Horário").performClick()
-        composeTestRule.onNodeWithText("Outro").performClick()
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
+        composeTestRule.onNode(hasText("Outro", substring = true, ignoreCase = true) or hasText("Other", substring = true, ignoreCase = true)).performClick()
         composeTestRule.onNodeWithTag("event_title_input").performTextInput("New Event")
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         composeTestRule.waitForIdle()
@@ -185,6 +192,6 @@ class DeepLinkScrollTest {
         composeTestRule.onNodeWithTag("event_list")
             .performScrollToNode(hasText("New Event", substring = true))
 
-        composeTestRule.onAllNodesWithText("New Event", substring = true).onFirst().assertIsDisplayed()
+        composeTestRule.onNode(hasText("New Event", substring = true)).assertIsDisplayed()
     }
 }

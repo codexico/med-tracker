@@ -65,7 +65,7 @@ fun M3TimePickerDialog(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(onClick = { onConfirm(timePickerState) }) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok))
                     }
                 }
             }

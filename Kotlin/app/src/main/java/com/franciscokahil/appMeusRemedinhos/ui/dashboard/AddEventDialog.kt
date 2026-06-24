@@ -150,7 +150,7 @@ fun AddEventDialog(
                             )
                         }
                     }, modifier = Modifier.testTag("confirm_add_event")) {
-                        Text(if (eventToEdit == null) stringResource(R.string.create) else "Salvar")
+                        Text(if (eventToEdit == null) stringResource(R.string.create) else stringResource(R.string.save))
                     }
                 }
             }

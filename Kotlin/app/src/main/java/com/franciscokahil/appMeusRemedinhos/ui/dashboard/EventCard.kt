@@ -114,17 +114,18 @@ fun EventCard(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text(stringResource(R.string.cd_delete_event, event.title)) },
-            text = { Text("Tem certeza que deseja remover este horário e todos os medicamentos associados?") },
+            title = { Text(stringResource(R.string.delete_confirm_title)) },
+            text = { Text(stringResource(R.string.delete_confirm_desc)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showDeleteConfirm = false
                         onDelete()
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.testTag("confirm_delete_button")
                 ) {
-                    Text("Remover")
+                    Text(stringResource(R.string.remove))
                 }
             },
             dismissButton = {
@@ -328,7 +329,7 @@ fun EventCard(
 
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Medicamentos", 
+                        text = stringResource(R.string.medications_label), 
                         style = MaterialTheme.typography.labelLarge, 
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -398,7 +399,7 @@ fun EventCard(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 )
                                 {
-                                    Text(text = "Adicionar medicamento")
+                                    Text(text = stringResource(R.string.add_medication_hint))
                                     Text(
                                         text = "${newMedName.length}/30",
                                         modifier = Modifier.fillMaxWidth(),
@@ -465,7 +466,7 @@ fun EventCard(
                                     .minimumInteractiveComponentSize()
                                     .testTag("save_event_button")
                             ) {
-                                Text("Salvar")
+                                Text(stringResource(R.string.save))
                             }
                         }
                     }
