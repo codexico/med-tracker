@@ -2,7 +2,7 @@
     <string name="app_name">Meus Remedinhos</string>
 
     <string name="edit_time">Alterar Horário</string>
-    <string name="med_name_placeholder">Nome do medicamento</string>
+    <string name="med_name_placeholder">O que lembrar?</string>
     <string name="cancel">Cancelar</string>
     <string name="add">Adicionar</string>
     <string name="new_time">Novo Horário</string>
@@ -13,15 +13,15 @@
     <string name="add_new_time">Adicionar Novo Horário</string>
     <string name="name_required_hint">É bom colocar um nome para lembrar depois.</string>
 
-    <string name="onboarding_empty_title">Nunca esqueça seus remédios</string>
-    <string name="onboarding_empty_desc">Crie lembretes personalizados para cada momento do seu dia e receba avisos na hora exata.</string>
+    <string name="onboarding_empty_title">Nunca esqueça seus horários</string>
+    <string name="onboarding_empty_desc">Crie lembretes personalizados para organizar sua rotina e receba avisos na hora exata.</string>
     <string name="onboarding_empty_hint">Escolha um horário padrão ou crie um do seu jeito.</string>
     <string name="onboarding_fab_tooltip">Toque aqui para começar</string>
     <string name="onboarding_fab_menu_tooltip">Agora escolha\num horário</string>
 
     <string name="preset_other">Outro</string>
     <string name="permission_dialog_title">Permitir Notificações</string>
-    <string name="permission_dialog_desc">Para que possamos te avisar no horário exato dos seus remédios, precisamos da sua permissão para enviar notificações.</string>
+    <string name="permission_dialog_desc">Para que possamos te avisar no horário exato dos seus compromissos, precisamos da sua permissão para enviar notificações.</string>
     <string name="permission_dialog_confirm">Permitir</string>
     <string name="permission_dialog_cancel">Agora não</string>
 
@@ -38,9 +38,9 @@
     <string name="cd_event_icon">Ícone do horário</string>
     <string name="cd_edit_event">Editar horário %1$s</string>
     <string name="cd_mark_taken">Marcar %1$s como tomado</string>
-    <string name="cd_remove_medication">Remover medicamento %1$s</string>
-    <string name="cd_delete_event">Excluir horário %1$s</string>
-    <string name="cd_medications_list">Lista de medicamentos para %1$s</string>
+    <string name="cd_remove_medication">Remover item %1$s</string>
+    <string name="cd_delete_event">Excluir lembrete %1$s</string>
+    <string name="cd_medications_list">Lista de itens para %1$s</string>
     <string name="status_taken">Tomado</string>
     <string name="status_pending">Pendente</string>
     <string name="ok">OK</string>
@@ -48,6 +48,6 @@
     <string name="delete_confirm_desc">Tem certeza que deseja remover este horário e todos os medicamentos associados?</string>
     <string name="remove">Remover</string>
     <string name="save">Salvar</string>
-    <string name="medications_label">Medicamentos</string>
-    <string name="add_medication_hint">Adicionar medicamento</string>
+    <string name="medications_label">Itens</string>
+    <string name="add_medication_hint">Adicionar item</string>
 </resources>
