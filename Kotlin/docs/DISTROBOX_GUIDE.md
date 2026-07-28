@@ -42,6 +42,18 @@ distrobox-enter -n ubuntu22-android
 
 ---
 
+## 💡 Dica de Produtividade: Alias no Host
+
+Para evitar ter que digitar `distrobox-enter...` toda vez, você pode adicionar este alias ao seu `~/.bashrc` ou `~/.zshrc` **no seu HOST**:
+
+```bash
+alias dbox-gradle='distrobox-enter -n ubuntu22-android -- ./gradlew'
+```
+
+Assim, basta rodar `dbox-gradle test` de dentro da pasta do projeto no host.
+
+---
+
 ## 🧪 Como Rodar os Testes
 
 ### ⚡ Testes Unitários (JVM)

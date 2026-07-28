@@ -13,10 +13,22 @@ android {
         applicationId = "com.franciscokahil.appMeusRemedinhos"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
+        versionCode = 6
         versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        val storeFilePath = project.findProperty("RELEASE_STORE_FILE")?.toString()
+        if (storeFilePath != null) {
+            create("release") {
+                storeFile = file(storeFilePath)
+                storePassword = project.findProperty("RELEASE_STORE_PASSWORD")?.toString()
+                keyAlias = project.findProperty("RELEASE_KEY_ALIAS")?.toString()
+                keyPassword = project.findProperty("RELEASE_KEY_PASSWORD")?.toString()
+            }
+        }
     }
 
     buildTypes {
@@ -27,7 +39,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug") // Temporary until user adds release key
+            if (signingConfigs.findByName("release") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
             enableUnitTestCoverage = true
@@ -52,8 +66,11 @@ android {
     ndkVersion = "27.1.12297006"
 }
 
-// Disable symbol stripping to resolve missing llvm-strip in the environment
+// Disable symbol stripping to resolve missing llvm-strip/objcopy in the environment
 tasks.withType<com.android.build.gradle.internal.tasks.StripDebugSymbolsTask>().configureEach {
+    enabled = false
+}
+tasks.withType<com.android.build.gradle.internal.tasks.ExtractNativeDebugMetadataTask>().configureEach {
     enabled = false
 }
 

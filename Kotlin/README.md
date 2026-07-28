@@ -47,23 +47,24 @@ _(Nota: Para usuários Linux, recomendamos o uso de um container Distrobox com U
 
 ## 🚀 Como Rodar Localmente
 
-> [!IMPORTANT]
-> Se você está usando o ambiente **Distrobox** configurado neste projeto, consulte o [**DISTROBOX_GUIDE.md**](docs/DISTROBOX_GUIDE.md) para instruções específicas de caminhos e comandos.
+> [!CAUTION]
+> **NÃO rode comandos Gradle diretamente no seu Host.** Este projeto requer dependências específicas instaladas apenas no container Distrobox.
 
-1. **Clone o repositório e navegue até a pasta:**
+> [!IMPORTANT]
+> Certifique-se de entrar no container antes de rodar qualquer comando ou use o prefixo `distrobox-enter`:
+
+1. **Navegue até a pasta do projeto:**
    ```bash
    cd med-tracker/Kotlin
    ```
-2. **Abra o projeto no Android Studio:**
-   Abra a IDE, selecione "Open" e aponte para o diretório `Kotlin`.
-3. **Sincronize o Gradle:**
-   O Android Studio pedirá para baixar as dependências e o Gradle Wrapper.
-4. **Rode no Emulador ou Dispositivo Físico:**
-   Clique no botão de "Play" (Run) ou utilize o terminal:
+2. **Execute via Distrobox:**
    ```bash
-   ./gradlew assembleDebug
+   distrobox-enter -n ubuntu22-android -- ./gradlew assembleDebug
    ```
    _(O APK gerado ficará em `app/build/outputs/apk/debug/`)_
+
+3. **Abra o Android Studio:**
+   Consulte o [**DISTROBOX_GUIDE.md**](docs/DISTROBOX_GUIDE.md) para o comando correto de abertura da IDE.
 
 ---
 
