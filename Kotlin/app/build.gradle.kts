@@ -13,8 +13,8 @@ android {
         applicationId = "com.franciscokahil.appMeusRemedinhos"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "2.0.0"
+        versionCode = 3
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -54,6 +54,9 @@ android {
 
 // Disable symbol stripping to resolve missing llvm-strip in the environment
 tasks.withType<com.android.build.gradle.internal.tasks.StripDebugSymbolsTask>().configureEach {
+    enabled = false
+}
+tasks.withType<com.android.build.gradle.internal.tasks.ExtractNativeDebugMetadataTask>().configureEach {
     enabled = false
 }
 
