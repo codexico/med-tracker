@@ -3,6 +3,7 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -83,13 +84,16 @@ fun EventCard(
     onDelete: () -> Unit,
     onToggleTaken: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    highlightColor: Color = Color.Transparent
+    highlightColor: Color = Color.Transparent,
+    isNewEvent: Boolean = false
 ) {
     // Local state for editing - we keep medications local so we can add them instantly
     var editTitle by remember(event.title, isExpanded) { mutableStateOf(event.title) }
     var editTime by remember(event.time, isExpanded) { mutableStateOf(event.time) }
+    var editIcon by remember(event.icon, isExpanded) { mutableStateOf(event.icon) }
     var localMedications by remember(event.medications, isExpanded) { mutableStateOf(event.medications) }
     var newMedName by remember(isExpanded) { mutableStateOf("") }
+    var titleError by remember { mutableStateOf(false) }
     
     val timeParts = editTime.split(":")
     val initialHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 12
@@ -146,6 +150,13 @@ fun EventCard(
             .fillMaxWidth()
             .then(if (isExpanded) Modifier.fillMaxHeight() else Modifier)
             .animateContentSize()
+            .then(
+                if (!isExpanded) Modifier.border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = MaterialTheme.shapes.medium
+                ) else Modifier
+            )
             .clickable(
                 enabled = !isExpanded,
                 onClickLabel = stringResource(R.string.cd_edit_event, event.title)
@@ -162,7 +173,7 @@ fun EventCard(
                              else if (event.isTakenToday) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f) 
                              else MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = if (isExpanded) 0.dp else 2.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = if (isExpanded) 0.dp else 3.dp)
     ) {
         Column(
             modifier = Modifier
@@ -195,7 +206,7 @@ fun EventCard(
                             .semantics { contentDescription = cdEventIcon },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = event.icon, fontSize = 24.sp)
+                        Text(text = if (isExpanded) editIcon else event.icon, fontSize = 24.sp)
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -207,16 +218,16 @@ fun EventCard(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = event.title,
+                                text = if (isExpanded) editTitle.ifBlank { stringResource(R.string.new_time) } else event.title,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = if (event.isTakenToday && !isExpanded) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface,
+                                color = if (!isExpanded && event.isTakenToday) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
                             )
                             Text(
-                                text = event.time,
+                                text = if (isExpanded) editTime else event.time,
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.outline,
                             )
@@ -294,13 +305,28 @@ fun EventCard(
                     // Edit Title
                     OutlinedTextField(
                         value = editTitle,
-                        onValueChange = { if (it.length <= 25) editTitle = it },
+                        onValueChange = { 
+                            if (it.length <= 25) {
+                                editTitle = it
+                                if (it.isNotBlank()) titleError = false
+                            }
+                        },
                         label = { Text(stringResource(R.string.time_name_label)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("edit_event_title_input"),
                         singleLine = true,
-                        supportingText = { Text("${editTitle.length}/25", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End) }
+                        isError = titleError,
+                        supportingText = {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                if (titleError) {
+                                    Text(text = stringResource(R.string.name_required_hint), color = MaterialTheme.colorScheme.error)
+                                } else {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
+                                Text("${editTitle.length}/25")
+                            }
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -433,15 +459,19 @@ fun EventCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = { showDeleteConfirm = true },
-                            modifier = Modifier.minimumInteractiveComponentSize()
-                        ) {
-                            Icon(
-                                Icons.Default.DeleteForever, 
-                                contentDescription = stringResource(R.string.cd_delete_event, event.title), 
-                                tint = MaterialTheme.colorScheme.error
-                            )
+                        if (!isNewEvent) {
+                            IconButton(
+                                onClick = { showDeleteConfirm = true },
+                                modifier = Modifier.minimumInteractiveComponentSize()
+                            ) {
+                                Icon(
+                                    Icons.Default.DeleteForever,
+                                    contentDescription = stringResource(R.string.cd_delete_event, event.title),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        } else {
+                            Spacer(modifier = Modifier.width(48.dp)) // Maintain alignment
                         }
                         
                         Row {
@@ -454,19 +484,23 @@ fun EventCard(
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
                                 onClick = { 
-                                    // If there's text in input, add it to medications before saving
-                                    val finalMeds = if (newMedName.isNotBlank()) {
-                                        localMedications.toMutableList().apply { add(newMedName) }
+                                    if (editTitle.isBlank()) {
+                                        titleError = true
                                     } else {
-                                        localMedications
+                                        // If there's text in input, add it to medications before saving
+                                        val finalMeds = if (newMedName.isNotBlank()) {
+                                            localMedications.toMutableList().apply { add(newMedName) }
+                                        } else {
+                                            localMedications
+                                        }
+                                        onSave(editTitle, editTime, finalMeds)
                                     }
-                                    onSave(editTitle, editTime, finalMeds) 
                                 },
                                 modifier = Modifier
                                     .minimumInteractiveComponentSize()
                                     .testTag("save_event_button")
                             ) {
-                                Text(stringResource(R.string.save))
+                                Text(if (isNewEvent) stringResource(R.string.create) else stringResource(R.string.save))
                             }
                         }
                     }

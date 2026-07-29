@@ -36,14 +36,15 @@ class DashboardViewModel(
         }
     }
 
-    fun addEvent(label: String, time: String, icon: String? = null) {
+    fun addEvent(label: String, time: String, icon: String? = null, medications: List<String> = emptyList()) {
         viewModelScope.launch {
             val newEvent = EventEntity(
                 id = UUID.randomUUID().toString(),
                 title = label,
                 time = time,
                 isEnabled = true,
-                icon = icon ?: getClockEmoji(time)
+                icon = icon ?: getClockEmoji(time),
+                medications = medications
             )
             repository.insertEvent(newEvent)
             scheduleEventAlarm(newEvent)

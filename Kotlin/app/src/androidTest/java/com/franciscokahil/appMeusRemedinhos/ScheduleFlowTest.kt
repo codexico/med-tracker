@@ -55,8 +55,8 @@ class ScheduleFlowTest {
 
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
         composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput(title)
-        composeTestRule.onNodeWithTag("confirm_add_event").performClick()
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(title)
+        composeTestRule.onNodeWithTag("save_event_button").performClick()
         composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithText(title, substring = true).fetchSemanticsNodes().isNotEmpty()
         }
@@ -71,9 +71,9 @@ class ScheduleFlowTest {
         composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
 
         val testName = "Lanche Exato 10:12"
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput(testName)
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(testName)
         
-        composeTestRule.onNodeWithTag("confirm_add_event").performClick()
+        composeTestRule.onNodeWithTag("save_event_button").performClick()
 
         composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithText(testName, substring = true).fetchSemanticsNodes().isNotEmpty()

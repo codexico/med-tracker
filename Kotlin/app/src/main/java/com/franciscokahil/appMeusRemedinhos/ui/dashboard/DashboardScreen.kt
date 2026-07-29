@@ -21,18 +21,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddAlarm
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,11 +48,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,6 +72,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImpl
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
+import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import kotlinx.coroutines.delay
@@ -90,11 +98,10 @@ fun DashboardScreen(
     
     // FAB Menu State
     var isFabExpanded by remember { mutableStateOf(false) }
-    var showAddDialog by remember { mutableStateOf(false) }
-    var selectedPreset by remember { mutableStateOf<PresetOption?>(null) }
+    var pendingNewEvent by remember { mutableStateOf<EventEntity?>(null) }
     
     // Tooltip State (shared for onboarding)
-    val tooltipState = rememberTooltipState(isPersistent = true)
+    val tooltipState = remember { TooltipState() }
     
     // Pulsating animation for the tooltip (pulsing towards the FAB)
     val infiniteTransition = rememberInfiniteTransition(label = "tooltip")
@@ -120,18 +127,16 @@ fun DashboardScreen(
     
     // Permission State
     var showPermissionExplanation by remember { mutableStateOf(false) }
-    var pendingAddEvent by remember { mutableStateOf<AddEventParams?>(null) }
     
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ ->
         // Proceed with adding the event regardless of permission result
-        pendingAddEvent?.let { params ->
-            viewModel.addEvent(params.label, params.time, params.icon)
+        pendingNewEvent?.let { params ->
+            viewModel.addEvent(params.title, params.time, params.icon, params.medications)
         }
-        pendingAddEvent = null
-        showAddDialog = false
-        selectedPreset = null
+        pendingNewEvent = null
+        expandedEventId = null
     }
 
     val listState = rememberLazyListState()
@@ -164,6 +169,29 @@ fun DashboardScreen(
         }
     }
 
+    val createNewEvent = { label: String, time: String, icon: String?, meds: List<String> ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                viewModel.addEvent(label, time, icon, meds)
+                expandedEventId = null
+                pendingNewEvent = null
+            } else {
+                pendingNewEvent = EventEntity(
+                    id = "NEW_EVENT",
+                    title = label,
+                    time = time,
+                    icon = icon ?: "access_time",
+                    medications = meds
+                )
+                showPermissionExplanation = true
+            }
+        } else {
+            viewModel.addEvent(label, time, icon, meds)
+            expandedEventId = null
+            pendingNewEvent = null
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -192,8 +220,13 @@ fun DashboardScreen(
                     onToggle = { isFabExpanded = !isFabExpanded },
                     onOptionSelected = { preset ->
                         isFabExpanded = false
-                        selectedPreset = preset
-                        showAddDialog = true
+                        pendingNewEvent = EventEntity(
+                            id = "NEW_EVENT",
+                            title = preset?.label ?: "",
+                            time = preset?.time ?: "12:00",
+                            icon = preset?.icon ?: "access_time"
+                        )
+                        expandedEventId = "NEW_EVENT"
                     },
                     tooltipState = tooltipState,
                     tooltipOffsetX = tooltipOffsetX
@@ -208,12 +241,11 @@ fun DashboardScreen(
                 onDismissRequest = { 
                     showPermissionExplanation = false
                     // Proceed anyway
-                    pendingAddEvent?.let { params ->
-                        viewModel.addEvent(params.label, params.time, params.icon)
+                    pendingNewEvent?.let { params ->
+                        viewModel.addEvent(params.title, params.time, params.icon, params.medications)
                     }
-                    pendingAddEvent = null
-                    showAddDialog = false
-                    selectedPreset = null
+                    pendingNewEvent = null
+                    expandedEventId = null
                 },
                 title = { Text(stringResource(R.string.permission_dialog_title)) },
                 text = { Text(stringResource(R.string.permission_dialog_desc)) },
@@ -231,12 +263,11 @@ fun DashboardScreen(
                 dismissButton = {
                     TextButton(onClick = { 
                         showPermissionExplanation = false
-                        pendingAddEvent?.let { params ->
-                            viewModel.addEvent(params.label, params.time, params.icon)
+                        pendingNewEvent?.let { params ->
+                            viewModel.addEvent(params.title, params.time, params.icon, params.medications)
                         }
-                        pendingAddEvent = null
-                        showAddDialog = false
-                        selectedPreset = null
+                        pendingNewEvent = null
+                        expandedEventId = null
                     }) {
                         Text(stringResource(R.string.permission_dialog_cancel))
                     }
@@ -244,36 +275,7 @@ fun DashboardScreen(
             )
         }
 
-        if (showAddDialog) {
-            AddEventDialog(
-                initialLabel = selectedPreset?.label ?: "",
-                initialTimeStr = selectedPreset?.time ?: "12:00",
-                initialIcon = selectedPreset?.icon,
-                onDismiss = { 
-                    showAddDialog = false
-                    selectedPreset = null
-                },
-                onConfirm = { label, time, icon ->
-                    // Logic moved here: Check permission on "Create"
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                            viewModel.addEvent(label, time, icon)
-                            showAddDialog = false
-                            selectedPreset = null
-                        } else {
-                            pendingAddEvent = AddEventParams(label, time, icon)
-                            showPermissionExplanation = true
-                        }
-                    } else {
-                        viewModel.addEvent(label, time, icon)
-                        showAddDialog = false
-                        selectedPreset = null
-                    }
-                }
-            )
-        }
-
-        if (events.isEmpty()) {
+        if (events.isEmpty() && expandedEventId != "NEW_EVENT") {
             OnboardingEmptyState(
                 paddingValues = paddingValues,
                 onAddClick = { isFabExpanded = true },
@@ -289,6 +291,26 @@ fun DashboardScreen(
                 verticalArrangement = if (expandedEventId == null) Arrangement.spacedBy(16.dp) else Arrangement.Top,
                 contentPadding = if (expandedEventId == null) PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 8.dp) else PaddingValues(0.dp)
             ) {
+                if (expandedEventId == "NEW_EVENT" && pendingNewEvent != null) {
+                    item(key = "NEW_EVENT") {
+                        EventCard(
+                            event = pendingNewEvent!!,
+                            isExpanded = true,
+                            onExpandClick = {
+                                expandedEventId = null
+                                pendingNewEvent = null
+                            },
+                            onSave = { title, time, meds ->
+                                createNewEvent(title, time, pendingNewEvent!!.icon, meds)
+                            },
+                            onDelete = { },
+                            onToggleTaken = { },
+                            modifier = Modifier.fillParentMaxSize(),
+                            isNewEvent = true
+                        )
+                    }
+                }
+
                 items(events, key = { it.id }) { event ->
                     val isHighlighted = activeHighlightId == event.id
                     val isExpanded = expandedEventId == event.id
@@ -332,52 +354,49 @@ fun OnboardingEmptyState(
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.Center
+            .padding(paddingValues)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Surface(
-            modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+        Icon(
+            imageVector = Icons.Default.AddAlarm,
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = stringResource(R.string.onboarding_empty_title),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.onboarding_empty_desc),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(
+            onClick = onAddClick,
+            shape = MaterialTheme.shapes.medium
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.onboarding_empty_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = stringResource(R.string.onboarding_empty_desc),
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = stringResource(R.string.onboarding_empty_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.clickable { onAddClick() }.testTag("empty_state_hint")
-                )
-            }
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(R.string.add_new_time))
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.onboarding_empty_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.outline
+        )
     }
 }
 
@@ -388,9 +407,3 @@ fun DashboardPreview() {
         DashboardScreen()
     }
 }
-
-data class AddEventParams(
-    val label: String,
-    val time: String,
-    val icon: String?
-)
