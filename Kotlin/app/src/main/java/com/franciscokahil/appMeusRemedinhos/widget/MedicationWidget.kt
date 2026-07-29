@@ -15,6 +15,7 @@ import androidx.glance.layout.*
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import androidx.glance.text.FontWeight
 import androidx.glance.background
@@ -56,7 +57,7 @@ class MedicationWidget : GlanceAppWidget() {
                         .padding(12.dp)
                 ) {
                     Text(
-                        text = "Meus Remedinhos",
+                        text = context.getString(R.string.widget_title),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             color = ColorProvider(colorPrimary),
@@ -69,7 +70,7 @@ class MedicationWidget : GlanceAppWidget() {
                     if (events.isEmpty()) {
                         Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(
-                                text = "Sem remédios hoje",
+                                text = context.getString(R.string.widget_empty_text),
                                 style = TextStyle(color = ColorProvider(colorTextSecondary))
                             )
                         }

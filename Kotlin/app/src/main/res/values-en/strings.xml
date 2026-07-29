@@ -37,11 +37,11 @@
     <!-- Accessibility Strings -->
     <string name="cd_event_icon">Reminder icon</string>
     <string name="cd_edit_event">Edit reminder %1$s</string>
-    <string name="cd_mark_taken">Mark %1$s as taken</string>
+    <string name="cd_mark_taken">Mark %1$s as done</string>
     <string name="cd_remove_medication">Remove item %1$s</string>
     <string name="cd_delete_event">Delete reminder %1$s</string>
     <string name="cd_medications_list">Items list for %1$s</string>
-    <string name="status_taken">Taken</string>
+    <string name="status_taken">Done</string>
     <string name="status_pending">Pending</string>
 
     <string name="ok">OK</string>
@@ -49,6 +49,14 @@
     <string name="delete_confirm_desc">Are you sure you want to remove this reminder and all associated medications?</string>
     <string name="remove">Remove</string>
     <string name="save">Save</string>
-    <string name="medications_label">Items</string>
-    <string name="add_medication_hint">Add item</string>
+    <string name="medications_label">Medications</string>
+    <string name="add_medication_hint">Add medication</string>
+
+    <!-- System and Notification Strings -->
+    <string name="notification_channel_name">Medication Reminders</string>
+    <string name="notification_channel_desc">Notifications for your medication times</string>
+    <string name="notification_default_title">Med Time</string>
+    <string name="notification_default_msg">Don\'t forget your medication!</string>
+    <string name="widget_title">My Meds</string>
+    <string name="widget_empty_text">No meds today</string>
 </resources>

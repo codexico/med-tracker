@@ -37,17 +37,25 @@
     <!-- Accessibility Strings -->
     <string name="cd_event_icon">Ícone do horário</string>
     <string name="cd_edit_event">Editar horário %1$s</string>
-    <string name="cd_mark_taken">Marcar %1$s como tomado</string>
+    <string name="cd_mark_taken">Marcar %1$s como concluído</string>
     <string name="cd_remove_medication">Remover item %1$s</string>
     <string name="cd_delete_event">Excluir lembrete %1$s</string>
     <string name="cd_medications_list">Lista de itens para %1$s</string>
-    <string name="status_taken">Tomado</string>
+    <string name="status_taken">Concluído</string>
     <string name="status_pending">Pendente</string>
     <string name="ok">OK</string>
     <string name="delete_confirm_title">Remover horário?</string>
     <string name="delete_confirm_desc">Tem certeza que deseja remover este horário e todos os medicamentos associados?</string>
     <string name="remove">Remover</string>
     <string name="save">Salvar</string>
-    <string name="medications_label">Itens</string>
-    <string name="add_medication_hint">Adicionar item</string>
+    <string name="medications_label">Medicamentos</string>
+    <string name="add_medication_hint">Adicionar medicamento</string>
+
+    <!-- System and Notification Strings -->
+    <string name="notification_channel_name">Lembretes de Medicamentos</string>
+    <string name="notification_channel_desc">Notificações para os horários dos seus remédios</string>
+    <string name="notification_default_title">Hora do Remédio</string>
+    <string name="notification_default_msg">Não se esqueça da sua medicação!</string>
+    <string name="widget_title">Meus Remedinhos</string>
+    <string name="widget_empty_text">Sem remédios hoje</string>
 </resources>
