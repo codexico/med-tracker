@@ -73,6 +73,7 @@ import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImpl
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import kotlinx.coroutines.delay
@@ -169,7 +170,7 @@ fun DashboardScreen(
         }
     }
 
-    val createNewEvent = { label: String, time: String, icon: String?, meds: List<String> ->
+    val createNewEvent = { label: String, time: String, icon: String?, meds: List<Medication> ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 viewModel.addEvent(label, time, icon, meds)
@@ -328,7 +329,7 @@ fun DashboardScreen(
                                 expandedEventId = if (isExpanded) null else event.id
                             },
                             onSave = { title, time, meds ->
-                                viewModel.updateEvent(event.copy(medications = meds), title, time)
+                                viewModel.updateEvent(event, title, time, meds)
                                 expandedEventId = null
                             },
                             onDelete = {

@@ -38,7 +38,7 @@ class EventDaoTest {
             id = "test-1",
             title = "Aspirina",
             time = "10:00",
-            medications = listOf("Aspirina 100mg"),
+            medications = listOf(Medication("Aspirina", "100", "mg")),
             isTakenToday = false
         )
         dao.insertEvent(event)
@@ -46,7 +46,7 @@ class EventDaoTest {
         val allEvents = dao.getAllEvents().first()
         assertEquals(1, allEvents.size)
         assertEquals("Aspirina", allEvents[0].title)
-        assertEquals(listOf("Aspirina 100mg"), allEvents[0].medications)
+        assertEquals(listOf(Medication("Aspirina", "100", "mg")), allEvents[0].medications)
     }
 
     @Test

@@ -55,7 +55,7 @@ class DashboardRefinementTest {
         composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
         
         // Use the new test tag
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput(title)
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(title)
         
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         composeTestRule.waitUntil(10000) {
@@ -87,7 +87,7 @@ class DashboardRefinementTest {
 
         // 4. Add an event
         composeTestRule.onNodeWithText(otherText, substring = true).performClick()
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput("Remedio de Teste")
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput("Remedio de Teste")
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         
         // Wait for the event to appear, which signals that tooltips SHOULD be gone

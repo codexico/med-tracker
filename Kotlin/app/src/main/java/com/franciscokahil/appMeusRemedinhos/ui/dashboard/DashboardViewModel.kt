@@ -3,8 +3,10 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,13 +17,13 @@ import java.util.UUID
 
 class DashboardViewModel(
     private val repository: EventRepository,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
 ) : ViewModel() {
 
     val events: StateFlow<List<EventEntity>> = repository.allEvents.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
+        initialValue = emptyList(),
     )
 
     val shouldShowOnboarding: StateFlow<Boolean> = events.map { it.isEmpty() }.stateIn(
@@ -36,14 +38,15 @@ class DashboardViewModel(
         }
     }
 
-    fun addEvent(label: String, time: String, icon: String? = null, medications: List<String> = emptyList()) {
+    fun addEvent(label: String, time: String, icon: String? = null, medications: List<Medication> = emptyList()) {
         viewModelScope.launch {
+            val finalIcon = if (icon == "⏰") getClockEmoji(time) else icon ?: getClockEmoji(time)
             val newEvent = EventEntity(
                 id = UUID.randomUUID().toString(),
                 title = label,
                 time = time,
                 isEnabled = true,
-                icon = icon ?: getClockEmoji(time),
+                icon = finalIcon,
                 medications = medications
             )
             repository.insertEvent(newEvent)
@@ -51,12 +54,20 @@ class DashboardViewModel(
         }
     }
 
-    fun updateEvent(event: EventEntity, newTitle: String, newTime: String) {
+    fun updateEvent(event: EventEntity, newTitle: String, newTime: String, medications: List<Medication>? = null) {
         viewModelScope.launch {
+            // Only update the icon if the original icon was the "Other" preset icon (⏰)
+            // or if it's already one of the dynamic clock emojis.
+            val clockEmojis = listOf(
+                "🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", "🕟", "🕔", "🕠",
+                "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", "🕦", "⏰"
+            )
+            
             val updatedEvent = event.copy(
                 title = newTitle,
                 time = newTime,
-                icon = getClockEmoji(newTime)
+                icon = if (event.icon in clockEmojis) getClockEmoji(newTime) else event.icon,
+                medications = medications ?: event.medications
             )
             repository.updateEvent(updatedEvent)
             if (updatedEvent.isEnabled) {
@@ -72,11 +83,11 @@ class DashboardViewModel(
         }
     }
 
-    fun addMedication(eventId: String, medicationName: String) {
+    fun addMedication(eventId: String, medication: Medication) {
         viewModelScope.launch {
             val event = events.value.find { it.id == eventId }
             event?.let {
-                val updatedMeds = it.medications.toMutableList().apply { add(medicationName) }
+                val updatedMeds = it.medications.toMutableList().apply { add(medication) }
                 val updatedEvent = it.copy(medications = updatedMeds)
                 repository.updateEvent(updatedEvent)
                 if (updatedEvent.isEnabled) {
@@ -107,18 +118,8 @@ class DashboardViewModel(
         if (parts.size == 2) {
             val hour = parts[0].toIntOrNull() ?: return
             val minute = parts[1].toIntOrNull() ?: return
-            val message = if (event.medications.isEmpty()) {
-                "Não se esqueça da sua medicação!"
-            } else {
-                "Remédios: ${event.medications.joinToString(", ")}"
-            }
-            alarmScheduler.scheduleAlarm(
-                event.id,
-                event.title,
-                message,
-                hour,
-                minute
-            )
+            
+            alarmScheduler.scheduleAlarm(event, hour, minute)
         }
     }
 
@@ -129,7 +130,7 @@ class DashboardViewModel(
         val minute = parts[1].toIntOrNull() ?: return "\uD83D\uDC8A"
         
         var isHalf = false
-        if (minute in 15..44) {
+        if ((minute in 15..44)) {
             isHalf = true
         } else if (minute >= 45) {
             hour = (hour + 1) % 24

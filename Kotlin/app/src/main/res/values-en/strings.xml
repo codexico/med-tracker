@@ -20,6 +20,15 @@
     <string name="onboarding_fab_menu_tooltip">Now choose\na time</string>
 
     <string name="preset_other">Other</string>
+    <string name="unit_other">Other unit…</string>
+    <string name="unit_label">Unit</string>
+    <string name="unit_pill">💊 pill</string>
+    <string name="unit_capsule">💊 capsule</string>
+    <string name="unit_mg">⚖️ mg</string>
+    <string name="unit_ml">🧪 ml</string>
+    <string name="unit_drops">💧 drops</string>
+    <string name="unit_spoon">🥄 spoon</string>
+    <string name="unit_application">💉 application</string>
     <string name="permission_dialog_title">Allow Notifications</string>
     <string name="permission_dialog_desc">To notify you at the exact time of your events, we need permission to send notifications.</string>
     <string name="permission_dialog_confirm">Allow</string>
@@ -43,7 +52,13 @@
     <string name="cd_medications_list">Items list for %1$s</string>
     <string name="status_taken">Done</string>
     <string name="status_pending">Pending</string>
-
+    <string name="status_expanded">Expanded</string>
+    <string name="status_collapsed">Collapsed</string>
+    <string name="medications_count">%1$d medications</string>
+    <string name="medication_item_format">%1$s (%2$s%3$s)</string>
+    <string name="medication_item_format_simple">%1$s</string>
+    <string name="med_name_error">Please enter a name</string>
+    <string name="med_qty_placeholder">Qty</string>
     <string name="ok">OK</string>
     <string name="delete_confirm_title">Delete reminder?</string>
     <string name="delete_confirm_desc">Are you sure you want to remove this reminder and all associated medications?</string>
@@ -57,6 +72,8 @@
     <string name="notification_channel_desc">Notifications for your medication times</string>
     <string name="notification_default_title">Med Time</string>
     <string name="notification_default_msg">Don\'t forget your medication!</string>
+    <string name="notification_med_prefix">Medication</string>
+    <string name="notification_meds_prefix">Medications</string>
     <string name="widget_title">My Meds</string>
     <string name="widget_empty_text">No meds today</string>
 </resources>

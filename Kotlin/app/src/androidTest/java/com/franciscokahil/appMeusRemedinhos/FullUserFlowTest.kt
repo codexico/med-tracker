@@ -76,7 +76,7 @@ class FullUserFlowTest {
         composeTestRule.onNode(hasText("Novo Horário", substring = true) or hasText("New Reminder", substring = true)).assertIsDisplayed()
         
         val testLabel = "Teste Automatizado"
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput(testLabel)
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(testLabel)
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
 
         // 5. Verify added event on Dashboard

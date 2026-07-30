@@ -58,7 +58,7 @@ class AccessibilityTest {
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
         // Use unmerged tree to find the preset item inside the merged menu
         composeTestRule.onNode(hasText(otherText, substring = true) and hasAnyAncestor(hasTestTag("fab_menu_presets")), useUnmergedTree = true).performClick()
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput(title)
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(title)
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithText(title, substring = true).fetchSemanticsNodes().isNotEmpty()

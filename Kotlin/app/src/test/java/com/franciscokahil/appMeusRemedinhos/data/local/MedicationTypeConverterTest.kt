@@ -6,7 +6,7 @@ import org.junit.Test
 
 /**
  * Unit tests for MedicationTypeConverter.
- * Tests CSV serialization/deserialization of medication lists.
+ * Tests JSON serialization/deserialization of medication lists.
  */
 class MedicationTypeConverterTest {
 
@@ -18,44 +18,46 @@ class MedicationTypeConverterTest {
     }
 
     @Test
-    fun `fromList should convert list to CSV string`() {
+    fun `fromList should convert list to JSON string`() {
         // Arrange
-        val medications = listOf("Vitamina D", "Ômega-3", "Aspirina")
+        val medications = listOf(
+            Medication("Vitamina D", "1", "gota"),
+            Medication("Ômega-3", "1000", "mg")
+        )
 
         // Act
-        val csv = converter.fromList(medications)
+        val json = converter.fromList(medications)
 
         // Assert
-        assert(csv.isNotEmpty())
-        assert(csv.contains("Vitamina D"))
-        assert(csv.contains("Ômega-3"))
-        assert(csv.contains("Aspirina"))
-        assertEquals("Vitamina D,Ômega-3,Aspirina", csv)
+        assert(json.isNotEmpty())
+        assert(json.contains("Vitamina D"))
+        assert(json.contains("gota"))
+        assert(json.contains("mg"))
     }
 
     @Test
-    fun `fromString should convert CSV back to list`() {
+    fun `fromString should convert JSON back to list`() {
         // Arrange
-        val medications = listOf("Vitamina D", "Ômega-3")
-        val csv = converter.fromList(medications)
+        val medications = listOf(Medication("Vitamina D", "1", "gota"))
+        val json = converter.fromList(medications)
 
         // Act
-        val result = converter.fromString(csv)
+        val result = converter.fromString(json)
 
         // Assert
         assertEquals(medications, result)
     }
 
     @Test
-    fun `empty list should serialize to empty string`() {
+    fun `empty list should serialize correctly`() {
         // Arrange
-        val emptyList = emptyList<String>()
+        val emptyList = emptyList<Medication>()
 
         // Act
-        val csv = converter.fromList(emptyList)
+        val json = converter.fromList(emptyList)
 
         // Assert
-        assertEquals("", csv)
+        assertEquals("[]", json)
     }
 
     @Test
@@ -67,51 +69,20 @@ class MedicationTypeConverterTest {
         val result = converter.fromString(emptyString)
 
         // Assert
-        assertEquals(emptyList<String>(), result)
+        assertEquals(emptyList<Medication>(), result)
     }
 
     @Test
-    fun `single medication item should roundtrip correctly`() {
+    fun `legacy CSV string should be handled correctly`() {
         // Arrange
-        val medications = listOf("Remédio Único")
+        val legacyCsv = "Vitamina D, Ômega-3"
 
         // Act
-        val csv = converter.fromList(medications)
-        val result = converter.fromString(csv)
+        val result = converter.fromString(legacyCsv)
 
         // Assert
-        assertEquals(medications, result)
-    }
-
-    @Test
-    fun `medicament with spaces should preserve data`() {
-        // Arrange
-        val medications = listOf(
-            "Paracetamol 500mg",
-            "Dipirona - Genérico",
-            "Vitamina C (ácido)"
-        )
-
-        // Act
-        val csv = converter.fromList(medications)
-        val result = converter.fromString(csv)
-
-        // Assert
-        assertEquals(medications, result)
-    }
-
-    @Test
-    fun `large list should serialize efficiently`() {
-        // Arrange
-        val medications = (1..100).map { "Remédio $it" }
-
-        // Act
-        val csv = converter.fromList(medications)
-        val result = converter.fromString(csv)
-
-        // Assert
-        assertEquals(medications, result)
-        assertEquals(100, result.size)
+        assertEquals(2, result.size)
+        assertEquals("Vitamina D", result[0].name)
+        assertEquals("Ômega-3", result[1].name)
     }
 }
-

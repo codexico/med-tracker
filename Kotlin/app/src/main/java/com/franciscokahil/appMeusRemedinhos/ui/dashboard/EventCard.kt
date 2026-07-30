@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,8 +35,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +48,7 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -63,13 +69,14 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.ui.components.M3TimePickerDialog
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import java.util.Locale
@@ -80,21 +87,41 @@ fun EventCard(
     event: EventEntity,
     isExpanded: Boolean,
     onExpandClick: () -> Unit,
-    onSave: (String, String, List<String>) -> Unit,
+    onSave: (String, String, List<Medication>) -> Unit,
     onDelete: () -> Unit,
     onToggleTaken: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     highlightColor: Color = Color.Transparent,
-    isNewEvent: Boolean = false
+    isNewEvent: Boolean = false,
 ) {
     // Local state for editing - we keep medications local so we can add them instantly
     var editTitle by remember(event.title, isExpanded) { mutableStateOf(event.title) }
     var editTime by remember(event.time, isExpanded) { mutableStateOf(event.time) }
     var editIcon by remember(event.icon, isExpanded) { mutableStateOf(event.icon) }
     var localMedications by remember(event.medications, isExpanded) { mutableStateOf(event.medications) }
+    
+    // New medication input state
     var newMedName by remember(isExpanded) { mutableStateOf("") }
+    var newMedQuantity by remember(isExpanded) { mutableStateOf("") }
+    var newMedUnit by remember(isExpanded) { mutableStateOf("") }
+    var customUnit by remember(isExpanded) { mutableStateOf("") }
+    var unitExpanded by remember { mutableStateOf(value = false) }
+    var medNameError by remember { mutableStateOf(false) }
+    
     var titleError by remember { mutableStateOf(false) }
     
+    val otherUnitLabel = stringResource(R.string.unit_other)
+    val units = listOf(
+        stringResource(R.string.unit_pill),
+        stringResource(R.string.unit_capsule),
+        stringResource(R.string.unit_mg),
+        stringResource(R.string.unit_ml),
+        stringResource(R.string.unit_drops),
+        stringResource(R.string.unit_spoon),
+        stringResource(R.string.unit_application),
+        otherUnitLabel,
+    )
+
     val timeParts = editTime.split(":")
     val initialHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 12
     val initialMinute = timeParts.getOrNull(1)?.toIntOrNull() ?: 0
@@ -145,6 +172,10 @@ fun EventCard(
     val cdMedList = stringResource(R.string.cd_medications_list, event.title)
     val cdMarkTaken = stringResource(R.string.cd_mark_taken, event.title)
 
+    val medicationsCountText = stringResource(R.string.medications_count, event.medications.size)
+    val expandedText = stringResource(R.string.status_expanded)
+    val collapsedText = stringResource(R.string.status_collapsed)
+
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
@@ -163,8 +194,8 @@ fun EventCard(
             ) { onExpandClick() }
             .semantics(mergeDescendants = true) {
                 contentDescription =
-                    "${event.title}, ${event.time}, $statusText. ${event.medications.size} medicamentos."
-                stateDescription = if (isExpanded) "Expandido" else "Recolhido"
+                    "${event.title}, ${event.time}, $statusText. $medicationsCountText"
+                stateDescription = if (isExpanded) expandedText else collapsedText
             },
         shape = if (isExpanded) RectangleShape else MaterialTheme.shapes.medium,
         colors = CardDefaults.elevatedCardColors(
@@ -247,11 +278,21 @@ fun EventCard(
                                     AssistChip(
                                         onClick = { },
                                         label = {
+                                            val medText = if (med.dosageValue.isNotEmpty()) {
+                                                stringResource(
+                                                    R.string.medication_item_format,
+                                                    med.name,
+                                                    med.dosageValue,
+                                                    med.dosageUnit.take(3),
+                                                )
+                                            } else {
+                                                stringResource(R.string.medication_item_format_simple, med.name)
+                                            }
                                             Text(
-                                                text = med,
+                                                text = medText,
                                                 style = MaterialTheme.typography.labelSmall,
                                                 maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
+                                                overflow = TextOverflow.Ellipsis,
                                             )
                                         },
                                         colors = AssistChipDefaults.assistChipColors(
@@ -305,7 +346,7 @@ fun EventCard(
                     // Edit Title
                     OutlinedTextField(
                         value = editTitle,
-                        onValueChange = { 
+                        onValueChange = {
                             if (it.length <= 25) {
                                 editTitle = it
                                 if (it.isNotBlank()) titleError = false
@@ -318,15 +359,21 @@ fun EventCard(
                         singleLine = true,
                         isError = titleError,
                         supportingText = {
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
                                 if (titleError) {
-                                    Text(text = stringResource(R.string.name_required_hint), color = MaterialTheme.colorScheme.error)
+                                    Text(
+                                        text = stringResource(R.string.name_required_hint),
+                                        color = MaterialTheme.colorScheme.error,
+                                    )
                                 } else {
                                     Spacer(modifier = Modifier.weight(1f))
                                 }
                                 Text("${editTitle.length}/25")
                             }
-                        }
+                        },
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -338,7 +385,7 @@ fun EventCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "$editTime",
+                            text = editTime,
                             style = MaterialTheme.typography.displaySmall
                         )
                         Button(
@@ -367,17 +414,22 @@ fun EventCard(
                             .fillMaxWidth()
                             .testTag("medications_flow_row"),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalArrangement = Arrangement.spacedBy(-8.dp)
+                        verticalArrangement = Arrangement.spacedBy((-8).dp)
                     ) {
                         localMedications.forEachIndexed { index, med ->
                             InputChip(
                                 selected = false,
                                 onClick = { },
-                                label = { Text(med) },
+                                label = {
+                                    Text(
+                                        if (med.dosageValue.isEmpty() && med.dosageUnit.isEmpty()) med.name
+                                        else "${med.name} ${med.dosageValue}${med.dosageUnit}".trim(),
+                                    )
+                                },
                                 trailingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = stringResource(R.string.cd_remove_medication, med),
+                                        contentDescription = stringResource(R.string.cd_remove_medication, med.name),
                                         modifier = Modifier
                                             .size(InputChipDefaults.IconSize)
                                             .clickable {
@@ -395,59 +447,150 @@ fun EventCard(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    // Add Med Input
-                    Row(
+                    // REFINED ADD MED INPUT
+                    Surface(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                     ) {
-                        TextField(
-                            value = newMedName,
-                            onValueChange = { 
-                                if (it.length <= 30) newMedName = it 
-                            },
-                            placeholder = { Text(stringResource(R.string.med_name_placeholder)) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .testTag("medication_input"),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent
-                            ),
-                            singleLine = true,
-                            supportingText = {
-                                Row(
-
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            // Line 1: Name
+                            TextField(
+                                value = newMedName,
+                                onValueChange = { 
+                                    if (it.length <= 30) {
+                                        newMedName = it
+                                        if (it.isNotBlank()) medNameError = false
+                                    }
+                                },
+                                placeholder = { Text(stringResource(R.string.med_name_placeholder)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("medication_input"),
+                                singleLine = true,
+                                isError = medNameError,
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedIndicatorColor = if (medNameError) MaterialTheme.colorScheme.error.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
                                 )
-                                {
-                                    Text(text = stringResource(R.string.add_medication_hint))
-                                    Text(
-                                        text = "${newMedName.length}/30",
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.End,
-                                        style = MaterialTheme.typography.labelSmall
+                            )
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                TextField(
+                                    value = newMedQuantity,
+                                    onValueChange = { newMedQuantity = it },
+                                    placeholder = { Text(stringResource(R.string.med_qty_placeholder)) },
+                                    modifier = Modifier.weight(0.8f),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                        unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
+                                    ),
+                                )
+                                
+                                ExposedDropdownMenuBox(
+                                    expanded = unitExpanded,
+                                    onExpandedChange = { unitExpanded = !unitExpanded },
+                                    modifier = Modifier.weight(1.2f)
+                                ) {
+                                    TextField(
+                                        value = newMedUnit,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        placeholder = { Text(stringResource(R.string.unit_label)) },
+                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                                        colors = TextFieldDefaults.colors(
+                                            focusedContainerColor = Color.Transparent,
+                                            unfocusedContainerColor = Color.Transparent,
+                                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                            unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant
+                                        ),
+                                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
+                                        textStyle = MaterialTheme.typography.bodyMedium
                                     )
+                                    ExposedDropdownMenu(
+                                        expanded = unitExpanded,
+                                        onDismissRequest = { unitExpanded = false }
+                                    ) {
+                                        units.forEach { selectionOption ->
+                                            DropdownMenuItem(
+                                                text = { Text(selectionOption) },
+                                                onClick = {
+                                                    newMedUnit = selectionOption
+                                                    unitExpanded = false
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
-                        )
-                        IconButton(
-                            onClick = {
-                                if (newMedName.isNotBlank()) {
-                                    localMedications = localMedications.toMutableList().apply { add(newMedName.trim()) }
-                                    newMedName = ""
-                                }
-                            },
-                            enabled = newMedName.isNotBlank(),
-                            modifier = Modifier
-                                .minimumInteractiveComponentSize()
-                                .testTag("add_medication_button")
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
+                            
+                            if (newMedUnit == otherUnitLabel) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                TextField(
+                                    value = customUnit,
+                                    onValueChange = { customUnit = it },
+                                    placeholder = { Text(stringResource(R.string.unit_other)) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    singleLine = true,
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                        unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant
+                                    )
+                                )
+                            }
+                            
+                            if (medNameError) {
+                                Text(
+                                    text = stringResource(R.string.med_name_error),
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(top = 4.dp, start = 4.dp),
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            // Line 3: Add Button
+                            Button(
+                                onClick = { 
+                                    if (newMedName.isBlank()) {
+                                        medNameError = true
+                                    } else {
+                                        val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
+                                        localMedications = localMedications.toMutableList().apply { 
+                                            add(Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit)) 
+                                        }
+                                        newMedName = ""
+                                        newMedQuantity = ""
+                                        newMedUnit = ""
+                                        customUnit = ""
+                                        medNameError = false
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("add_medication_button"),
+                                shape = MaterialTheme.shapes.small
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(stringResource(R.string.add_medication_hint))
+                            }
                         }
                     }
 
@@ -487,9 +630,12 @@ fun EventCard(
                                     if (editTitle.isBlank()) {
                                         titleError = true
                                     } else {
-                                        // If there's text in input, add it to medications before saving
+                                        // If there's text in name input, add it to medications before saving if valid
                                         val finalMeds = if (newMedName.isNotBlank()) {
-                                            localMedications.toMutableList().apply { add(newMedName) }
+                                            val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
+                                            localMedications.toMutableList().apply { 
+                                                add(Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit))
+                                            }
                                         } else {
                                             localMedications
                                         }
@@ -517,7 +663,7 @@ fun EventCardPreview() {
         id = "1",
         title = "Café da manhã",
         time = "08:00",
-        medications = listOf("Aspirina", "Vitamina C"),
+        medications = listOf(Medication("Aspirina"), Medication("Vitamina C")),
         isTakenToday = false,
         icon = "🍳"
     )
@@ -543,7 +689,7 @@ fun EventCardTakenPreview() {
         id = "1",
         title = "Ao acordar",
         time = "07:00",
-        medications = listOf("Água"),
+        medications = listOf(Medication("Água")),
         isTakenToday = true,
         icon = "🕐"
     )
@@ -569,7 +715,11 @@ fun EventCardExpandedPreview() {
         id = "1",
         title = "Café da manhã",
         time = "08:00",
-        medications = listOf("Aspirina", "Cloridato de Vitamina C", "Ômega 3"),
+        medications = listOf(
+            Medication("Aspirina", "100", "mg"), 
+            Medication("Cloridato de Vitamina C"), 
+            Medication("Ômega 3", "1", "cápsula")
+        ),
         isTakenToday = false,
         icon = "🍳"
     )

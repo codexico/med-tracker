@@ -179,7 +179,7 @@ class DeepLinkScrollTest {
 
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
         composeTestRule.onNode(hasText("Outro", substring = true, ignoreCase = true) or hasText("Other", substring = true, ignoreCase = true)).performClick()
-        composeTestRule.onNodeWithTag("event_title_input").performTextInput("New Event")
+        composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput("New Event")
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         composeTestRule.waitForIdle()
 

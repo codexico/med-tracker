@@ -3,6 +3,7 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import app.cash.turbine.test
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
@@ -72,11 +73,11 @@ class DashboardViewModelTest {
         val label = "Teste"
         val time = "08:00"
         
-        viewModel.addEvent(label, time)
+        viewModel.addEvent(label, time, medications = listOf(Medication("Aspirina")))
         advanceUntilIdle()
 
-        coVerify { repository.insertEvent(any()) }
-        coVerify { alarmScheduler.scheduleAlarm(any(), any(), any(), any(), any()) }
+        coVerify { repository.insertEvent(match { it.medications.size == 1 }) }
+        coVerify { alarmScheduler.scheduleAlarm(any<EventEntity>(), any(), any()) }
     }
 
     @Test

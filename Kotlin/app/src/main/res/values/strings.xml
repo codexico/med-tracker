@@ -20,6 +20,15 @@
     <string name="onboarding_fab_menu_tooltip">Agora escolha\num horário</string>
 
     <string name="preset_other">Outro</string>
+    <string name="unit_other">Outra unidade…</string>
+    <string name="unit_label">Unidade</string>
+    <string name="unit_pill">💊 comprimido</string>
+    <string name="unit_capsule">💊 cápsula</string>
+    <string name="unit_mg">⚖️ mg</string>
+    <string name="unit_ml">🧪 ml</string>
+    <string name="unit_drops">💧 gotas</string>
+    <string name="unit_spoon">🥄 colher</string>
+    <string name="unit_application">💉 aplicação</string>
     <string name="permission_dialog_title">Permitir Notificações</string>
     <string name="permission_dialog_desc">Para que possamos te avisar no horário exato dos seus compromissos, precisamos da sua permissão para enviar notificações.</string>
     <string name="permission_dialog_confirm">Permitir</string>
@@ -43,6 +52,13 @@
     <string name="cd_medications_list">Lista de itens para %1$s</string>
     <string name="status_taken">Concluído</string>
     <string name="status_pending">Pendente</string>
+    <string name="status_expanded">Expandido</string>
+    <string name="status_collapsed">Recolhido</string>
+    <string name="medications_count">%1$d medicamentos</string>
+    <string name="medication_item_format">%1$s (%2$s%3$s)</string>
+    <string name="medication_item_format_simple">%1$s</string>
+    <string name="med_name_error">Por favor, informe o nome</string>
+    <string name="med_qty_placeholder">Qtd</string>
     <string name="ok">OK</string>
     <string name="delete_confirm_title">Remover horário?</string>
     <string name="delete_confirm_desc">Tem certeza que deseja remover este horário e todos os medicamentos associados?</string>
@@ -56,6 +72,8 @@
     <string name="notification_channel_desc">Notificações para os horários dos seus remédios</string>
     <string name="notification_default_title">Hora do Remédio</string>
     <string name="notification_default_msg">Não se esqueça da sua medicação!</string>
+    <string name="notification_med_prefix">Remédio</string>
+    <string name="notification_meds_prefix">Remédios</string>
     <string name="widget_title">Meus Remedinhos</string>
     <string name="widget_empty_text">Sem remédios hoje</string>
 </resources>
