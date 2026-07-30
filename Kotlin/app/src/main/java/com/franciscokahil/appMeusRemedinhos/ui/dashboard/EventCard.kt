@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -77,6 +78,7 @@ import androidx.compose.ui.unit.sp
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
+import com.franciscokahil.appMeusRemedinhos.data.local.MedicationUnit
 import com.franciscokahil.appMeusRemedinhos.ui.components.M3TimePickerDialog
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import java.util.Locale
@@ -108,17 +110,20 @@ fun EventCard(
     var unitExpanded by remember { mutableStateOf(value = false) }
     var medNameError by remember { mutableStateOf(false) }
     
+    // Editing medication state
+    var editingMedicationIndex by remember(isExpanded) { mutableStateOf<Int?>(null) }
+    
     var titleError by remember { mutableStateOf(false) }
     
     val otherUnitLabel = stringResource(R.string.unit_other)
     val units = listOf(
-        stringResource(R.string.unit_pill),
-        stringResource(R.string.unit_capsule),
-        stringResource(R.string.unit_mg),
-        stringResource(R.string.unit_ml),
-        stringResource(R.string.unit_drops),
-        stringResource(R.string.unit_spoon),
-        stringResource(R.string.unit_application),
+        "${MedicationUnit.PILL.emoji} ${stringResource(MedicationUnit.PILL.labelRes)}",
+        "${MedicationUnit.CAPSULE.emoji} ${stringResource(MedicationUnit.CAPSULE.labelRes)}",
+        "${MedicationUnit.MG.emoji} ${stringResource(MedicationUnit.MG.labelRes)}",
+        "${MedicationUnit.ML.emoji} ${stringResource(MedicationUnit.ML.labelRes)}",
+        "${MedicationUnit.DROPS.emoji} ${stringResource(MedicationUnit.DROPS.labelRes)}",
+        "${MedicationUnit.SPOON.emoji} ${stringResource(MedicationUnit.SPOON.labelRes)}",
+        "${MedicationUnit.APPLICATION.emoji} ${stringResource(MedicationUnit.APPLICATION.labelRes)}",
         otherUnitLabel,
     )
 
@@ -161,6 +166,39 @@ fun EventCard(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    var showMedDeleteConfirm by remember { mutableStateOf(false) }
+
+    if (showMedDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showMedDeleteConfirm = false },
+            title = { Text(stringResource(R.string.delete_confirm_title)) },
+            text = { Text(stringResource(R.string.delete_confirm_desc)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMedDeleteConfirm = false
+                        editingMedicationIndex?.let { index ->
+                            localMedications = localMedications.toMutableList().apply { removeAt(index) }
+                            editingMedicationIndex = null
+                            newMedName = ""
+                            newMedQuantity = ""
+                            newMedUnit = ""
+                            customUnit = ""
+                        }
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(stringResource(R.string.remove))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMedDeleteConfirm = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -278,18 +316,8 @@ fun EventCard(
                                     AssistChip(
                                         onClick = { },
                                         label = {
-                                            val medText = if (med.dosageValue.isNotEmpty()) {
-                                                stringResource(
-                                                    R.string.medication_item_format,
-                                                    med.name,
-                                                    med.dosageValue,
-                                                    med.dosageUnit.take(3),
-                                                )
-                                            } else {
-                                                stringResource(R.string.medication_item_format_simple, med.name)
-                                            }
                                             Text(
-                                                text = medText,
+                                                text = med.displayName,
                                                 style = MaterialTheme.typography.labelSmall,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
@@ -417,30 +445,34 @@ fun EventCard(
                         verticalArrangement = Arrangement.spacedBy((-8).dp)
                     ) {
                         localMedications.forEachIndexed { index, med ->
+                            val isEditingThis = editingMedicationIndex == index
                             InputChip(
-                                selected = false,
-                                onClick = { },
-                                label = {
-                                    Text(
-                                        if (med.dosageValue.isEmpty() && med.dosageUnit.isEmpty()) med.name
-                                        else "${med.name} ${med.dosageValue}${med.dosageUnit}".trim(),
-                                    )
+                                selected = isEditingThis,
+                                onClick = {
+                                    editingMedicationIndex = index
+                                    newMedName = med.name
+                                    newMedQuantity = med.dosageValue
+                                    
+                                    // Robust unit detection
+                                    val matchedUnit = units.find { it == med.dosageUnit }
+                                    if (matchedUnit != null) {
+                                        newMedUnit = matchedUnit
+                                        customUnit = ""
+                                    } else if (med.dosageUnit.isNotEmpty()) {
+                                        newMedUnit = otherUnitLabel
+                                        customUnit = med.dosageUnit
+                                    } else {
+                                        newMedUnit = ""
+                                        customUnit = ""
+                                    }
+                                    medNameError = false
                                 },
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = stringResource(R.string.cd_remove_medication, med.name),
-                                        modifier = Modifier
-                                            .size(InputChipDefaults.IconSize)
-                                            .clickable {
-                                                localMedications = localMedications.toMutableList()
-                                                    .apply { removeAt(index) }
-                                            }
-                                    )
-                                },
+                                label = { Text(text = med.displayName) },
                                 colors = InputChipDefaults.inputChipColors(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
                                 ),
                                 modifier = Modifier.testTag("medication_chip_$index")
                             )
@@ -449,13 +481,20 @@ fun EventCard(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // REFINED ADD MED INPUT
+                    // REFINED ADD/EDIT MED INPUT
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = if (editingMedicationIndex != null) "Editar item" else "Adicionar item",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+
                             // Line 1: Name
                             TextField(
                                 value = newMedName,
@@ -565,31 +604,88 @@ fun EventCard(
 
                             Spacer(modifier = Modifier.height(12.dp))
                             
-                            // Line 3: Add Button
-                            Button(
-                                onClick = { 
-                                    if (newMedName.isBlank()) {
-                                        medNameError = true
-                                    } else {
-                                        val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
-                                        localMedications = localMedications.toMutableList().apply { 
-                                            add(Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit)) 
+                            if (editingMedicationIndex == null) {
+                                // ADD MODE
+                                Button(
+                                    onClick = { 
+                                        if (newMedName.isBlank()) {
+                                            medNameError = true
+                                        } else {
+                                            val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
+                                            localMedications = localMedications.toMutableList().apply { 
+                                                add(Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit)) 
+                                            }
+                                            newMedName = ""
+                                            newMedQuantity = ""
+                                            newMedUnit = ""
+                                            customUnit = ""
+                                            medNameError = false
                                         }
-                                        newMedName = ""
-                                        newMedQuantity = ""
-                                        newMedUnit = ""
-                                        customUnit = ""
-                                        medNameError = false
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("add_medication_button"),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(stringResource(R.string.add_medication_hint))
+                                }
+                            } else {
+                                // EDIT MODE
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    TextButton(
+                                        onClick = { showMedDeleteConfirm = true },
+                                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(Icons.Default.DeleteForever, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(stringResource(R.string.remove), fontSize = 13.sp)
                                     }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .testTag("add_medication_button"),
-                                shape = MaterialTheme.shapes.small
-                            ) {
-                                Icon(Icons.Default.Add, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(stringResource(R.string.add_medication_hint))
+
+                                    TextButton(
+                                        onClick = {
+                                            editingMedicationIndex = null
+                                            newMedName = ""
+                                            newMedQuantity = ""
+                                            newMedUnit = ""
+                                            customUnit = ""
+                                            medNameError = false
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(stringResource(R.string.cancel), fontSize = 13.sp)
+                                    }
+
+                                    Button(
+                                        onClick = {
+                                            if (newMedName.isBlank()) {
+                                                medNameError = true
+                                            } else {
+                                                val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
+                                                val updatedMed = Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit)
+                                                localMedications = localMedications.toMutableList().apply {
+                                                    set(editingMedicationIndex!!, updatedMed)
+                                                }
+                                                editingMedicationIndex = null
+                                                newMedName = ""
+                                                newMedQuantity = ""
+                                                newMedUnit = ""
+                                                customUnit = ""
+                                                medNameError = false
+                                            }
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        shape = MaterialTheme.shapes.small,
+                                        contentPadding = PaddingValues(horizontal = 8.dp)
+                                    ) {
+                                        Text(stringResource(R.string.save), fontSize = 13.sp)
+                                    }
+                                }
                             }
                         }
                     }
@@ -630,11 +726,17 @@ fun EventCard(
                                     if (editTitle.isBlank()) {
                                         titleError = true
                                     } else {
-                                        // If there's text in name input, add it to medications before saving if valid
+                                        // If there's text in name input, apply it before saving the entire event
                                         val finalMeds = if (newMedName.isNotBlank()) {
                                             val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
+                                            val currentMed = Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit)
+                                            
                                             localMedications.toMutableList().apply { 
-                                                add(Medication(newMedName.trim(), newMedQuantity.trim(), finalUnit))
+                                                if (editingMedicationIndex != null) {
+                                                    set(editingMedicationIndex!!, currentMed)
+                                                } else {
+                                                    add(currentMed)
+                                                }
                                             }
                                         } else {
                                             localMedications

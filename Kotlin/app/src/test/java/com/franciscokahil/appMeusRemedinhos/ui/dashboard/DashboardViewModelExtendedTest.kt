@@ -117,6 +117,21 @@ class DashboardViewModelExtendedTest {
         coVerify { repository.updateEvent(match { it.icon == "\uD83D\uDD59" }) }
     }
 
+    @Test
+    fun `updateEvent should update specific medication within list`() = runTest {
+        val med1 = Medication("Vitamina")
+        val med2 = Medication("Ômega")
+        val event = EventEntity("1", "Café", "08:00", medications = listOf(med1, med2))
+        
+        val updatedMed2 = med2.copy(name = "Ômega-3")
+        val newMeds = listOf(med1, updatedMed2)
+
+        viewModel.updateEvent(event, "Café", "08:00", medications = newMeds)
+        advanceUntilIdle()
+
+        coVerify { repository.updateEvent(match { it.medications == newMeds }) }
+    }
+
     // ========== DELETE EVENT ==========
 
     @Test
