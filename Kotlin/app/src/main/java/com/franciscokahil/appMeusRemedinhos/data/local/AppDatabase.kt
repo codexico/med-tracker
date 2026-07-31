@@ -6,10 +6,20 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [EventEntity::class], version = 3, exportSchema = false)
-@TypeConverters(MedicationTypeConverter::class)
+@Database(
+    entities = [
+        EventEntity::class,
+        Medication::class,
+        EventMedicationEntity::class,
+        DoseHistoryEntity::class
+    ],
+    version = 4,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
+    abstract fun medicationDao(): MedicationDao
+    abstract fun doseHistoryDao(): DoseHistoryDao
 
     fun ensureSeeded() {
         // Seeding removed for UX 2.0. Users start with an empty state.

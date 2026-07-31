@@ -1,34 +1,54 @@
-# Glossário do Projeto: Meus Remedinhos
+# 📖 Project Glossary: Meus Remedinhos
 
-Este documento define os termos e conceitos fundamentais do aplicativo **Meus Remedinhos**, servindo como base de conhecimento comum para IA, Desenvolvedores, Product Managers e Usuários.
+> Standard definitions and terminology for the application domain.
 
-## Termos Gerais
+---
 
-*   **Meus Remedinhos**: O nome oficial do aplicativo.
-*   **App**: Refere-se ao ecossistema completo do aplicativo Android (interface, lógica de background e banco de dados).
-*   **Onboarding**: O fluxo inicial de boas-vindas exibido na primeira vez que o usuário abre o app, apresentando a proposta de valor.
+## Data Entities
 
-## Entidades de Dados
+### Event (or Schedule Slot)
+The primary organization unit. An Event has a title (e.g., "Breakfast"), a specific time, and a list of associated medications.
 
-*   **Evento (ou Horário)**: A unidade principal de organização. Um evento possui um título (ex: "Café da Manhã"), um horário específico e uma lista de medicamentos associados.
-*   **Medicamento**: Um item individual cadastrado dentro de um **Evento**. Representa o remédio ou suplemento que deve ser tomado naquele horário.
-*   **Status do Evento**:
-    *   **Pendente**: O estado inicial de um evento a cada dia. Indica que o usuário ainda não confirmou a ingestão dos medicamentos.
-    *   **Tomado**: O estado após o usuário marcar o checkbox no **Card**. O status é visualmente indicado por um estilo "desbotado" (cinza) no título.
-*   **Reset Diário**: A lógica automática que limpa todos os status de "Tomado" para "Pendente" no início de cada novo dia (00:00).
+### Medication
+An individual item registered within an **Event**. It represents the specific pill, drop, or supplement to be taken.
 
-## Componentes de Interface (UI)
+### Event Status
+- **Pending**: The initial state at the start of each day.
+- **Taken**: The state after a user confirms they have taken the medication. Marked with a strikethrough in the UI.
 
-*   **Dashboard**: A tela principal do aplicativo onde todos os **Eventos** são listados cronologicamente.
-*   **Card**: O componente visual que representa um **Evento** na lista do Dashboard.
-    *   **Card Compacto**: O estado padrão do Card, mostrando apenas o título, horário, emojis e uma prévia dos medicamentos.
-    *   **Card Expandido**: O estado de edição do Card. Ativado ao clicar no ícone de editar, permitindo alterar o nome, horário e gerenciar a lista de medicamentos.
-*   **Widget**: O componente que o usuário adiciona à tela inicial (Home Screen) do celular. Ele mostra os próximos eventos sem a necessidade de abrir o app.
-*   **Dialog de Criação**: A janela flutuante usada para adicionar um novo **Evento** personalizado à lista.
+### Daily Reset
+The automatic logic that resets all "Taken" statuses back to "Pending" at 00:00 (Midnight) every day.
 
-## Funcionalidades e Background
+---
 
-*   **Alarme / Lembrete**: A notificação do sistema disparada no horário configurado em cada **Evento**.
-*   **Deep-link**: O link "mágico" que permite que o usuário, ao clicar em um item dentro do **Widget**, abra o **App** diretamente naquele **Evento** específico, destacando-o visualmente.
-*   **Destaque (Highlight)**: O efeito visual (cor de fundo temporária) aplicado a um **Card** quando o app é aberto via **Deep-link**, ajudando o usuário a localizar o item rapidamente.
-*   **Seeding (Semeio)**: O processo automático de criar os eventos padrão (Acordar, Almoço, etc.) na primeira vez que o banco de dados é criado.
+## UI Components
+
+### Dashboard
+The main app screen displaying all **Events** chronologically.
+
+### Event Card
+The visual container for a single **Event**.
+- **Compact View**: Shows the title, time, and medication preview.
+- **Expanded View**: Used for editing name, time, and managing the medication list.
+
+### Input Chip
+Interactive elements used inside the Expanded Card to display medications. Clicking one triggers the edit form.
+
+### Home Widget
+A small preview of the daily schedule added to the Android Home Screen.
+
+---
+
+## Technical Terms
+
+### Alarm / Reminder
+A system notification scheduled via `AlarmManager` for a specific Event's time.
+
+### Deep-link
+A specialized URL (e.g., `meusremedinhos://event/{id}`) that opens the app from a widget or notification directly to a specific Event.
+
+### Highlight
+A temporary visual background color applied to a card when navigated via a Deep-link.
+
+### Seeding
+The automatic creation of default events (e.g., Wake Up, Lunch) during the very first app launch.

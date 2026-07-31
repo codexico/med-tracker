@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.franciscokahil.appMeusRemedinhos.data.local.EventDao
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.widget.MedicationWidget
 import androidx.glance.appwidget.updateAll
 import kotlinx.coroutines.NonCancellable
@@ -11,36 +13,30 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 interface EventRepository {
-    val allEvents: Flow<List<EventEntity>>
-    suspend fun insertEvent(event: EventEntity)
-    suspend fun updateEvent(event: EventEntity)
+    val allEvents: Flow<List<EventWithMedications>>
+    suspend fun insertEvent(event: EventEntity, medications: List<EventMedicationEntity>)
+    suspend fun updateEvent(event: EventEntity, medications: List<EventMedicationEntity>)
     suspend fun deleteEvent(event: EventEntity)
-    suspend fun resetDailyStatus()
 }
 
 class EventRepositoryImpl(
     private val context: Context,
     private val eventDao: EventDao
 ) : EventRepository {
-    override val allEvents: Flow<List<EventEntity>> = eventDao.getAllEvents()
+    override val allEvents: Flow<List<EventWithMedications>> = eventDao.getAllEventsWithMedications()
 
-    override suspend fun insertEvent(event: EventEntity) {
-        eventDao.insertEvent(event)
+    override suspend fun insertEvent(event: EventEntity, medications: List<EventMedicationEntity>) {
+        eventDao.updateEventWithMedications(event, medications)
         updateWidgets()
     }
 
-    override suspend fun updateEvent(event: EventEntity) {
-        eventDao.updateEvent(event)
+    override suspend fun updateEvent(event: EventEntity, medications: List<EventMedicationEntity>) {
+        eventDao.updateEventWithMedications(event, medications)
         updateWidgets()
     }
 
     override suspend fun deleteEvent(event: EventEntity) {
         eventDao.deleteEvent(event)
-        updateWidgets()
-    }
-
-    override suspend fun resetDailyStatus() {
-        eventDao.resetAllTakenStatus()
         updateWidgets()
     }
 

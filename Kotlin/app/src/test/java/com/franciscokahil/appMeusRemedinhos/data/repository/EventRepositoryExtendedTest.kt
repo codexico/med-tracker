@@ -31,14 +31,13 @@ class EventRepositoryExtendedTest {
         val event = EventEntity("1", "Test Event", "12:00")
 
         try {
-            repository.insertEvent(event)
+            repository.insertEvent(event, emptyList())
             // Widget update is attempted
-            // In real env, would verify widget refresh
         } catch (e: Exception) {
-            // Expected: Glance may not be available in test
+            // Expected in test
         }
 
-        coVerify { eventDao.insertEvent(event) }
+        coVerify { eventDao.updateEventWithMedications(event, any()) }
     }
 
     @Test
@@ -46,12 +45,12 @@ class EventRepositoryExtendedTest {
         val event = EventEntity("1", "Test Event", "12:00")
 
         try {
-            repository.updateEvent(event)
+            repository.updateEvent(event, emptyList())
         } catch (e: Exception) {
-            // Expected in test env
+            // Expected
         }
 
-        coVerify { eventDao.updateEvent(event) }
+        coVerify { eventDao.updateEventWithMedications(event, any()) }
     }
 
     @Test
@@ -72,16 +71,9 @@ class EventRepositoryExtendedTest {
         val event = EventEntity("1", "Test", "12:00")
 
         // This should complete without throwing
-        repository.insertEvent(event)
+        repository.insertEvent(event, emptyList())
 
-        coVerify { eventDao.insertEvent(event) }
-    }
-
-    @Test
-    fun `resetDailyStatus should call DAO reset method`() = runTest {
-        repository.resetDailyStatus()
-
-        coVerify { eventDao.resetAllTakenStatus() }
+        coVerify { eventDao.updateEventWithMedications(event, any()) }
     }
 
     @Test
@@ -90,11 +82,11 @@ class EventRepositoryExtendedTest {
         val event2 = EventEntity("2", "Event 2", "14:00")
         val event3 = EventEntity("3", "Event 3", "20:00")
 
-        repository.insertEvent(event1)
-        repository.insertEvent(event2)
-        repository.insertEvent(event3)
+        repository.insertEvent(event1, emptyList())
+        repository.insertEvent(event2, emptyList())
+        repository.insertEvent(event3, emptyList())
 
-        coVerify(exactly = 3) { eventDao.insertEvent(any()) }
+        coVerify(exactly = 3) { eventDao.updateEventWithMedications(any(), any()) }
     }
 }
 

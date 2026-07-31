@@ -63,6 +63,11 @@
     <string name="delete_confirm_title">Delete reminder?</string>
     <string name="delete_confirm_desc">Are you sure you want to remove this reminder and all associated medications?</string>
     <string name="remove">Remove</string>
+    <string name="remove_med_title">Remove Medication?</string>
+    <string name="remove_med_desc">This will remove the medication from stock and all associated schedules.</string>
+    <string name="edit_med_title">Edit Medication</string>
+    <string name="edit_item_label">Edit item</string>
+    <string name="add_item_label">Add item</string>
     <string name="save">Save</string>
     <string name="medications_label">Medications</string>
     <string name="add_medication_hint">Add medication</string>
@@ -76,4 +81,20 @@
     <string name="notification_meds_prefix">Medications</string>
     <string name="widget_title">My Meds</string>
     <string name="widget_empty_text">No meds today</string>
+    <string name="stock_management_title">Stock Management</string>
+    <string name="no_meds_registered">No medications registered yet.</string>
+    <string name="low_stock_label">LOW STOCK</string>
+    <string name="stock_remaining_label">%1$s units remaining</string>
+    <string name="stock_duration_days">, enough for %1$d days</string>
+    <string name="current_stock_label">Current Stock</string>
+    <string name="low_stock_threshold_label">Low stock alert</string>
+    <string name="stock_banner_title">Low Stock</string>
+    <string name="stock_banner_more"> and more…</string>
+    <string name="stock_banner_action">Refill</string>
+    <string name="stock_notification_single">Medication %1$s is running low.</string>
+    <string name="stock_notification_multiple">You have %1$d medications with low stock.</string>
+    <string name="pending_yesterday_title">Yesterday\'s Pending</string>
+    <string name="pending_yesterday_desc">Not registered yesterday</string>
+    <string name="take_late_action">Taken</string>
+    <string name="skip_action">Skip</string>
 </resources>

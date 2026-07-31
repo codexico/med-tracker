@@ -1,46 +1,43 @@
-# 🚀 Checklist de Publicação (Google Play Store)
+# 🚀 Release Checklist (Google Play Store)
 
-Siga estas etapas antes de enviar o aplicativo para produção.
+> Follow these steps before pushing the application to production.
 
 ---
 
-## 🛠 Configuração Técnica
+## 🛠 Technical Configuration
 
-- [ ] **Chave de Assinatura (Keystore):**
-    - Gere uma chave `.jks` no Android Studio (`Build > Generate Signed Bundle / APK`).
-    - Guarde o arquivo e as senhas em local seguro!
-- [ ] **Configuração do Gradle:**
-    - Atualize o `build.gradle.kts` para usar a sua chave de assinatura em vez da `debugConfig`.
-    - Verifique se `versionCode` foi incrementado (em relação à versão anterior na Play Store).
-- [ ] **ProGuard / R8:**
-    - Ative `isMinifyEnabled = true` no `build.gradle.kts`.
-    - Teste o APK de release exaustivamente, pois a ofuscação pode quebrar o Room ou Reflexão se as regras em `proguard-rules.pro` estiverem incompletas.
+- [ ] **Signing Key (Keystore)**:
+    - Ensure you have the `.jks` file and credentials.
+    - Check that the `release` block in `app/build.gradle.kts` points to the correct signing config.
+- [ ] **Version Bump**:
+    - Increment `versionCode` by 1.
+    - Update `versionName` to the new semantic version (e.g., `3.4.0`).
+- [ ] **ProGuard / R8**:
+    - Verify `isMinifyEnabled = true` is active for release builds.
+    - Run a full manual test on the release APK to ensure no Room or serialization issues due to obfuscation.
 
-## 🎨 Ativos e Identidade
+## 🎨 Assets & Identity
 
-- [ ] **Ícone do App:** Verifique se o ícone adaptativo (`res/mipmap-anydpi-v26/ic_launcher.xml`) está correto.
-- [ ] **Logo do Header:** Verifique se o logo dinâmico no dashboard está com o contraste correto.
+- [ ] **App Icon**: Verify adaptive icons are rendering correctly.
+- [ ] **Dynamic Logo**: Check contrast of the header logo in both light and dark backgrounds.
 
-## 📝 Conteúdo e Localização
+## 📝 Content & Localization
 
-- [ ] **Internacionalização:** Atualmente suportamos Português (padrão) e Inglês. Verifique se novas strings foram traduzidas em `values-en/strings.xml`.
-- [ ] **Políticas de Privacidade:** Crie uma URL com a política de privacidade (exigido pelo Google).
+- [ ] **Internationalization**: Ensure all new strings in `strings.xml` have equivalents in `values-en/strings.xml`.
+- [ ] **Privacy Policy**: Ensure the app links to a valid Privacy Policy URL (Play Store requirement).
 
-## 🧪 Qualidade e Testes
+## 🧪 Quality & Testing
 
-- [ ] **Testes de Regressão:** Execute todos os testes unitários e instrumentados.
+- [ ] **Regression Suite**: Run all unit and instrumented tests.
     - `./gradlew testDebugUnitTest connectedAndroidTest`
-- [ ] **Teste em Dispositivo Real:** O comportamento do `AlarmManager` pode variar entre fabricantes (Samsung, Xiaomi, etc.). Teste em dispositivos físicos se possível.
-- [ ] **Crashlytics / Analytics:** Considere adicionar Firebase Crashlytics para monitorar erros em produção.
+- [ ] **Physical Device Test**: Test `AlarmManager` behavior on a real device (ideally Samsung or Xiaomi to check power management issues).
 
 ---
 
-## 📦 Gerando o Pacote Final
+## 📦 Generating the Bundle
 
-Para gerar o arquivo `.aab` (Android App Bundle) para a Play Store:
-
+Generate the Android App Bundle (AAB) for upload:
 ```bash
-./gradlew bundleRelease
+./gradlew clean app:bundleRelease
 ```
-
-O arquivo estará em: `app/build/outputs/bundle/release/app-release.aab`
+Artifact location: `app/build/outputs/bundle/release/app-release.aab`

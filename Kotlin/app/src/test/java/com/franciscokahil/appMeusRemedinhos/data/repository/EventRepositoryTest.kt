@@ -23,9 +23,9 @@ class EventRepositoryTest {
     fun `insertEvent should call DAO`() = runTest {
         val event = EventEntity("1", "Teste", "12:00")
         
-        repository.insertEvent(event)
+        repository.insertEvent(event, emptyList())
 
-        coVerify { eventDao.insertEvent(event) }
+        coVerify { eventDao.updateEventWithMedications(event, any()) }
     }
 
     @Test
@@ -35,12 +35,5 @@ class EventRepositoryTest {
         repository.deleteEvent(event)
 
         coVerify { eventDao.deleteEvent(event) }
-    }
-
-    @Test
-    fun `resetDailyStatus should call DAO reset`() = runTest {
-        repository.resetDailyStatus()
-
-        coVerify { eventDao.resetAllTakenStatus() }
     }
 }

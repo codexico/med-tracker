@@ -3,8 +3,12 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import app.cash.turbine.test
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
+import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
+import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,15 +28,17 @@ import org.junit.Test
 class DashboardViewModelExtendedTest {
 
     private lateinit var viewModel: DashboardViewModel
-    private val repository = mockk<EventRepository>(relaxed = true)
+    private val eventRepository = mockk<EventRepository>(relaxed = true)
+    private val medicationRepository = mockk<MedicationRepository>(relaxed = true)
     private val alarmScheduler = mockk<AlarmScheduler>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        every { repository.allEvents } returns flowOf(emptyList())
-        viewModel = DashboardViewModel(repository, alarmScheduler)
+        every { eventRepository.allEvents } returns flowOf(emptyList())
+        every { medicationRepository.allHistory } returns flowOf(emptyList())
+        viewModel = DashboardViewModel(eventRepository, medicationRepository, alarmScheduler)
     }
 
     @After
@@ -47,89 +53,52 @@ class DashboardViewModelExtendedTest {
     fun `updateEvent should call repository and reschedule alarm`() = runTest {
         val event = EventEntity("1", "Café", "08:00", isEnabled = true)
 
-        viewModel.updateEvent(event, "Café Updated", "09:00")
+        viewModel.updateEvent(event, "Café Updated", "09:00", emptyList())
         advanceUntilIdle()
 
-        coVerify { repository.updateEvent(match { it.title == "Café Updated" && it.time == "09:00" }) }
-        coVerify { alarmScheduler.scheduleAlarm(match { it.id == "1" && it.title == "Café Updated" }, 9, 0) }
+        coVerify { eventRepository.updateEvent(match { it.title == "Café Updated" && it.time == "09:00" }, any()) }
+        coVerify { alarmScheduler.scheduleAlarm(match { it.event.id == "1" && it.event.title == "Café Updated" }, 9, 0) }
     }
 
     @Test
     fun `updateEvent when disabled should not reschedule alarm`() = runTest {
         val event = EventEntity("1", "Café", "08:00", isEnabled = false)
 
-        viewModel.updateEvent(event, "Café Updated", "09:00")
+        viewModel.updateEvent(event, "Café Updated", "09:00", emptyList())
         advanceUntilIdle()
 
-        coVerify { repository.updateEvent(any()) }
-        coVerify(inverse = true) { alarmScheduler.scheduleAlarm(any(), any(), any(), any(), any()) }
-    }
-
-    @Test
-    fun `updateEvent should preserve medications when null passed`() = runTest {
-        val originalMeds = listOf(Medication("Vitamina D"), Medication("Ômega-3"))
-        val event = EventEntity("1", "Café", "08:00", medications = originalMeds)
-
-        viewModel.updateEvent(event, "Café", "09:00", medications = null)
-        advanceUntilIdle()
-
-        coVerify { repository.updateEvent(match { it.medications == originalMeds }) }
-    }
-
-    @Test
-    fun `updateEvent should update medications when provided`() = runTest {
-        val event = EventEntity("1", "Café", "08:00", medications = emptyList())
-        val newMeds = listOf(Medication("Aspirina"))
-
-        viewModel.updateEvent(event, "Café", "08:00", medications = newMeds)
-        advanceUntilIdle()
-
-        coVerify { repository.updateEvent(match { it.medications == newMeds }) }
+        coVerify { eventRepository.updateEvent(any(), any()) }
+        coVerify(inverse = true) { alarmScheduler.scheduleAlarm(any(), any(), any()) }
     }
 
     @Test
     fun `updateEvent should preserve original icon if not a clock emoji`() = runTest {
         val event = EventEntity("1", "Breakfast", "08:00", icon = "🍳")
 
-        viewModel.updateEvent(event, "Breakfast", "09:00")
+        viewModel.updateEvent(event, "Breakfast", "09:00", emptyList())
         advanceUntilIdle()
 
-        coVerify { repository.updateEvent(match { it.icon == "🍳" }) }
+        coVerify { eventRepository.updateEvent(match { it.icon == "🍳" }, any()) }
     }
 
     @Test
     fun `updateEvent should update icon to dynamic clock if previous icon was alarm clock`() = runTest {
         val event = EventEntity("1", "Other", "08:00", icon = "⏰")
 
-        viewModel.updateEvent(event, "Other", "05:30") // 5:30 should be 🕟 (\uD83D\uDD64)
+        viewModel.updateEvent(event, "Other", "05:30", emptyList()) // 5:30 should be 🕟 (\uD83D\uDD64)
         advanceUntilIdle()
 
-        coVerify { repository.updateEvent(match { it.icon == "\uD83D\uDD64" }) }
+        coVerify { eventRepository.updateEvent(match { it.icon == "\uD83D\uDD64" }, any()) }
     }
 
     @Test
     fun `updateEvent should update icon to dynamic clock if previous icon was already a clock emoji`() = runTest {
         val event = EventEntity("1", "Other", "08:00", icon = "\uD83D\uDD57") // 8:00
 
-        viewModel.updateEvent(event, "Other", "10:00") // 10:00 should be 🕙 (\uD83D\uDD59)
+        viewModel.updateEvent(event, "Other", "10:00", emptyList()) // 10:00 should be 🕙 (\uD83D\uDD59)
         advanceUntilIdle()
 
-        coVerify { repository.updateEvent(match { it.icon == "\uD83D\uDD59" }) }
-    }
-
-    @Test
-    fun `updateEvent should update specific medication within list`() = runTest {
-        val med1 = Medication("Vitamina")
-        val med2 = Medication("Ômega")
-        val event = EventEntity("1", "Café", "08:00", medications = listOf(med1, med2))
-        
-        val updatedMed2 = med2.copy(name = "Ômega-3")
-        val newMeds = listOf(med1, updatedMed2)
-
-        viewModel.updateEvent(event, "Café", "08:00", medications = newMeds)
-        advanceUntilIdle()
-
-        coVerify { repository.updateEvent(match { it.medications == newMeds }) }
+        coVerify { eventRepository.updateEvent(match { it.icon == "\uD83D\uDD59" }, any()) }
     }
 
     // ========== DELETE EVENT ==========
@@ -142,55 +111,7 @@ class DashboardViewModelExtendedTest {
         advanceUntilIdle()
 
         coVerify(exactly = 1) { alarmScheduler.cancelAlarm("1") }
-        coVerify(exactly = 1) { repository.deleteEvent(event) }
-    }
-
-    // ========== MEDICATION MANAGEMENT ==========
-
-    @Test
-    fun `addMedication should append to existing list`() = runTest {
-        val existingMeds = listOf(Medication("Vitamina D"))
-        val event = EventEntity("1", "Café", "08:00", medications = existingMeds)
-        
-        val flow = MutableStateFlow(listOf(event))
-        every { repository.allEvents } returns flow
-        viewModel = DashboardViewModel(repository, alarmScheduler)
-        
-        viewModel.events.test {
-            var item = awaitItem()
-            if (item.isEmpty()) item = awaitItem()
-            assertEquals(1, item.size)
-
-            val newMed = Medication("Ômega-3")
-            viewModel.addMedication("1", newMed)
-            advanceUntilIdle()
-
-            coVerify { repository.updateEvent(match { it.id == "1" && it.medications.contains(newMed) }) }
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `removeMedication should remove by index`() = runTest {
-        val med1 = Medication("Vitamina")
-        val med2 = Medication("Ômega")
-        val med3 = Medication("Aspirina")
-        val event = EventEntity("1", "Café", "08:00", medications = listOf(med1, med2, med3))
-        val flow = MutableStateFlow(listOf(event))
-        every { repository.allEvents } returns flow
-        viewModel = DashboardViewModel(repository, alarmScheduler)
-        
-        viewModel.events.test {
-            var item = awaitItem()
-            if (item.isEmpty()) item = awaitItem()
-            assertEquals(1, item.size)
-
-            viewModel.removeMedication("1", 1)  // Remove med2
-            advanceUntilIdle()
-
-            coVerify { repository.updateEvent(match { it.id == "1" && it.medications == listOf(med1, med3) }) }
-            cancelAndIgnoreRemainingEvents()
-        }
+        coVerify(exactly = 1) { eventRepository.deleteEvent(event) }
     }
 
     // ========== CLOCK EMOJI LOGIC ==========

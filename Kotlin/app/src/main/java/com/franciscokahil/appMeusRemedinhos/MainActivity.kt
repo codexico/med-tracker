@@ -29,18 +29,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         NotificationHelper(this).createNotificationChannel()
+        com.franciscokahil.appMeusRemedinhos.background.StockWorker.schedule(this)
         handleIntent(intent)
-        checkDailyReset()
-
-        lifecycleScope.launch {
-            AppDatabase.getDatabase(applicationContext).ensureSeeded()
-        }
 
         setContent {
             MeusRemedinhosTheme {
-                // Notification permission request removed from onCreate for UX 2.0.
-                // It is now requested Just-in-Time in DashboardScreen when creating an event.
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -49,25 +42,6 @@ class MainActivity : ComponentActivity() {
                         highlightedId = highlightedEventId.value,
                         onHighlightedConsumed = { highlightedEventId.value = null }
                     )
-                }
-            }
-        }
-    }
-
-    private fun checkDailyReset() {
-        val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val lastOpenDate = sharedPrefs.getString("last_open_date", "")
-        
-        val calendar = Calendar.getInstance()
-        val today = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH)}-${calendar.get(Calendar.DAY_OF_MONTH)}"
-
-        if (lastOpenDate != today) {
-            lifecycleScope.launch {
-                val database = AppDatabase.getDatabase(applicationContext)
-                val repository = EventRepositoryImpl(applicationContext, database.eventDao())
-                repository.resetDailyStatus()
-                sharedPrefs.edit {
-                    putString("last_open_date", today)
                 }
             }
         }

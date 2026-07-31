@@ -29,6 +29,7 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.text.TextDecoration
 import com.franciscokahil.appMeusRemedinhos.MainActivity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import kotlinx.coroutines.flow.first
 
 class MedicationWidget : GlanceAppWidget() {
@@ -42,7 +43,7 @@ class MedicationWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val database = AppDatabase.getDatabase(context)
         val events = try {
-            database.eventDao().getAllEvents().first()
+            database.eventDao().getAllEventsWithMedications().first()
         } catch (e: Exception) {
             emptyList()
         }
@@ -87,13 +88,17 @@ class MedicationWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun WidgetEventItem(context: Context, event: EventEntity) {
+    private fun WidgetEventItem(context: Context, eventWithMeds: EventWithMedications) {
+        val event = eventWithMeds.event
         // Explicit intent for Deep Link
         val intent = Intent(Intent.ACTION_VIEW, "meusremedinhos://event/${event.id}".toUri()).apply {
             setClass(context, MainActivity::class.java)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         val action = actionStartActivity(intent)
+        
+        // TODO: Get taken status from history
+        val isTakenToday = false 
 
         Column(
             modifier = GlanceModifier
@@ -125,9 +130,9 @@ class MedicationWidget : GlanceAppWidget() {
                         text = event.title,
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
-                            color = if (event.isTakenToday) ColorProvider(colorTextSecondary) else ColorProvider(colorTextPrimary),
+                            color = if (isTakenToday) ColorProvider(colorTextSecondary) else ColorProvider(colorTextPrimary),
                             fontSize = 14.sp,
-                            textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                            textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None
                         )
                     )
                     Text(
@@ -135,7 +140,7 @@ class MedicationWidget : GlanceAppWidget() {
                         style = TextStyle(
                             color = ColorProvider(colorTextSecondary),
                             fontSize = 12.sp,
-                            textDecoration = if (event.isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                            textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None
                         )
                     )
                 }

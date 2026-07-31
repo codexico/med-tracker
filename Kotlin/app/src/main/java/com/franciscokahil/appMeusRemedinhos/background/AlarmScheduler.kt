@@ -10,7 +10,7 @@ import java.util.Calendar
 
 interface AlarmScheduler {
     fun scheduleAlarm(id: String, title: String, message: String, hour: Int, minute: Int)
-    fun scheduleAlarm(event: com.franciscokahil.appMeusRemedinhos.data.local.EventEntity, hour: Int, minute: Int)
+    fun scheduleAlarm(event: com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications, hour: Int, minute: Int)
     fun cancelAlarm(id: String)
     fun getContext(): Context
 }
@@ -64,7 +64,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
     }
 
     override fun scheduleAlarm(
-        event: com.franciscokahil.appMeusRemedinhos.data.local.EventEntity,
+        event: com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications,
         hour: Int,
         minute: Int
     ) {
@@ -75,7 +75,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             val prefix = context.getString(prefixRes)
             "$prefix: ${event.medications.joinToString(", ") { it.displayName }}"
         }
-        scheduleAlarm(event.id, event.title, message, hour, minute)
+        scheduleAlarm(event.event.id, event.event.title, message, hour, minute)
     }
 
     override fun cancelAlarm(id: String) {

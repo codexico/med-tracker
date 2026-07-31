@@ -16,7 +16,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,11 +36,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAlarm
+import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -68,13 +73,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImpl
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
+import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
+import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -83,23 +93,27 @@ import androidx.core.content.ContextCompat
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
+    onNavigateToInventory: () -> Unit,
     highlightedId: String? = null,
     onHighlightedConsumed: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val database = remember { AppDatabase.getDatabase(context) }
-    val repository = remember { EventRepositoryImpl(context, database.eventDao()) }
+    val eventRepository = remember { EventRepositoryImpl(context, database.eventDao()) }
+    val medicationRepository = remember { MedicationRepositoryImpl(database.medicationDao(), database.doseHistoryDao()) }
     val alarmScheduler = remember { AlarmSchedulerImpl(context) }
-    val factory = remember { DashboardViewModelFactory(repository, alarmScheduler) }
+    val factory = remember { DashboardViewModelFactory(eventRepository, medicationRepository, alarmScheduler) }
     val viewModel: DashboardViewModel = viewModel(factory = factory)
     
     val events by viewModel.events.collectAsState()
+    val pendingEvents by viewModel.pendingEvents.collectAsState()
+    val allMedications by viewModel.allMedications.collectAsState()
     val shouldShowOnboarding by viewModel.shouldShowOnboarding.collectAsState()
     var expandedEventId by remember { mutableStateOf<String?>(null) }
     
     // FAB Menu State
     var isFabExpanded by remember { mutableStateOf(false) }
-    var pendingNewEvent by remember { mutableStateOf<EventEntity?>(null) }
+    var pendingNewEvent by remember { mutableStateOf<EventWithMedications?>(null) }
     
     // Tooltip State (shared for onboarding)
     val tooltipState = remember { TooltipState() }
@@ -134,7 +148,11 @@ fun DashboardScreen(
     ) { _ ->
         // Proceed with adding the event regardless of permission result
         pendingNewEvent?.let { params ->
-            viewModel.addEvent(params.title, params.time, params.icon, params.medications)
+            val medications = params.medications.map { it.medication.copy(
+                dosageValue = it.crossRef.dosageValue,
+                dosageUnit = it.crossRef.dosageUnit
+            ) }
+            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications)
         }
         pendingNewEvent = null
         expandedEventId = null
@@ -149,7 +167,7 @@ fun DashboardScreen(
             // Auto-collapse any expanded card when navigating via deep-link
             expandedEventId = null
 
-            val index = events.indexOfFirst { it.id == highlightedId }
+            val index = events.indexOfFirst { it.eventWithMeds.event.id == highlightedId }
             if (index != -1) {
                 // Wait for LazyColumn to be laid out and ready for scrolling
                 delay(200.milliseconds)
@@ -177,12 +195,19 @@ fun DashboardScreen(
                 expandedEventId = null
                 pendingNewEvent = null
             } else {
-                pendingNewEvent = EventEntity(
-                    id = "NEW_EVENT",
-                    title = label,
-                    time = time,
-                    icon = icon ?: "access_time",
-                    medications = meds
+                pendingNewEvent = EventWithMedications(
+                    event = EventEntity(
+                        id = "NEW_EVENT",
+                        title = label,
+                        time = time,
+                        icon = icon ?: "access_time"
+                    ),
+                    medications = meds.map { med ->
+                        MedicationWithDosage(
+                            crossRef = EventMedicationEntity("NEW_EVENT", med.id, med.dosageValue, med.dosageUnit),
+                            medication = med
+                        )
+                    }
                 )
                 showPermissionExplanation = true
             }
@@ -204,6 +229,15 @@ fun DashboardScreen(
                         tint = MaterialTheme.colorScheme.primary
                     )
                 },
+                actions = {
+                    IconButton(onClick = onNavigateToInventory) {
+                        Icon(
+                            imageVector = Icons.Default.Inventory,
+                            contentDescription = "Stock",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.primary
@@ -221,11 +255,14 @@ fun DashboardScreen(
                     onToggle = { isFabExpanded = !isFabExpanded },
                     onOptionSelected = { preset ->
                         isFabExpanded = false
-                        pendingNewEvent = EventEntity(
-                            id = "NEW_EVENT",
-                            title = preset?.label ?: "",
-                            time = preset?.time ?: "12:00",
-                            icon = preset?.icon ?: "access_time"
+                        pendingNewEvent = EventWithMedications(
+                            event = EventEntity(
+                                id = "NEW_EVENT",
+                                title = preset?.label ?: "",
+                                time = preset?.time ?: "12:00",
+                                icon = preset?.icon ?: "access_time"
+                            ),
+                            medications = emptyList()
                         )
                         expandedEventId = "NEW_EVENT"
                     },
@@ -237,112 +274,240 @@ fun DashboardScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         
-        if (showPermissionExplanation) {
-            AlertDialog(
-                onDismissRequest = { 
-                    showPermissionExplanation = false
-                    // Proceed anyway
-                    pendingNewEvent?.let { params ->
-                        viewModel.addEvent(params.title, params.time, params.icon, params.medications)
-                    }
-                    pendingNewEvent = null
-                    expandedEventId = null
-                },
-                title = { Text(stringResource(R.string.permission_dialog_title)) },
-                text = { Text(stringResource(R.string.permission_dialog_desc)) },
-                icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        showPermissionExplanation = false
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            // LOW STOCK BANNER
+            val lowStockMeds = allMedications.filter { it.currentStock <= it.lowStockThreshold && it.lowStockThreshold > 0 }
+            if (lowStockMeds.isNotEmpty() && expandedEventId == null) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = MaterialTheme.shapes.medium,
+                    tonalElevation = 2.dp
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.stock_banner_title),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.error,
+                                fontWeight = FontWeight.Bold
+                            )
+                            val medNames = lowStockMeds.take(2).joinToString(", ") { it.name }
+                            val suffix = if (lowStockMeds.size > 2) stringResource(R.string.stock_banner_more) else ""
+                            Text(
+                                text = "$medNames$suffix",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
                         }
-                    }) {
-                        Text(stringResource(R.string.permission_dialog_confirm))
+                        TextButton(onClick = onNavigateToInventory) {
+                            Text(stringResource(R.string.stock_banner_action), color = MaterialTheme.colorScheme.error)
+                        }
                     }
-                },
-                dismissButton = {
-                    TextButton(onClick = { 
+                }
+            }
+
+            if (showPermissionExplanation) {
+                AlertDialog(
+                    onDismissRequest = { 
                         showPermissionExplanation = false
+                        // Proceed anyway
                         pendingNewEvent?.let { params ->
-                            viewModel.addEvent(params.title, params.time, params.icon, params.medications)
+                            val medications = params.medications.map { it.medication.copy(
+                                dosageValue = it.crossRef.dosageValue,
+                                dosageUnit = it.crossRef.dosageUnit
+                            ) }
+                            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications)
                         }
                         pendingNewEvent = null
                         expandedEventId = null
-                    }) {
-                        Text(stringResource(R.string.permission_dialog_cancel))
+                    },
+                    title = { Text(stringResource(R.string.permission_dialog_title)) },
+                    text = { Text(stringResource(R.string.permission_dialog_desc)) },
+                    icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showPermissionExplanation = false
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        }) {
+                            Text(stringResource(R.string.permission_dialog_confirm))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { 
+                            showPermissionExplanation = false
+                            pendingNewEvent?.let { params ->
+                                val medications = params.medications.map { it.medication.copy(
+                                    dosageValue = it.crossRef.dosageValue,
+                                    dosageUnit = it.crossRef.dosageUnit
+                                ) }
+                                viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications)
+                            }
+                            pendingNewEvent = null
+                            expandedEventId = null
+                        }) {
+                            Text(stringResource(R.string.permission_dialog_cancel))
+                        }
+                    }
+                )
+            }
+
+            if (events.isEmpty() && expandedEventId != "NEW_EVENT") {
+                OnboardingEmptyState(
+                    paddingValues = PaddingValues(0.dp),
+                    onAddClick = { isFabExpanded = true },
+                    modifier = Modifier.testTag("empty_state")
+                )
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("event_list"),
+                    verticalArrangement = if (expandedEventId == null) Arrangement.spacedBy(16.dp) else Arrangement.Top,
+                    contentPadding = if (expandedEventId == null) PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 8.dp) else PaddingValues(0.dp)
+                ) {
+                    // PENDING EVENTS FROM YESTERDAY
+                    if (pendingEvents.isNotEmpty() && expandedEventId == null) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.pending_yesterday_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                            )
+                        }
+                        items(pendingEvents) { event ->
+                            PendingEventCard(
+                                event = event,
+                                onTakenLate = { viewModel.markAsTakenRetrospectively(event) },
+                                onSkip = { viewModel.markAsSkippedRetrospectively(event) }
+                            )
+                        }
+                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                    }
+
+                    if (expandedEventId == "NEW_EVENT" && pendingNewEvent != null) {
+                        item(key = "NEW_EVENT") {
+                            EventCard(
+                                event = pendingNewEvent!!,
+                                allMedications = allMedications,
+                                isTakenToday = false,
+                                isExpanded = true,
+                                onExpandClick = {
+                                    expandedEventId = null
+                                    pendingNewEvent = null
+                                },
+                                onSave = { updatedEvent, meds ->
+                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds)
+                                },
+                                onDelete = { },
+                                onToggleTaken = { },
+                                modifier = Modifier.fillParentMaxSize(),
+                                isNewEvent = true
+                            )
+                        }
+                    }
+
+                    items(events, key = { it.eventWithMeds.event.id }) { uiModel ->
+                        val eventWithMeds = uiModel.eventWithMeds
+                        val isHighlighted = activeHighlightId == eventWithMeds.event.id
+                        val isExpanded = expandedEventId == eventWithMeds.event.id
+                        
+                        val highlightColor by animateColorAsState(
+                            targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary.copy(alpha = 0.25f) else Color.Transparent,
+                            animationSpec = tween(500), label = "highlight"
+                        )
+
+                        if (expandedEventId == null || isExpanded) {
+                            EventCard(
+                                event = eventWithMeds,
+                                allMedications = allMedications,
+                                isTakenToday = uiModel.isTakenToday,
+                                isExpanded = isExpanded,
+                                onExpandClick = {
+                                    expandedEventId = if (isExpanded) null else eventWithMeds.event.id
+                                },
+                                onSave = { updatedEvent, meds ->
+                                    viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds)
+                                    expandedEventId = null
+                                },
+                                onDelete = {
+                                    viewModel.deleteEvent(eventWithMeds.event)
+                                    expandedEventId = null
+                                },
+                                onToggleTaken = { isTaken ->
+                                    viewModel.toggleEventStatus(eventWithMeds, isTaken)
+                                },
+                                highlightColor = highlightColor,
+                                modifier = if (isExpanded) Modifier.fillParentMaxSize() else Modifier
+                            )
+                        }
                     }
                 }
-            )
+            }
         }
+    }
+}
 
-        if (events.isEmpty() && expandedEventId != "NEW_EVENT") {
-            OnboardingEmptyState(
-                paddingValues = paddingValues,
-                onAddClick = { isFabExpanded = true },
-                modifier = Modifier.testTag("empty_state")
-            )
-        } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .testTag("event_list"),
-                verticalArrangement = if (expandedEventId == null) Arrangement.spacedBy(16.dp) else Arrangement.Top,
-                contentPadding = if (expandedEventId == null) PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 8.dp) else PaddingValues(0.dp)
+@Composable
+fun PendingEventCard(
+    event: EventWithMedications,
+    onTakenLate: () -> Unit,
+    onSkip: () -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.size(32.dp).background(
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                    shape = MaterialTheme.shapes.small
+                ),
+                contentAlignment = Alignment.Center
             ) {
-                if (expandedEventId == "NEW_EVENT" && pendingNewEvent != null) {
-                    item(key = "NEW_EVENT") {
-                        EventCard(
-                            event = pendingNewEvent!!,
-                            isExpanded = true,
-                            onExpandClick = {
-                                expandedEventId = null
-                                pendingNewEvent = null
-                            },
-                            onSave = { title, time, meds ->
-                                createNewEvent(title, time, pendingNewEvent!!.icon, meds)
-                            },
-                            onDelete = { },
-                            onToggleTaken = { },
-                            modifier = Modifier.fillParentMaxSize(),
-                            isNewEvent = true
-                        )
-                    }
+                Text(text = event.event.icon, fontSize = 16.sp)
+            }
+            
+            Spacer(modifier = Modifier.width(12.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = event.event.title,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = stringResource(R.string.pending_yesterday_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+            
+            Row {
+                TextButton(onClick = onSkip) {
+                    Text(stringResource(R.string.skip_action), color = MaterialTheme.colorScheme.error)
                 }
-
-                items(events, key = { it.id }) { event ->
-                    val isHighlighted = activeHighlightId == event.id
-                    val isExpanded = expandedEventId == event.id
-                    
-                    val highlightColor by animateColorAsState(
-                        targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary.copy(alpha = 0.25f) else Color.Transparent,
-                        animationSpec = tween(500), label = "highlight"
-                    )
-
-                    if (expandedEventId == null || isExpanded) {
-                        EventCard(
-                            event = event,
-                            isExpanded = isExpanded,
-                            onExpandClick = {
-                                expandedEventId = if (isExpanded) null else event.id
-                            },
-                            onSave = { title, time, meds ->
-                                viewModel.updateEvent(event, title, time, meds)
-                                expandedEventId = null
-                            },
-                            onDelete = {
-                                viewModel.deleteEvent(event)
-                                expandedEventId = null
-                            },
-                            onToggleTaken = { isTaken ->
-                                viewModel.toggleEventStatus(event, isTaken)
-                            },
-                            highlightColor = highlightColor,
-                            modifier = if (isExpanded) Modifier.fillParentMaxSize() else Modifier
-                        )
-                    }
+                Button(onClick = onTakenLate, shape = MaterialTheme.shapes.small) {
+                    Text(stringResource(R.string.take_late_action), fontSize = 12.sp)
                 }
             }
         }
@@ -405,6 +570,6 @@ fun OnboardingEmptyState(
 @Composable
 fun DashboardPreview() {
     MeusRemedinhosTheme {
-        DashboardScreen()
+        DashboardScreen(onNavigateToInventory = {})
     }
 }
