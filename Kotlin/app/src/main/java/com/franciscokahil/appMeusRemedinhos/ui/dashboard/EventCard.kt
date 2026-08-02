@@ -394,46 +394,40 @@ fun EventCard(
 
                     // Edit Title
                     val isOtherEvent = event.event.type == EventType.OTHER
-                    OutlinedTextField(
-                        value = editTitle,
-                        onValueChange = {
-                            if (it.length <= 25) {
-                                editTitle = it
-                                if (it.isNotBlank()) titleError = false
-                            }
-                        },
-                        readOnly = !isOtherEvent,
-                        label = { Text(stringResource(R.string.time_name_label)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("edit_event_title_input"),
-                        singleLine = true,
-                        isError = titleError,
-                        supportingText = {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                if (titleError) {
-                                    Text(
-                                        text = stringResource(R.string.name_required_hint),
-                                        color = MaterialTheme.colorScheme.error,
-                                    )
-                                } else if (!isOtherEvent) {
-                                    Text(
-                                        text = "Nome fixo para este período",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.outline
-                                    )
-                                } else {
-                                    Spacer(modifier = Modifier.weight(1f))
+                    if (isOtherEvent) {
+                        OutlinedTextField(
+                            value = editTitle,
+                            onValueChange = {
+                                if (it.length <= 25) {
+                                    editTitle = it
+                                    if (it.isNotBlank()) titleError = false
                                 }
-                                Text("${editTitle.length}/25")
-                            }
-                        },
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
+                            },
+                            label = { Text(stringResource(R.string.time_name_label)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("edit_event_title_input"),
+                            singleLine = true,
+                            isError = titleError,
+                            supportingText = {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    if (titleError) {
+                                        Text(
+                                            text = stringResource(R.string.name_required_hint),
+                                            color = MaterialTheme.colorScheme.error,
+                                        )
+                                    } else {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
+                                    Text("${editTitle.length}/25")
+                                }
+                            },
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
 
                     // Edit Time
                     Row(

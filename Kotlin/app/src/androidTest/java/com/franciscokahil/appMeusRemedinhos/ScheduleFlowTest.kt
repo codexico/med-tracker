@@ -92,10 +92,8 @@ class ScheduleFlowTest {
         composeTestRule.onAllNodesWithText(testTitle, substring = true).onFirst().performClick()
         composeTestRule.onNodeWithTag("medication_input").performTextInput(medName)
         
-        // Use a more specific finder for the Add medication button
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val addText = targetContext.getString(R.string.add)
-        composeTestRule.onNodeWithContentDescription(addText, substring = true).performClick()
+        // Use TestTag for Add medication button
+        composeTestRule.onNodeWithTag("add_medication_button").performClick()
         
         // 2. Save and collapse
         composeTestRule.onNodeWithTag("save_event_button").performClick()
@@ -120,15 +118,22 @@ class ScheduleFlowTest {
         composeTestRule.onNodeWithTag("add_medication_button").performClick()
         
         // 2. Verify it's there as an InputChip
-        composeTestRule.onNodeWithText(medName).assertIsDisplayed()
+        val chipTag = "medication_chip_0"
+        composeTestRule.onNodeWithTag(chipTag).assertIsDisplayed()
         
-        // 3. Remove it
+        // 3. Select chip to edit/remove
+        composeTestRule.onNodeWithTag(chipTag).performClick()
+        
+        // 4. Click remove button in edit mode
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val cdRemove = targetContext.getString(R.string.cd_remove_medication, medName)
-        composeTestRule.onNodeWithContentDescription(cdRemove, substring = true).performClick()
+        val removeText = targetContext.getString(R.string.remove)
+        composeTestRule.onNodeWithText(removeText).performClick()
         
-        // 4. Verify it's gone
-        composeTestRule.onNodeWithText(medName).assertDoesNotExist()
+        // 5. Confirm deletion in dialog
+        composeTestRule.onNode(hasText(removeText) and hasAnyAncestor(isDialog())).performClick()
+        
+        // 6. Verify it's gone
+        composeTestRule.onNodeWithTag(chipTag).assertDoesNotExist()
     }
 
     @Test
@@ -139,26 +144,19 @@ class ScheduleFlowTest {
         // 1. Expand
         composeTestRule.onAllNodesWithText(testTitle, substring = true).onFirst().performClick()
 
-        // 2. Try to add empty medication (button should be disabled)
-        composeTestRule.onNodeWithTag("medication_input").performTextInput("   ") // only spaces
-        composeTestRule.onNodeWithTag("add_medication_button").assertIsNotEnabled()
-
-        // 3. Try to exceed character limit (30)
-        // Clear previous input
-        composeTestRule.onNodeWithTag("medication_input").performTextReplacement("")
-        
-        val longName = "A".repeat(40)
-        composeTestRule.onNodeWithTag("medication_input").performTextInput(longName)
-        
-        // Check that character counter exists (doesn't need to be exact value if semantics merge it)
-        composeTestRule.onAllNodesWithText("/30", substring = true).onFirst().assertExists()
-        
-        // 4. Add valid name and check character counter
-        composeTestRule.onNodeWithTag("medication_input").performTextReplacement("Vitamina C")
-        composeTestRule.onNodeWithText("10/30", substring = true).assertIsDisplayed()
+        // 2. Try to add empty medication (should show error text when clicking add)
+        composeTestRule.onNodeWithTag("medication_input").performTextInput("") 
         composeTestRule.onNodeWithTag("add_medication_button").performClick()
         
-        // 5. Save and verify it's there
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val errorText = targetContext.getString(R.string.med_name_error)
+        composeTestRule.onNodeWithText(errorText).assertIsDisplayed()
+
+        // 3. Add valid name
+        composeTestRule.onNodeWithTag("medication_input").performTextInput("Vitamina C")
+        composeTestRule.onNodeWithTag("add_medication_button").performClick()
+        
+        // 4. Save and verify it's there
         composeTestRule.onNodeWithTag("save_event_button").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onAllNodesWithText("Vitamina C", substring = true).onFirst().assertIsDisplayed()

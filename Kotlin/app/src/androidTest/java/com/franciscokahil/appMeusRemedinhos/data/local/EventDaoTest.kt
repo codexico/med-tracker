@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,40 +37,34 @@ class EventDaoTest {
             id = "test-1",
             title = "Aspirina",
             time = "10:00",
-            medications = listOf(Medication("Aspirina", "100", "mg")),
-            isTakenToday = false
+            type = EventType.OTHER
         )
         dao.insertEvent(event)
 
-        val allEvents = dao.getAllEvents().first()
+        val allEvents = dao.getAllEventsWithMedications().first()
         assertEquals(1, allEvents.size)
-        assertEquals("Aspirina", allEvents[0].title)
-        assertEquals(listOf(Medication("Aspirina", "100", "mg")), allEvents[0].medications)
+        assertEquals("Aspirina", allEvents[0].event.title)
     }
 
     @Test
     fun updateEvent() = runBlocking {
-        val event = EventEntity(id = "test-2", title = "Remedio", time = "08:00", isTakenToday = false)
+        val event = EventEntity(id = "test-2", title = "Remedio", time = "08:00", type = EventType.OTHER)
         dao.insertEvent(event)
         
-        dao.updateEvent(event.copy(isTakenToday = true))
+        dao.updateEvent(event.copy(title = "Remedio Atualizado"))
 
-        val allEvents = dao.getAllEvents().first()
-        assertTrue(allEvents[0].isTakenToday)
+        val allEvents = dao.getAllEventsWithMedications().first()
+        assertEquals("Remedio Atualizado", allEvents[0].event.title)
     }
 
     @Test
-    fun resetAllTakenStatus() = runBlocking {
-        val event1 = EventEntity(id = "test-3", title = "Remedio 1", time = "08:00", isTakenToday = true)
-        val event2 = EventEntity(id = "test-4", title = "Remedio 2", time = "14:00", isTakenToday = true)
-        dao.insertEvent(event1)
-        dao.insertEvent(event2)
+    fun deleteEvent() = runBlocking {
+        val event = EventEntity(id = "test-3", title = "Remedio 1", time = "08:00", type = EventType.OTHER)
+        dao.insertEvent(event)
 
-        dao.resetAllTakenStatus()
+        dao.deleteEvent(event)
 
-        val allEvents = dao.getAllEvents().first()
-        allEvents.forEach {
-            assertTrue(!it.isTakenToday)
-        }
+        val allEvents = dao.getAllEventsWithMedications().first()
+        assertEquals(0, allEvents.size)
     }
 }
