@@ -18,4 +18,12 @@ form do medicamento
 
 Alguma outra solução possível?
 
+Antes de fazer, me mostre quais as opções.
 
+----
+
+Estoque no remedio está confuso
+
+--- -
+
+Bloqwuear o nome do Evento a não ser que seja o "Outro"

@@ -50,12 +50,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.franciscokahil.appMeusRemedinhos.R
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 
 data class PresetOption(
     val label: String,
     val time: String,
-    val icon: String
+    val icon: String,
+    val type: EventType
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,14 +73,14 @@ fun FabMenu(
     val rotation by animateFloatAsState(if (isExpanded) 45f else 0f, label = "rotation")
     
     val presets = listOf(
-        PresetOption(stringResource(R.string.wake_up), "07:00", "🕐"),
-        PresetOption(stringResource(R.string.breakfast), "08:00", "🍳"),
-        PresetOption(stringResource(R.string.morning), "10:00", "☀️"),
-        PresetOption(stringResource(R.string.lunch), "12:00", "🍽️"),
-        PresetOption(stringResource(R.string.afternoon), "15:00", "🌤️"),
-        PresetOption(stringResource(R.string.dinner), "20:00", "🍴"),
-        PresetOption(stringResource(R.string.sleep), "22:00", "🌙"),
-        PresetOption(stringResource(R.string.preset_other), "12:00", "⏰")
+        PresetOption(stringResource(R.string.wake_up), "07:00", "🕐", EventType.WAKE_UP),
+        PresetOption(stringResource(R.string.breakfast), "08:00", "🍳", EventType.BREAKFAST),
+        PresetOption(stringResource(R.string.morning), "10:00", "☀️", EventType.MORNING),
+        PresetOption(stringResource(R.string.lunch), "12:00", "🍽️", EventType.LUNCH),
+        PresetOption(stringResource(R.string.afternoon), "15:00", "🌤️", EventType.AFTERNOON),
+        PresetOption(stringResource(R.string.dinner), "20:00", "🍴", EventType.DINNER),
+        PresetOption(stringResource(R.string.sleep), "22:00", "🌙", EventType.SLEEP),
+        PresetOption(stringResource(R.string.preset_other), "12:00", "⏰", EventType.OTHER)
     )
 
     Column(

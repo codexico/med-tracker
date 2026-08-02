@@ -79,6 +79,7 @@ import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImpl
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
@@ -152,7 +153,7 @@ fun DashboardScreen(
                 dosageValue = it.crossRef.dosageValue,
                 dosageUnit = it.crossRef.dosageUnit
             ) }
-            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications)
+            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
         }
         pendingNewEvent = null
         expandedEventId = null
@@ -188,10 +189,10 @@ fun DashboardScreen(
         }
     }
 
-    val createNewEvent = { label: String, time: String, icon: String?, meds: List<Medication> ->
+    val createNewEvent = { label: String, time: String, icon: String?, meds: List<Medication>, type: EventType ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                viewModel.addEvent(label, time, icon, meds)
+                viewModel.addEvent(label, time, icon, meds, type)
                 expandedEventId = null
                 pendingNewEvent = null
             } else {
@@ -200,7 +201,8 @@ fun DashboardScreen(
                         id = "NEW_EVENT",
                         title = label,
                         time = time,
-                        icon = icon ?: "access_time"
+                        icon = icon ?: "access_time",
+                        type = type
                     ),
                     medications = meds.map { med ->
                         MedicationWithDosage(
@@ -212,7 +214,7 @@ fun DashboardScreen(
                 showPermissionExplanation = true
             }
         } else {
-            viewModel.addEvent(label, time, icon, meds)
+            viewModel.addEvent(label, time, icon, meds, type)
             expandedEventId = null
             pendingNewEvent = null
         }
@@ -260,7 +262,8 @@ fun DashboardScreen(
                                 id = "NEW_EVENT",
                                 title = preset?.label ?: "",
                                 time = preset?.time ?: "12:00",
-                                icon = preset?.icon ?: "access_time"
+                                icon = preset?.icon ?: "access_time",
+                                type = preset?.type ?: EventType.OTHER
                             ),
                             medications = emptyList()
                         )
@@ -410,7 +413,7 @@ fun DashboardScreen(
                                     pendingNewEvent = null
                                 },
                                 onSave = { updatedEvent, meds ->
-                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds)
+                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type)
                                 },
                                 onDelete = { },
                                 onToggleTaken = { },
@@ -440,7 +443,7 @@ fun DashboardScreen(
                                     expandedEventId = if (isExpanded) null else eventWithMeds.event.id
                                 },
                                 onSave = { updatedEvent, meds ->
-                                    viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds)
+                                    viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
                                     expandedEventId = null
                                 },
                                 onDelete = {

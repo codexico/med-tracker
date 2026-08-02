@@ -1,6 +1,7 @@
 package com.franciscokahil.appMeusRemedinhos.ui.inventory
 
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
@@ -43,7 +44,7 @@ class InventoryViewModelTest {
     @Test
     fun `medications flow should calculate daily dosage and days remaining correctly`() = runTest {
         val medication = Medication(id = "1", name = "Test Med", currentStock = 10f)
-        val event = EventEntity(id = "1", title = "Event", time = "10:00", isEnabled = true)
+        val event = EventEntity(id = "1", title = "Event", time = "10:00", isEnabled = true, type = EventType.OTHER)
         val medicationWithDosage = MedicationWithDosage(
             medication = medication,
             crossRef = EventMedicationEntity("1", "1", dosageValue = "2.0", dosageUnit = "pill")

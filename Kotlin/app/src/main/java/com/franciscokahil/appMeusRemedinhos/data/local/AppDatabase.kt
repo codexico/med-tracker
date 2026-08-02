@@ -13,9 +13,10 @@ import androidx.room.TypeConverters
         EventMedicationEntity::class,
         DoseHistoryEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
+@TypeConverters(EventTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
     abstract fun medicationDao(): MedicationDao

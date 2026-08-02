@@ -86,7 +86,7 @@ class DashboardViewModelTest {
         viewModel.addEvent(label, time, medications = listOf(Medication(name = "Aspirina")))
         advanceUntilIdle()
 
-        coVerify { eventRepository.insertEvent(any(), match { it.size == 1 }) }
+        coVerify { eventRepository.insertEvent(match { it.title == label && it.time == time }, match { it.size == 1 }) }
         coVerify { alarmScheduler.scheduleAlarm(any<EventWithMedications>(), any(), any()) }
     }
 

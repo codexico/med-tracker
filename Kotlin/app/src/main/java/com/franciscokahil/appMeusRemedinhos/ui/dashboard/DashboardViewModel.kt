@@ -12,6 +12,7 @@ import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -148,7 +149,7 @@ class DashboardViewModel(
         }
     }
 
-    fun addEvent(label: String, time: String, icon: String? = null, medications: List<Medication> = emptyList()) {
+    fun addEvent(label: String, time: String, icon: String? = null, medications: List<Medication> = emptyList(), type: EventType = EventType.OTHER) {
         viewModelScope.launch {
             val finalIcon = if (icon == "⏰") getClockEmoji(time) else icon ?: getClockEmoji(time)
             val eventId = UUID.randomUUID().toString()
@@ -156,6 +157,7 @@ class DashboardViewModel(
                 id = eventId,
                 title = label,
                 time = time,
+                type = type,
                 isEnabled = true,
                 icon = finalIcon
             )
@@ -185,7 +187,7 @@ class DashboardViewModel(
         }
     }
 
-    fun updateEvent(event: EventEntity, newTitle: String, newTime: String, medications: List<Medication>? = null) {
+    fun updateEvent(event: EventEntity, newTitle: String, newTime: String, medications: List<Medication>? = null, type: EventType? = null) {
         viewModelScope.launch {
             // Only update the icon if the original icon was the "Other" preset icon (⏰)
             // or if it's already one of the dynamic clock emojis.
@@ -198,7 +200,8 @@ class DashboardViewModel(
             val updatedEvent = event.copy(
                 title = newTitle,
                 time = newTime,
-                icon = finalIcon
+                icon = finalIcon,
+                type = type ?: event.type
             )
             
             val medicationLinks = (medications ?: emptyList()).map { med ->

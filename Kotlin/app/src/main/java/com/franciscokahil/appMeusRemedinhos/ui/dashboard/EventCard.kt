@@ -77,6 +77,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
@@ -392,6 +393,7 @@ fun EventCard(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Edit Title
+                    val isOtherEvent = event.event.type == EventType.OTHER
                     OutlinedTextField(
                         value = editTitle,
                         onValueChange = {
@@ -400,6 +402,7 @@ fun EventCard(
                                 if (it.isNotBlank()) titleError = false
                             }
                         },
+                        readOnly = !isOtherEvent,
                         label = { Text(stringResource(R.string.time_name_label)) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -415,6 +418,12 @@ fun EventCard(
                                     Text(
                                         text = stringResource(R.string.name_required_hint),
                                         color = MaterialTheme.colorScheme.error,
+                                    )
+                                } else if (!isOtherEvent) {
+                                    Text(
+                                        text = "Nome fixo para este período",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.outline
                                     )
                                 } else {
                                     Spacer(modifier = Modifier.weight(1f))
