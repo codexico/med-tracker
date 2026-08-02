@@ -29,7 +29,7 @@ data class EventEntity(
     @PrimaryKey val id: String,
     val title: String,
     val time: String, // HH:MM
-    val type: EventType = EventType.OTHER,
+    val type: EventType,
     val createdAt: Long = System.currentTimeMillis(),
     val isEnabled: Boolean = true,
     val icon: String = "⏰"

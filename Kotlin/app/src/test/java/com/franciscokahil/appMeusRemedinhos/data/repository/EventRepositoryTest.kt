@@ -3,6 +3,7 @@ package com.franciscokahil.appMeusRemedinhos.data.repository
 import android.content.Context
 import com.franciscokahil.appMeusRemedinhos.data.local.EventDao
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -21,7 +22,7 @@ class EventRepositoryTest {
 
     @Test
     fun `insertEvent should call DAO`() = runTest {
-        val event = EventEntity("1", "Teste", "12:00")
+        val event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER)
         
         repository.insertEvent(event, emptyList())
 
@@ -30,7 +31,7 @@ class EventRepositoryTest {
 
     @Test
     fun `deleteEvent should call DAO`() = runTest {
-        val event = EventEntity("1", "Teste", "12:00")
+        val event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER)
         
         repository.deleteEvent(event)
 

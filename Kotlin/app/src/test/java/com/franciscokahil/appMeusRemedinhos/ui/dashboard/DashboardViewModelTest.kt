@@ -3,6 +3,7 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import app.cash.turbine.test
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
@@ -68,7 +69,7 @@ class DashboardViewModelTest {
             
             // Emit a non-empty list
             val event = EventWithMedications(
-                event = EventEntity("1", "Teste", "08:00"),
+                event = EventEntity("1", "Teste", "08:00", type = EventType.OTHER),
                 medications = emptyList()
             )
             eventsFlow.value = listOf(event)
@@ -93,7 +94,7 @@ class DashboardViewModelTest {
     @Test
     fun `toggleEventStatus should call medication repository markAsTaken`() = runTest {
         val eventWithMeds = EventWithMedications(
-            event = EventEntity("1", "Teste", "12:00"),
+            event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER),
             medications = emptyList()
         )
         

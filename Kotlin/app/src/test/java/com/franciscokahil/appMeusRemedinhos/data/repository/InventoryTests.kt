@@ -31,7 +31,7 @@ class InventoryTests {
         
         // 2 events using this med: 1 unit and 2 units = 3 units/day
         val event1 = EventWithMedications(
-            event = EventEntity(id = "e1", title = "Morning", time = "08:00", isEnabled = true),
+            event = EventEntity(id = "e1", title = "Morning", time = "08:00", isEnabled = true, type = EventType.OTHER),
             medications = listOf(
                 MedicationWithDosage(
                     crossRef = EventMedicationEntity("e1", "med1", "1", ""), 
@@ -40,7 +40,7 @@ class InventoryTests {
             )
         )
         val event2 = EventWithMedications(
-            event = EventEntity(id = "e2", title = "Evening", time = "20:00", isEnabled = true),
+            event = EventEntity(id = "e2", title = "Evening", time = "20:00", isEnabled = true, type = EventType.OTHER),
             medications = listOf(
                 MedicationWithDosage(
                     crossRef = EventMedicationEntity("e2", "med1", "2", ""), 

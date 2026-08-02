@@ -917,7 +917,7 @@ fun EventCard(
 @Composable
 fun EventCardPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = "Café da manhã", time = "08:00", icon = "🍳"),
+        event = EventEntity(id = "1", title = "Café da manhã", time = "08:00", icon = "🍳", type = EventType.BREAKFAST),
         medications = listOf(
             MedicationWithDosage(
                 crossRef = EventMedicationEntity("1", "1", "1", "💊 comprimido"),
@@ -950,7 +950,7 @@ fun EventCardPreview() {
 @Composable
 fun EventCardTakenPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = "Ao acordar", time = "07:00", icon = "🕐"),
+        event = EventEntity(id = "1", title = "Ao acordar", time = "07:00", icon = "🕐", type = EventType.WAKE_UP),
         medications = listOf(
             MedicationWithDosage(
                 crossRef = EventMedicationEntity("1", "3", "200", "ml"),
@@ -979,7 +979,7 @@ fun EventCardTakenPreview() {
 @Composable
 fun EventCardExpandedPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = "Café da manhã", time = "08:00", icon = "🍳"),
+        event = EventEntity(id = "1", title = EventType.BREAKFAST.name, time = "08:00", icon = EventType.BREAKFAST.defaultIcon, type = EventType.BREAKFAST),
         medications = listOf(
             MedicationWithDosage(
                 crossRef = EventMedicationEntity("1", "1", "100", "mg"),
@@ -991,7 +991,40 @@ fun EventCardExpandedPreview() {
             )
         )
     )
-    
+
+    MeusRemedinhosTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            EventCard(
+                event = sampleEvent,
+                allMedications = listOf(Medication(id = "1", name = "Aspirina"), Medication(id = "2", name = "Vitamina C")),
+                isTakenToday = false,
+                isExpanded = true,
+                onExpandClick = {},
+                onSave = { _, _ -> },
+                onDelete = {},
+                onToggleTaken = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EventCardExpandedOtherPreview() {
+    val sampleEvent = EventWithMedications(
+        event = EventEntity(id = "1", title = EventType.OTHER.name, time = "08:00", icon = EventType.OTHER.defaultIcon, type = EventType.OTHER),
+        medications = listOf(
+            MedicationWithDosage(
+                crossRef = EventMedicationEntity("1", "1", "100", "mg"),
+                medication = Medication(id = "1", name = "Aspirina", currentStock = 24f, lowStockThreshold = 5f)
+            ),
+            MedicationWithDosage(
+                crossRef = EventMedicationEntity("1", "2", "1", "💊 comprimido"),
+                medication = Medication(id = "2", name = "Cloridato de Vitamina C")
+            )
+        )
+    )
+
     MeusRemedinhosTheme {
         Box(modifier = Modifier.fillMaxSize()) {
             EventCard(

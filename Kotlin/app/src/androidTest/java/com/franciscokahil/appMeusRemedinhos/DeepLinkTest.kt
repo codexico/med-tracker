@@ -9,6 +9,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +32,7 @@ class DeepLinkTest {
         
         runBlocking {
             database.eventDao().insertEvent(
-                EventEntity(id = eventId, title = eventTitle, time = "15:00", icon = "🧪")
+                EventEntity(id = eventId, title = eventTitle, time = "15:00", icon = "🧪", type = EventType.OTHER)
             )
         }
         
