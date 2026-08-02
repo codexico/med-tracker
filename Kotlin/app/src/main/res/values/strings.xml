@@ -67,7 +67,7 @@
     <string name="remove_med_desc">Isso removerá o medicamento do estoque e de todos os horários associados.</string>
     <string name="edit_med_title">Editar Medicamento</string>
     <string name="edit_item_label">Editar item</string>
-    <string name="add_item_label">Adicionar item</string>
+    <string name="add_item_label">Adicionar Medicamento</string>
     <string name="save">Salvar</string>
     <string name="medications_label">Medicamentos</string>
     <string name="add_medication_hint">Adicionar medicamento</string>

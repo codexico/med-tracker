@@ -41,7 +41,7 @@ class InventoryViewModel(
                 null
             }
 
-            MedicationStockUIModel(med, days)
+            MedicationStockUIModel(med, days, totalDailyDosage)
         }
     }.stateIn(
         scope = viewModelScope,

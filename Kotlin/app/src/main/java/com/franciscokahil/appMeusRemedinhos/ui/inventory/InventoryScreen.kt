@@ -1,5 +1,7 @@
 package com.franciscokahil.appMeusRemedinhos.ui.inventory
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,19 +13,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
-import com.franciscokahil.appMeusRemedinhos.ui.inventory.MedicationStockUIModel
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepositoryImpl
+import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,22 +42,8 @@ fun InventoryScreen(
 
     val uiModels by viewModel.medications.collectAsState()
     
-    var editingMedication by remember { mutableStateOf<Medication?>(null) }
+    var expandedMedicationId by remember { mutableStateOf<String?>(null) }
     var showDeleteConfirm by remember { mutableStateOf<Medication?>(null) }
-
-    if (editingMedication != null) {
-        EditStockDialog(
-            medication = editingMedication!!,
-            onDismiss = { editingMedication = null },
-            onSave = { updatedMed ->
-                viewModel.updateMedication(updatedMed)
-                editingMedication = null
-            },
-            onDeleteRequest = { med ->
-                showDeleteConfirm = med
-            }
-        )
-    }
 
     if (showDeleteConfirm != null) {
         AlertDialog(
@@ -66,7 +55,7 @@ fun InventoryScreen(
                     onClick = {
                         viewModel.deleteMedication(showDeleteConfirm!!)
                         showDeleteConfirm = null
-                        editingMedication = null
+                        expandedMedicationId = null
                     },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                 ) {
@@ -111,13 +100,24 @@ fun InventoryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                contentPadding = PaddingValues(bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(if (expandedMedicationId != null) 0.dp else 12.dp)
             ) {
                 items(uiModels, key = { it.medication.id }) { uiModel ->
+                    val isExpanded = expandedMedicationId == uiModel.medication.id
                     MedicationStockCard(
                         uiModel = uiModel,
-                        onClick = { editingMedication = uiModel.medication }
+                        isExpanded = isExpanded,
+                        onExpandClick = {
+                            expandedMedicationId = if (isExpanded) null else uiModel.medication.id
+                        },
+                        onSave = { updatedMed ->
+                            viewModel.updateMedication(updatedMed)
+                            expandedMedicationId = null
+                        },
+                        onDeleteRequest = { med ->
+                            showDeleteConfirm = med
+                        }
                     )
                 }
             }
@@ -128,116 +128,188 @@ fun InventoryScreen(
 @Composable
 fun MedicationStockCard(
     uiModel: MedicationStockUIModel,
-    onClick: () -> Unit
+    isExpanded: Boolean,
+    onExpandClick: () -> Unit,
+    onSave: (Medication) -> Unit,
+    onDeleteRequest: (Medication) -> Unit
 ) {
     val medication = uiModel.medication
     val isLowStock = medication.currentStock <= medication.lowStockThreshold && medication.lowStockThreshold > 0
 
+    var nameText by remember(medication.name, isExpanded) { mutableStateOf(medication.name) }
+    var stockText by remember(medication.currentStock, isExpanded) { mutableStateOf(medication.currentStock.toString()) }
+    var thresholdText by remember(medication.lowStockThreshold, isExpanded) { mutableStateOf(medication.lowStockThreshold.toString()) }
+
     ElevatedCard(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        onClick = onExpandClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+            .padding(horizontal = if (isExpanded) 0.dp else 16.dp),
+        shape = if (isExpanded) RectangleShape else MaterialTheme.shapes.medium,
         colors = CardDefaults.elevatedCardColors(
-            containerColor = if (isLowStock) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f) 
+            containerColor = if (isExpanded) MaterialTheme.colorScheme.surface
+                             else if (isLowStock) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f) 
                              else MaterialTheme.colorScheme.surface
-        )
+        ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = if (isExpanded) 0.dp else 3.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = medication.nameWithEmoji,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                val stockText = stringResource(R.string.stock_remaining_label, medication.currentStock)
-                val daysText = uiModel.daysRemaining?.let { stringResource(R.string.stock_duration_days, it) } ?: ""
-                
-                Text(
-                    text = "$stockText$daysText",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isLowStock) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
-                )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = medication.nameWithEmoji,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    val stockTextDisplay = stringResource(R.string.stock_remaining_label, medication.currentStock)
+                    val daysText = uiModel.daysRemaining?.let { stringResource(R.string.stock_duration_days, it) } ?: ""
+                    
+                    Text(
+                        text = "$stockTextDisplay$daysText",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (isLowStock) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
+                    )
+                }
+
+                if (isLowStock && !isExpanded) {
+                    Text(
+                        text = stringResource(R.string.low_stock_label),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Black
+                    )
+                }
             }
 
-            if (isLowStock) {
-                Text(
-                    text = stringResource(R.string.low_stock_label),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Black
-                )
+            AnimatedVisibility(visible = isExpanded) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    OutlinedTextField(
+                        value = nameText,
+                        onValueChange = { nameText = it },
+                        label = { Text(stringResource(R.string.time_name_label)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = stockText,
+                        onValueChange = { stockText = it },
+                        label = { Text(stringResource(R.string.current_stock_label)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = thresholdText,
+                        onValueChange = { thresholdText = it },
+                        label = { Text(stringResource(R.string.low_stock_threshold_label)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { onDeleteRequest(medication) }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+                        }
+                        
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            TextButton(onClick = onExpandClick) {
+                                Text(stringResource(R.string.cancel))
+                            }
+                            Button(
+                                onClick = {
+                                    val threshold = if (thresholdText.isBlank()) {
+                                        uiModel.dailyDosage * 7
+                                    } else {
+                                        thresholdText.toFloatOrNull() ?: 0f
+                                    }
+                                    val updated = medication.copy(
+                                        name = nameText,
+                                        currentStock = stockText.toFloatOrNull() ?: 0f,
+                                        lowStockThreshold = threshold
+                                    )
+                                    onSave(updated)
+                                }
+                            ) {
+                                Text(stringResource(R.string.save))
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun EditStockDialog(
-    medication: Medication,
-    onDismiss: () -> Unit,
-    onSave: (Medication) -> Unit,
-    onDeleteRequest: (Medication) -> Unit
-) {
-    var stockText by remember { mutableStateOf(medication.currentStock.toString()) }
-    var thresholdText by remember { mutableStateOf(medication.lowStockThreshold.toString()) }
-    var nameText by remember { mutableStateOf(medication.name) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.edit_med_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = nameText,
-                    onValueChange = { nameText = it },
-                    label = { Text(stringResource(R.string.time_name_label)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = stockText,
-                    onValueChange = { stockText = it },
-                    label = { Text(stringResource(R.string.current_stock_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = thresholdText,
-                    onValueChange = { thresholdText = it },
-                    label = { Text(stringResource(R.string.low_stock_threshold_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    val updated = medication.copy(
-                        name = nameText,
-                        currentStock = stockText.toFloatOrNull() ?: 0f,
-                        lowStockThreshold = thresholdText.toFloatOrNull() ?: 0f
-                    )
-                    onSave(updated)
-                }
-            ) {
-                Text(stringResource(R.string.save))
-            }
-        },
-        dismissButton = {
-            Row {
-                IconButton(onClick = { onDeleteRequest(medication) }) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
-                }
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        }
+fun MedicationStockCardPreview() {
+    val sampleMedication = Medication(
+        id = "1",
+        name = "Paracetamol 💊",
+        currentStock = 10f,
+        lowStockThreshold = 5f
     )
+    val uiModel = MedicationStockUIModel(
+        medication = sampleMedication,
+        daysRemaining = 5,
+        dailyDosage = 2f
+    )
+    MeusRemedinhosTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            MedicationStockCard(
+                uiModel = uiModel,
+                isExpanded = false,
+                onExpandClick = {},
+                onSave = {},
+                onDeleteRequest = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MedicationStockCardExpandedPreview() {
+    val sampleMedication = Medication(
+        id = "1",
+        name = "Paracetamol 💊",
+        currentStock = 10f,
+        lowStockThreshold = 5f
+    )
+    val uiModel = MedicationStockUIModel(
+        medication = sampleMedication,
+        daysRemaining = 5,
+        dailyDosage = 2f
+    )
+    MeusRemedinhosTheme {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            MedicationStockCard(
+                uiModel = uiModel,
+                isExpanded = true,
+                onExpandClick = {},
+                onSave = {},
+                onDeleteRequest = {}
+            )
+        }
+    }
 }
