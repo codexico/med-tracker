@@ -10,6 +10,7 @@
     - Ensure you have the `.jks` file and credentials.
     - Check that the `release` block in `app/build.gradle.kts` points to the correct signing config.
 - [ ] **Version Bump**:
+    - Consult the [**Release Guide**](RELEASE_GUIDE.md) for the detailed procedure.
     - Increment `versionCode` by 1.
     - Update `versionName` to the new semantic version (e.g., `3.4.0`).
 - [ ] **ProGuard / R8**:

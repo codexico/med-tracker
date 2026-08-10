@@ -96,6 +96,7 @@ graph TD;
 | [**Product Guide**](docs/PRODUCT_GUIDE.md) | Features, user flows, and roadmap. |
 | [**Developer Guide**](docs/DEVELOPER_GUIDE.md) | Setup, project structure, and coding patterns. |
 | [**Testing Guide**](docs/TESTING.md) | How to run tests and coverage reports. |
+| [**Release Guide**](docs/RELEASE_GUIDE.md) | Standard procedure for building and versioning a new release. |
 | [**Glossary**](docs/GLOSSARY.md) | Domain terms used in the project. |
 | [**Features**](docs/FEATURES.md) | Technical breakdown of implemented features. |
 
