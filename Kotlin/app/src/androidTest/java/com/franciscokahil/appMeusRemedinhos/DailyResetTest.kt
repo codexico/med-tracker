@@ -70,6 +70,8 @@ class DailyResetTest {
         composeTestRule.waitForIdle()
     }
 
+    private fun hasTakenStatusMatcher() = hasContentDescription("Concluído", substring = true) or hasContentDescription("Done", substring = true)
+
     @Test
     fun testMarkMedicationAsTaken() {
         ensureInDashboard()
@@ -77,9 +79,8 @@ class DailyResetTest {
         composeTestRule.onAllNodesWithTag("event_checkbox").onFirst().performClick()
         composeTestRule.waitForIdle()
 
-        // Verify status in card content description
-        val takenStatus = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.status_taken)
-        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).onFirst().assertIsDisplayed()
+        // Verify status in card content description (PT: Concluído, EN: Done)
+        composeTestRule.onAllNodes(hasTakenStatusMatcher(), useUnmergedTree = true).onFirst().assertIsDisplayed()
     }
 
     @Test
@@ -104,9 +105,8 @@ class DailyResetTest {
             composeTestRule.waitForIdle()
         }
 
-        // Verify all are now in "Taken" state (in semantics content description)
-        val takenStatus = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.status_taken)
-        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).assertCountEquals(count)
+        // Verify all are now in "Taken" state
+        composeTestRule.onAllNodes(hasTakenStatusMatcher(), useUnmergedTree = true).assertCountEquals(count)
     }
 
     @Test
@@ -134,7 +134,6 @@ class DailyResetTest {
         composeTestRule.activityRule.scenario.recreate()
         composeTestRule.waitForIdle()
 
-        val takenStatus = InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.status_taken)
-        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).onFirst().assertIsDisplayed()
+        composeTestRule.onAllNodes(hasTakenStatusMatcher(), useUnmergedTree = true).onFirst().assertIsDisplayed()
     }
 }

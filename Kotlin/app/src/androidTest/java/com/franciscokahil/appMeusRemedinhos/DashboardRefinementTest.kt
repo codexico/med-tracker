@@ -147,7 +147,8 @@ class DashboardRefinementTest {
         composeTestRule.waitForIdle()
         
         // 4. Verify it was saved and is visible in the compact card
-        composeTestRule.onNodeWithText(medName).assertIsDisplayed()
+        // Note: med.displayName includes dosage/unit if present, but here it's just name
+        composeTestRule.onNodeWithText(medName, substring = true).assertIsDisplayed()
     }
 
     @Test

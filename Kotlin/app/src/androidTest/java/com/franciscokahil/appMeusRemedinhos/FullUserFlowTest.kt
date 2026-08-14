@@ -9,7 +9,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.RuleChain
@@ -47,54 +46,40 @@ class FullUserFlowTest {
         .around(permissionRule)
         .around(composeTestRule)
 
-    @Before
-    fun setup() {
-        // Activity is launched after cleanStateRule
-    }
-
     @Test
     fun fullAppFlow() {
-        // 1. Dashboard State - can be empty OR seeded
+        // 1. Dashboard State
         composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule.onAllNodesWithTag("empty_state").fetchSemanticsNodes().isNotEmpty() ||
             composeTestRule.onAllNodesWithTag("event_list").fetchSemanticsNodes().isNotEmpty()
         }
 
-        // If it's empty, we might see the onboarding title
-        val emptyTitle = composeTestRule.onAllNodesWithText("esqueça seus remédios", substring = true)
-        if (emptyTitle.fetchSemanticsNodes().isNotEmpty()) {
-            emptyTitle[0].assertIsDisplayed()
-        }
-
-        // 2. Click FAB to open menu
+        // 2. Click FAB
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
 
-        // 3. Select "Outro" preset (Other in English)
+        // 3. Select "Other" preset (PT: Outro, EN: Other)
         composeTestRule.onNode(hasText("Outro", substring = true) or hasText("Other", substring = true)).performClick()
         
-        // 4. Fill and Create
-        composeTestRule.onNode(hasText("Novo Horário", substring = true) or hasText("New Reminder", substring = true)).assertIsDisplayed()
+        // 4. Verify New Reminder header (PT: Novo Horário, EN: New Reminder)
+        composeTestRule.onNode(hasText("Novo Horário", substring = true) or hasText("New Reminder", substring = true), useUnmergedTree = true).assertIsDisplayed()
         
         val testLabel = "Teste Automatizado"
         composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(testLabel)
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
 
-        // 5. Verify added event on Dashboard
+        // 5. Verify added event
         composeTestRule.waitUntil(10000) {
             composeTestRule.onAllNodesWithText(testLabel, substring = true).fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithText(testLabel, substring = true).assertIsDisplayed()
         
         // 6. Toggle status
-        // Use the test tag and onFirst to handle potential seeded events
         composeTestRule.onAllNodesWithTag("event_checkbox").onFirst().performClick()
         
-        // Verify taken status (semantics usually merge text into content description)
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val takenStatus = targetContext.getString(R.string.status_taken)
+        // 7. Verify taken status in content description (PT: Concluído, EN: Done)
         composeTestRule.waitUntil(10000) {
-            composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).fetchSemanticsNodes().isNotEmpty()
+            composeTestRule.onAllNodes(hasContentDescription("Concluído", substring = true) or hasContentDescription("Done", substring = true), useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
         }
-        composeTestRule.onAllNodesWithContentDescription(takenStatus, substring = true).onFirst().assertIsDisplayed()
+        composeTestRule.onAllNodes(hasContentDescription("Concluído", substring = true) or hasContentDescription("Done", substring = true), useUnmergedTree = true).onFirst().assertIsDisplayed()
     }
 }

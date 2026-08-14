@@ -878,7 +878,7 @@ fun EventCard(
                                 },
                                 modifier = Modifier
                                     .minimumInteractiveComponentSize()
-                                    .testTag("save_event_button")
+                                    .testTag(if (isNewEvent) "confirm_add_event" else "save_event_button")
                             ) {
                                 Text(if (isNewEvent) stringResource(R.string.create) else stringResource(R.string.save))
                             }
