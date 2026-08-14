@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,20 +19,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
+import com.franciscokahil.appMeusRemedinhos.ui.components.CombinedPreviews
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoryScreen(
-    onNavigateBack: () -> Unit
+    highlightedMedId: String? = null,
+    onNavigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
     val database = remember { AppDatabase.getDatabase(context) }
@@ -44,6 +48,20 @@ fun InventoryScreen(
     
     var expandedMedicationId by remember { mutableStateOf<String?>(null) }
     var showDeleteConfirm by remember { mutableStateOf<Medication?>(null) }
+
+    val listState = rememberLazyListState()
+
+    // Handle highlighting from navigation
+    LaunchedEffect(highlightedMedId, uiModels) {
+        if ((highlightedMedId != null) && uiModels.isNotEmpty()) {
+            val index = uiModels.indexOfFirst { it.medication.id == highlightedMedId }
+            if (index != -1) {
+                expandedMedicationId = highlightedMedId
+                delay(100.milliseconds) // Ensure layout is ready
+                listState.animateScrollToItem(index)
+            }
+        }
+    }
 
     if (showDeleteConfirm != null) {
         AlertDialog(
@@ -97,6 +115,7 @@ fun InventoryScreen(
             }
         } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
@@ -114,11 +133,10 @@ fun InventoryScreen(
                         onSave = { updatedMed ->
                             viewModel.updateMedication(updatedMed)
                             expandedMedicationId = null
-                        },
-                        onDeleteRequest = { med ->
-                            showDeleteConfirm = med
                         }
-                    )
+                    ) { med ->
+                        showDeleteConfirm = med
+                    }
                 }
             }
         }
@@ -131,10 +149,10 @@ fun MedicationStockCard(
     isExpanded: Boolean,
     onExpandClick: () -> Unit,
     onSave: (Medication) -> Unit,
-    onDeleteRequest: (Medication) -> Unit
+    onDeleteRequest: (Medication) -> Unit,
 ) {
     val medication = uiModel.medication
-    val isLowStock = medication.currentStock <= medication.lowStockThreshold && medication.lowStockThreshold > 0
+    val isLowStock = (medication.currentStock <= medication.lowStockThreshold) && (medication.lowStockThreshold > 0)
 
     var nameText by remember(medication.name, isExpanded) { mutableStateOf(medication.name) }
     var stockText by remember(medication.currentStock, isExpanded) { mutableStateOf(medication.currentStock.toString()) }
@@ -150,7 +168,7 @@ fun MedicationStockCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = if (isExpanded) MaterialTheme.colorScheme.surface
                              else if (isLowStock) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f) 
-                             else MaterialTheme.colorScheme.surface
+                             else MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = if (isExpanded) 0.dp else 3.dp)
     ) {
@@ -165,7 +183,7 @@ fun MedicationStockCard(
                     Text(
                         text = medication.nameWithEmoji,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     
@@ -199,26 +217,52 @@ fun MedicationStockCard(
                     HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(modifier = Modifier.height(4.dp))
                     
-                    OutlinedTextField(
-                        value = nameText,
-                        onValueChange = { nameText = it },
-                        label = { Text(stringResource(R.string.time_name_label)) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = stockText,
-                        onValueChange = { stockText = it },
-                        label = { Text(stringResource(R.string.current_stock_label)) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = thresholdText,
-                        onValueChange = { thresholdText = it },
-                        label = { Text(stringResource(R.string.low_stock_threshold_label)) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Column {
+                        Text(
+                            text = stringResource(R.string.med_name_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
+                        OutlinedTextField(
+                            value = nameText,
+                            onValueChange = { nameText = it },
+                            placeholder = { Text(stringResource(R.string.med_name_placeholder)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    Column {
+                        Text(
+                            text = stringResource(R.string.current_stock_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
+                        OutlinedTextField(
+                            value = stockText,
+                            onValueChange = { stockText = it },
+                            placeholder = { Text(stringResource(R.string.current_stock_label)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    Column {
+                        Text(
+                            text = stringResource(R.string.low_stock_threshold_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
+                        OutlinedTextField(
+                            value = thresholdText,
+                            onValueChange = { thresholdText = it },
+                            placeholder = { Text(stringResource(R.string.low_stock_threshold_label)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
 
                     Row(
                         modifier = Modifier
@@ -260,14 +304,14 @@ fun MedicationStockCard(
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun MedicationStockCardPreview() {
     val sampleMedication = Medication(
         id = "1",
-        name = "Paracetamol 💊",
+        name = stringResource(R.string.sample_med_paracetamol),
         currentStock = 10f,
-        lowStockThreshold = 5f
+        lowStockThreshold = 5f,
     )
     val uiModel = MedicationStockUIModel(
         medication = sampleMedication,
@@ -280,21 +324,20 @@ fun MedicationStockCardPreview() {
                 uiModel = uiModel,
                 isExpanded = false,
                 onExpandClick = {},
-                onSave = {},
-                onDeleteRequest = {}
-            )
+                onSave = { }
+            ) { }
         }
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun MedicationStockCardExpandedPreview() {
     val sampleMedication = Medication(
         id = "1",
-        name = "Paracetamol 💊",
+        name = stringResource(R.string.sample_med_paracetamol),
         currentStock = 10f,
-        lowStockThreshold = 5f
+        lowStockThreshold = 5f,
     )
     val uiModel = MedicationStockUIModel(
         medication = sampleMedication,
@@ -307,9 +350,8 @@ fun MedicationStockCardExpandedPreview() {
                 uiModel = uiModel,
                 isExpanded = true,
                 onExpandClick = {},
-                onSave = {},
-                onDeleteRequest = {}
-            )
+                onSave = { }
+            ) { }
         }
     }
 }

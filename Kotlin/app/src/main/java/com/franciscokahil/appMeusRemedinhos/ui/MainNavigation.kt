@@ -1,9 +1,11 @@
 package com.franciscokahil.appMeusRemedinhos.ui
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.franciscokahil.appMeusRemedinhos.ui.dashboard.DashboardScreen
 import com.franciscokahil.appMeusRemedinhos.ui.inventory.InventoryScreen
 
@@ -18,13 +20,25 @@ fun MainNavigation(
     NavHost(navController = navController, startDestination = startDestination) {
         composable("dashboard") {
             DashboardScreen(
-                onNavigateToInventory = { navController.navigate("inventory") },
+                onNavigateToInventory = { medId -> 
+                    val route = if (medId != null) "inventory?medId=$medId" else "inventory"
+                    navController.navigate(route) 
+                },
                 highlightedId = highlightedId,
                 onHighlightedConsumed = onHighlightedConsumed
             )
         }
-        composable("inventory") {
+        composable(
+            route = "inventory?medId={medId}",
+            arguments = listOf(navArgument("medId") { 
+                type = NavType.StringType
+                nullable = true
+                defaultValue = null
+            })
+        ) { backStackEntry ->
+            val medId = backStackEntry.arguments?.getString("medId")
             InventoryScreen(
+                highlightedMedId = medId,
                 onNavigateBack = { navController.popBackStack() }
             )
         }

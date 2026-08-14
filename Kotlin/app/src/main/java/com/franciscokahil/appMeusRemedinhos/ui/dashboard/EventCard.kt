@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChip
@@ -48,6 +47,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -72,7 +72,6 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.franciscokahil.appMeusRemedinhos.R
@@ -83,9 +82,11 @@ import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationUnit
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
+import com.franciscokahil.appMeusRemedinhos.ui.components.CombinedPreviews
 import com.franciscokahil.appMeusRemedinhos.ui.components.M3TimePickerDialog
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import java.util.Locale
+import java.util.UUID
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +99,7 @@ fun EventCard(
     onSave: (EventEntity, List<Medication>) -> Unit,
     onDelete: () -> Unit,
     onToggleTaken: (Boolean) -> Unit,
+    onManageStock: (EventEntity, List<Medication>, String?) -> Unit,
     modifier: Modifier = Modifier,
     highlightColor: Color = Color.Transparent,
     isNewEvent: Boolean = false,
@@ -123,8 +125,6 @@ fun EventCard(
     var newMedName by remember(isExpanded) { mutableStateOf("") }
     var newMedQuantity by remember(isExpanded) { mutableStateOf("") }
     var newMedUnit by remember(isExpanded) { mutableStateOf("") }
-    var newMedStock by remember(isExpanded) { mutableStateOf("") }
-    var newMedThreshold by remember(isExpanded) { mutableStateOf("") }
     var customUnit by remember(isExpanded) { mutableStateOf("") }
     var unitExpanded by remember { mutableStateOf(value = false) }
     var medNameError by remember { mutableStateOf(false) }
@@ -137,16 +137,9 @@ fun EventCard(
     var titleError by remember { mutableStateOf(false) }
     
     val otherUnitLabel = stringResource(R.string.unit_other)
-    val units = listOf(
-        "${MedicationUnit.PILL.emoji} ${stringResource(MedicationUnit.PILL.labelRes)}",
-        "${MedicationUnit.CAPSULE.emoji} ${stringResource(MedicationUnit.CAPSULE.labelRes)}",
-        "${MedicationUnit.MG.emoji} ${stringResource(MedicationUnit.MG.labelRes)}",
-        "${MedicationUnit.ML.emoji} ${stringResource(MedicationUnit.ML.labelRes)}",
-        "${MedicationUnit.DROPS.emoji} ${stringResource(MedicationUnit.DROPS.labelRes)}",
-        "${MedicationUnit.SPOON.emoji} ${stringResource(MedicationUnit.SPOON.labelRes)}",
-        "${MedicationUnit.APPLICATION.emoji} ${stringResource(MedicationUnit.APPLICATION.labelRes)}",
-        otherUnitLabel,
-    )
+    val units = MedicationUnit.DEFAULT_UNITS.map { 
+        "${it.emoji} ${stringResource(it.labelRes)}" 
+    } + otherUnitLabel
 
     val timeParts = editTime.split(":")
     val initialHour = timeParts.getOrNull(0)?.toIntOrNull() ?: 12
@@ -395,6 +388,12 @@ fun EventCard(
                     // Edit Title
                     val isOtherEvent = event.event.type == EventType.OTHER
                     if (isOtherEvent) {
+                        Text(
+                            text = stringResource(R.string.time_name_label),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
                         OutlinedTextField(
                             value = editTitle,
                             onValueChange = {
@@ -403,7 +402,7 @@ fun EventCard(
                                     if (it.isNotBlank()) titleError = false
                                 }
                             },
-                            label = { Text(stringResource(R.string.time_name_label)) },
+                            placeholder = { Text(stringResource(R.string.time_name_placeholder)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("edit_event_title_input"),
@@ -475,8 +474,6 @@ fun EventCard(
                                     editingMedicationIndex = index
                                     newMedName = med.name
                                     newMedQuantity = med.dosageValue
-                                    newMedStock = if (med.currentStock > 0) med.currentStock.toString() else ""
-                                    newMedThreshold = if (med.lowStockThreshold > 0) med.lowStockThreshold.toString() else ""
                                     
                                     // Robust unit detection
                                     val matchedUnit = units.find { it == med.dosageUnit }
@@ -514,19 +511,26 @@ fun EventCard(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
-                                text = if (editingMedicationIndex != null) "Editar item" else "Adicionar item",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.secondary,
+                                text = if (editingMedicationIndex != null) stringResource(R.string.edit_item_label) else stringResource(R.string.add_item_label),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
 
                             // Line 1: Name with Autocomplete
+                            Text(
+                                text = stringResource(R.string.med_name_label),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.padding(bottom = 2.dp)
+                            )
                             ExposedDropdownMenuBox(
                                 expanded = medNameExpanded && newMedName.isNotBlank(),
                                 onExpandedChange = { medNameExpanded = it },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                TextField(
+                                OutlinedTextField(
                                     value = newMedName,
                                     onValueChange = { 
                                         if (it.length <= 30) {
@@ -535,14 +539,7 @@ fun EventCard(
                                             if (it.isNotBlank()) medNameError = false
                                             
                                             // Check if it matches an existing med EXACTLY to reuse ID
-                                            val matched = allMedications.find { m -> m.name.equals(it.trim(), ignoreCase = true) }
-                                            if (matched != null) {
-                                                selectedMedicationId = matched.id
-                                                // We don't auto-fill everything here to avoid annoying the user 
-                                                // while typing, but the ID is now linked.
-                                            } else {
-                                                selectedMedicationId = null
-                                            }
+                                            selectedMedicationId = allMedications.find { m -> m.name.equals(it.trim(), ignoreCase = true) }?.id
                                         }
                                     },
                                     placeholder = { Text(stringResource(R.string.med_name_placeholder)) },
@@ -551,13 +548,7 @@ fun EventCard(
                                         .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true)
                                         .testTag("medication_input"),
                                     singleLine = true,
-                                    isError = medNameError,
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent,
-                                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                        unfocusedIndicatorColor = if (medNameError) MaterialTheme.colorScheme.error.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
-                                    )
+                                    isError = medNameError
                                 )
 
                                 val filteredOptions = allMedications.filter { 
@@ -578,8 +569,6 @@ fun EventCard(
                                                     newMedQuantity = selectionOption.dosageValue
                                                     newMedUnit = if (selectionOption.dosageUnit in units) selectionOption.dosageUnit else if (selectionOption.dosageUnit.isNotEmpty()) otherUnitLabel else ""
                                                     customUnit = if (selectionOption.dosageUnit in units) "" else selectionOption.dosageUnit
-                                                    newMedStock = if (selectionOption.currentStock > 0) selectionOption.currentStock.toString() else ""
-                                                    newMedThreshold = if (selectionOption.lowStockThreshold > 0) selectionOption.lowStockThreshold.toString() else ""
                                                     medNameExpanded = false
                                                     medNameError = false
                                                 }
@@ -595,53 +584,57 @@ fun EventCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                TextField(
-                                    value = newMedQuantity,
-                                    onValueChange = { newMedQuantity = it },
-                                    placeholder = { Text(stringResource(R.string.med_qty_placeholder)) },
-                                    modifier = Modifier.weight(0.8f),
-                                    singleLine = true,
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent,
-                                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                        unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-                                    ),
-                                )
-                                
-                                ExposedDropdownMenuBox(
-                                    expanded = unitExpanded,
-                                    onExpandedChange = { unitExpanded = !unitExpanded },
-                                    modifier = Modifier.weight(1.2f)
-                                ) {
-                                    TextField(
-                                        value = newMedUnit,
-                                        onValueChange = {},
-                                        readOnly = true,
-                                        placeholder = { Text(stringResource(R.string.unit_label)) },
-                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
-                                        colors = TextFieldDefaults.colors(
-                                            focusedContainerColor = Color.Transparent,
-                                            unfocusedContainerColor = Color.Transparent,
-                                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                            unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant
-                                        ),
-                                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
-                                        textStyle = MaterialTheme.typography.bodyMedium
+                                Column(modifier = Modifier.weight(0.8f)) {
+                                    Text(
+                                        text = stringResource(R.string.med_qty_placeholder),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        modifier = Modifier.padding(bottom = 2.dp)
                                     )
-                                    ExposedDropdownMenu(
+                                    OutlinedTextField(
+                                        value = newMedQuantity,
+                                        onValueChange = { newMedQuantity = it },
+                                        placeholder = { Text(stringResource(R.string.med_qty_placeholder)) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                                    )
+                                }
+                                
+                                Column(modifier = Modifier.weight(1.2f)) {
+                                    Text(
+                                        text = stringResource(R.string.unit_label),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        modifier = Modifier.padding(bottom = 2.dp)
+                                    )
+                                    ExposedDropdownMenuBox(
                                         expanded = unitExpanded,
-                                        onDismissRequest = { unitExpanded = false }
+                                        onExpandedChange = { unitExpanded = !unitExpanded },
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        units.forEach { selectionOption ->
-                                            DropdownMenuItem(
-                                                text = { Text(selectionOption) },
-                                                onClick = {
-                                                    newMedUnit = selectionOption
-                                                    unitExpanded = false
-                                                }
-                                            )
+                                        OutlinedTextField(
+                                            value = newMedUnit,
+                                            onValueChange = {},
+                                            readOnly = true,
+                                            placeholder = { Text("\uD83D\uDC8A, \uD83D\uDCA7, \uD83D\uDC89, \uD83E\uDD44, ..") },
+                                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = unitExpanded) },
+                                            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true),
+                                            textStyle = MaterialTheme.typography.bodyMedium
+                                        )
+                                        ExposedDropdownMenu(
+                                            expanded = unitExpanded,
+                                            onDismissRequest = { unitExpanded = false }
+                                        ) {
+                                            units.forEach { selectionOption ->
+                                                DropdownMenuItem(
+                                                    text = { Text(selectionOption) },
+                                                    onClick = {
+                                                        newMedUnit = selectionOption
+                                                        unitExpanded = false
+                                                    }
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -649,54 +642,15 @@ fun EventCard(
                             
                             if (newMedUnit == otherUnitLabel) {
                                 Spacer(modifier = Modifier.height(8.dp))
-                                TextField(
+                                OutlinedTextField(
                                     value = customUnit,
                                     onValueChange = { customUnit = it },
                                     placeholder = { Text(stringResource(R.string.unit_other)) },
                                     modifier = Modifier.fillMaxWidth(),
-                                    singleLine = true,
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent,
-                                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                        unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant
-                                    )
+                                    singleLine = true
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            // STOCK FIELDS
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                TextField(
-                                    value = newMedStock,
-                                    onValueChange = { newMedStock = it },
-                                    label = { Text("Estoque Atual") },
-                                    modifier = Modifier.weight(1f),
-                                    singleLine = true,
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent
-                                    )
-                                )
-                                TextField(
-                                    value = newMedThreshold,
-                                    onValueChange = { newMedThreshold = it },
-                                    label = { Text("Aviso de estoque") },
-                                    modifier = Modifier.weight(1f),
-                                    singleLine = true,
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                    colors = TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent
-                                    )
-                                )
-                            }
-                            
                             if (medNameError) {
                                 Text(
                                     text = stringResource(R.string.med_name_error),
@@ -716,8 +670,6 @@ fun EventCard(
                                             medNameError = true
                                         } else {
                                             val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
-                                        val stock = newMedStock.toFloatOrNull() ?: 0f
-                                        val threshold = newMedThreshold.toFloatOrNull() ?: 0f
                                         
                                         localMedications = localMedications.toMutableList().apply { 
                                             val newMed = if (selectedMedicationId != null) {
@@ -726,16 +678,12 @@ fun EventCard(
                                                     name = newMedName.trim(),
                                                     dosageValue = newMedQuantity.trim(),
                                                     dosageUnit = finalUnit,
-                                                    currentStock = stock,
-                                                    lowStockThreshold = threshold
                                                 )
                                             } else {
                                                 Medication(
                                                     name = newMedName.trim(), 
                                                     dosageValue = newMedQuantity.trim(), 
                                                     dosageUnit = finalUnit,
-                                                    currentStock = stock,
-                                                    lowStockThreshold = threshold
                                                 )
                                             }
                                             add(newMed) 
@@ -743,8 +691,6 @@ fun EventCard(
                                         newMedName = ""
                                         newMedQuantity = ""
                                         newMedUnit = ""
-                                        newMedStock = ""
-                                        newMedThreshold = ""
                                         customUnit = ""
                                         selectedMedicationId = null
                                         medNameError = false
@@ -795,16 +741,12 @@ fun EventCard(
                                                 medNameError = true
                                             } else {
                                                 val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
-                                                val stock = newMedStock.toFloatOrNull() ?: 0f
-                                                val threshold = newMedThreshold.toFloatOrNull() ?: 0f
                                                 
                                                 val updatedMed = localMedications[editingMedicationIndex!!].copy(
                                                     id = selectedMedicationId ?: localMedications[editingMedicationIndex!!].id,
                                                     name = newMedName.trim(),
                                                     dosageValue = newMedQuantity.trim(),
                                                     dosageUnit = finalUnit,
-                                                    currentStock = stock,
-                                                    lowStockThreshold = threshold
                                                 )
                                                 localMedications = localMedications.toMutableList().apply {
                                                     set(editingMedicationIndex!!, updatedMed)
@@ -813,8 +755,6 @@ fun EventCard(
                                                 newMedName = ""
                                                 newMedQuantity = ""
                                                 newMedUnit = ""
-                                                newMedStock = ""
-                                                newMedThreshold = ""
                                                 customUnit = ""
                                                 selectedMedicationId = null
                                                 medNameError = false
@@ -827,6 +767,47 @@ fun EventCard(
                                         Text(stringResource(R.string.save), fontSize = 13.sp)
                                     }
                                 }
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // MANAGE STOCK BUTTON
+                            OutlinedButton(
+                                onClick = {
+                                    if (editTitle.isBlank()) {
+                                        titleError = true
+                                    } else {
+                                        val finalMeds = if (newMedName.isNotBlank()) {
+                                            val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
+                                            val currentMed = Medication(
+                                                id = selectedMedicationId ?: (if (editingMedicationIndex != null) localMedications[editingMedicationIndex!!].id else UUID.randomUUID().toString()),
+                                                name = newMedName.trim(), 
+                                                dosageValue = newMedQuantity.trim(), 
+                                                dosageUnit = finalUnit,
+                                            )
+                                            localMedications.toMutableList().apply { 
+                                                if (editingMedicationIndex != null) set(editingMedicationIndex!!, currentMed)
+                                                else add(currentMed)
+                                            }
+                                        } else {
+                                            localMedications
+                                        }
+                                        
+                                        val finalEvent = event.event.copy(title = editTitle, time = editTime, icon = editIcon)
+                                        val targetMedId = if (editingMedicationIndex != null) {
+                                            localMedications[editingMedicationIndex!!].id
+                                        } else if (newMedName.isNotBlank()) {
+                                            selectedMedicationId ?: finalMeds.last().id
+                                        } else null
+
+                                        onManageStock(finalEvent, finalMeds, targetMedId)
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.small,
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                            ) {
+                                Text(stringResource(R.string.manage_stock_label))
                             }
                         }
                     }
@@ -869,15 +850,11 @@ fun EventCard(
                                     } else {
                                         val finalMeds = if (newMedName.isNotBlank()) {
                                             val finalUnit = if (newMedUnit == otherUnitLabel) customUnit.trim() else newMedUnit
-                                            val stock = newMedStock.toFloatOrNull() ?: 0f
-                                            val threshold = newMedThreshold.toFloatOrNull() ?: 0f
                                             
                                             val currentMed = Medication(
                                                 name = newMedName.trim(), 
                                                 dosageValue = newMedQuantity.trim(), 
                                                 dosageUnit = finalUnit,
-                                                currentStock = stock,
-                                                lowStockThreshold = threshold
                                             )
                                             
                                             localMedications.toMutableList().apply { 
@@ -913,19 +890,25 @@ fun EventCard(
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun EventCardPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = "Café da manhã", time = "08:00", icon = "🍳", type = EventType.BREAKFAST),
+        event = EventEntity(
+            id = "1",
+            title = stringResource(EventType.BREAKFAST.defaultTitleRes),
+            time = "08:00",
+            icon = EventType.BREAKFAST.defaultIcon,
+            type = EventType.BREAKFAST
+        ),
         medications = listOf(
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "1", "1", "💊 comprimido"),
-                medication = Medication(id = "1", name = "Aspirina")
+                crossRef = EventMedicationEntity("1", "1", "1", "${MedicationUnit.PILL.emoji} ${stringResource(R.string.unit_pill)}"),
+                medication = Medication(id = "1", name = stringResource(R.string.sample_med_aspirin))
             ),
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "2", "1", "💊 comprimido"),
-                medication = Medication(id = "2", name = "Vitamina C")
+                crossRef = EventMedicationEntity("1", "2", "1", "${MedicationUnit.PILL.emoji} ${stringResource(R.string.unit_pill)}"),
+                medication = Medication(id = "2", name = stringResource(R.string.sample_med_vitamin_c))
             )
         )
     )
@@ -940,21 +923,28 @@ fun EventCardPreview() {
                 onExpandClick = {},
                 onSave = { _, _ -> },
                 onDelete = {},
-                onToggleTaken = {}
+                onToggleTaken = {},
+                onManageStock = { _, _, _ -> }
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun EventCardTakenPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = "Ao acordar", time = "07:00", icon = "🕐", type = EventType.WAKE_UP),
+        event = EventEntity(
+            id = "1",
+            title = stringResource(EventType.WAKE_UP.defaultTitleRes),
+            time = "07:00",
+            icon = EventType.WAKE_UP.defaultIcon,
+            type = EventType.WAKE_UP
+        ),
         medications = listOf(
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "3", "200", "ml"),
-                medication = Medication(id = "3", name = "Água")
+                crossRef = EventMedicationEntity("1", "3", "200", stringResource(R.string.unit_ml)),
+                medication = Medication(id = "3", name = stringResource(R.string.sample_med_water))
             )
         )
     )
@@ -969,25 +959,32 @@ fun EventCardTakenPreview() {
                 onExpandClick = {},
                 onSave = { _, _ -> },
                 onDelete = {},
-                onToggleTaken = {}
+                onToggleTaken = {},
+                onManageStock = { _, _, _ -> }
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun EventCardExpandedPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = EventType.BREAKFAST.name, time = "08:00", icon = EventType.BREAKFAST.defaultIcon, type = EventType.BREAKFAST),
+        event = EventEntity(
+            id = "1",
+            title = stringResource(EventType.BREAKFAST.defaultTitleRes),
+            time = "08:00",
+            icon = EventType.BREAKFAST.defaultIcon,
+            type = EventType.BREAKFAST
+        ),
         medications = listOf(
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "1", "100", "mg"),
-                medication = Medication(id = "1", name = "Aspirina", currentStock = 24f, lowStockThreshold = 5f)
+                crossRef = EventMedicationEntity("1", "1", "100", stringResource(R.string.unit_mg)),
+                medication = Medication(id = "1", name = stringResource(R.string.sample_med_aspirin), currentStock = 24f, lowStockThreshold = 5f)
             ),
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "2", "1", "💊 comprimido"),
-                medication = Medication(id = "2", name = "Cloridato de Vitamina C")
+                crossRef = EventMedicationEntity("1", "2", "1", "${MedicationUnit.PILL.emoji} ${stringResource(R.string.unit_pill)}"),
+                medication = Medication(id = "2", name = stringResource(R.string.sample_med_vitamin_c_full))
             )
         )
     )
@@ -996,31 +993,41 @@ fun EventCardExpandedPreview() {
         Box(modifier = Modifier.fillMaxSize()) {
             EventCard(
                 event = sampleEvent,
-                allMedications = listOf(Medication(id = "1", name = "Aspirina"), Medication(id = "2", name = "Vitamina C")),
+                allMedications = listOf(
+                    Medication(id = "1", name = stringResource(R.string.sample_med_aspirin)),
+                    Medication(id = "2", name = stringResource(R.string.sample_med_vitamin_c))
+                ),
                 isTakenToday = false,
                 isExpanded = true,
                 onExpandClick = {},
                 onSave = { _, _ -> },
                 onDelete = {},
-                onToggleTaken = {}
+                onToggleTaken = {},
+                onManageStock = { _, _, _ -> }
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun EventCardExpandedOtherPreview() {
     val sampleEvent = EventWithMedications(
-        event = EventEntity(id = "1", title = EventType.OTHER.name, time = "08:00", icon = EventType.OTHER.defaultIcon, type = EventType.OTHER),
+        event = EventEntity(
+            id = "1",
+            title = stringResource(EventType.OTHER.defaultTitleRes),
+            time = "08:00",
+            icon = EventType.OTHER.defaultIcon,
+            type = EventType.OTHER
+        ),
         medications = listOf(
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "1", "100", "mg"),
-                medication = Medication(id = "1", name = "Aspirina", currentStock = 24f, lowStockThreshold = 5f)
+                crossRef = EventMedicationEntity("1", "1", "100", stringResource(R.string.unit_mg)),
+                medication = Medication(id = "1", name = stringResource(R.string.sample_med_aspirin), currentStock = 24f, lowStockThreshold = 5f)
             ),
             MedicationWithDosage(
-                crossRef = EventMedicationEntity("1", "2", "1", "💊 comprimido"),
-                medication = Medication(id = "2", name = "Cloridato de Vitamina C")
+                crossRef = EventMedicationEntity("1", "2", "1", "${MedicationUnit.PILL.emoji} ${stringResource(R.string.unit_pill)}"),
+                medication = Medication(id = "2", name = stringResource(R.string.sample_med_vitamin_c_full))
             )
         )
     )
@@ -1029,13 +1036,17 @@ fun EventCardExpandedOtherPreview() {
         Box(modifier = Modifier.fillMaxSize()) {
             EventCard(
                 event = sampleEvent,
-                allMedications = listOf(Medication(id = "1", name = "Aspirina"), Medication(id = "2", name = "Vitamina C")),
+                allMedications = listOf(
+                    Medication(id = "1", name = stringResource(R.string.sample_med_aspirin)),
+                    Medication(id = "2", name = stringResource(R.string.sample_med_vitamin_c))
+                ),
                 isTakenToday = false,
                 isExpanded = true,
                 onExpandClick = {},
                 onSave = { _, _ -> },
                 onDelete = {},
-                onToggleTaken = {}
+                onToggleTaken = {},
+                onManageStock = { _, _, _ -> }
             )
         }
     }

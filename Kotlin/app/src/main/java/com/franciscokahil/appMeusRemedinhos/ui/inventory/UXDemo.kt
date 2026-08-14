@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import com.franciscokahil.appMeusRemedinhos.R
+import com.franciscokahil.appMeusRemedinhos.ui.components.CombinedPreviews
 import androidx.compose.ui.unit.dp
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 
@@ -22,9 +24,9 @@ fun DemoContent() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         repeat(8) { i ->
             OutlinedTextField(
-                value = "Campo $i",
+                value = stringResource(R.string.demo_field_label, i),
                 onValueChange = {},
-                label = { Text("Informação $i") },
+                label = { Text(stringResource(R.string.demo_info_label, i)) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -46,7 +48,7 @@ fun Option4_1ActionsInHeader() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp)) {
-                        Text("Editar", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.edit_label), style = MaterialTheme.typography.titleMedium)
                     }
                     Row {
                         IconButton(onClick = {}) { Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red) }
@@ -66,7 +68,7 @@ fun Option4_1ActionsInHeader() {
                 modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Check, contentDescription = "Salvar")
+                Icon(Icons.Default.Check, contentDescription = stringResource(R.string.save))
             }
         }
     }
@@ -80,7 +82,7 @@ fun Option4_2ActionsInFooter() {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Text("Editar Medicamento", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.edit_med_title), modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
                 
                 // Content with actions at the end
                 Box(modifier = Modifier.weight(1f).padding(horizontal = 16.dp).verticalScroll(rememberScrollState())) {
@@ -92,7 +94,7 @@ fun Option4_2ActionsInFooter() {
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextButton(onClick = {}, modifier = Modifier.weight(1f)) { Text("Cancelar") }
+                            TextButton(onClick = {}, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.cancel)) }
                             IconButton(onClick = {}) { Icon(Icons.Default.Delete, contentDescription = null, tint = Color.Red) }
                         }
                     }
@@ -105,13 +107,13 @@ fun Option4_2ActionsInFooter() {
                 modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Check, contentDescription = "Salvar")
+                Icon(Icons.Default.Check, contentDescription = stringResource(R.string.save))
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun PreviewOption4_1() {
     MeusRemedinhosTheme {
@@ -121,7 +123,7 @@ fun PreviewOption4_1() {
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun PreviewOption4_2() {
     MeusRemedinhosTheme {

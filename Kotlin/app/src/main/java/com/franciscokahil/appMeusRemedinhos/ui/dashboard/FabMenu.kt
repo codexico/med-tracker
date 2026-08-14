@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.EventType
+import com.franciscokahil.appMeusRemedinhos.ui.components.CombinedPreviews
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 
 data class PresetOption(
@@ -181,7 +182,7 @@ fun PresetFabItem(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun FabMenuExpandedPreview() {
     MeusRemedinhosTheme {
@@ -198,7 +199,7 @@ fun FabMenuExpandedPreview() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun FabMenuInteractivePreview() {
     MeusRemedinhosTheme {

@@ -59,5 +59,10 @@ data class MedicationUnit(
         val DROPS = MedicationUnit("drops", "💧", R.string.unit_drops)
         val SPOON = MedicationUnit("spoon", "🥄", R.string.unit_spoon)
         val APPLICATION = MedicationUnit("application", "💉", R.string.unit_application)
+        val GRAM = MedicationUnit("gram", "⚖️", R.string.unit_g)
+        val UI = MedicationUnit("ui", "💉", R.string.unit_ui)
+        val SPRAY = MedicationUnit("spray", "💨", R.string.unit_spray)
+
+        val DEFAULT_UNITS = listOf(PILL, CAPSULE, MG, ML, DROPS, SPOON, APPLICATION, GRAM, UI, SPRAY)
     }
 }

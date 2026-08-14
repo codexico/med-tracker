@@ -84,6 +84,19 @@ Refer to [**docs/TESTING.md**](TESTING.md) for detailed execution commands.
 
 ---
 
+## 7. Changelog
+
+### Version 4.1.0 (Current)
+- **Stock Management Integration**: Seamless flow between medication scheduling and stock control.
+- **Deep-linking Navigation**: Automatic expansion and scrolling to specific medication cards when navigating from the Dashboard.
+- **UI/UX Modernization**: Standardized `OutlinedTextField` across all forms for better Material 3 compliance.
+- **Enhanced Localization**: Full support for emojis in placeholders and more intuitive labeling in PT-BR and EN-US.
+
+### Version 4.0.0
+- **Initial Release**: Basic medication tracking with local persistence and notification support.
+
+---
+
 ## 6. Debugging Tips
 - **Logcat**: Filter by package name `com.franciscokahil.appMeusRemedinhos`.
 - **Database**: Use Android Studio's **App Inspection** tool to view the live SQLite database.

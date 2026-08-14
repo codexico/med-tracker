@@ -2,18 +2,19 @@
     <string name="app_name">Meus Remedinhos</string>
 
     <string name="edit_time">Alterar Horário</string>
-    <string name="med_name_placeholder">O que lembrar?</string>
+    <string name="med_name_placeholder">Ex: Aspirina</string>
+    <string name="med_name_label">Medicamento</string>
     <string name="cancel">Cancelar</string>
     <string name="add">Adicionar</string>
     <string name="new_time">Novo Horário</string>
     <string name="time_name_label">Nome do Horário (ex: Lanche):</string>
     <string name="time_name_placeholder">Ex: Lanche da Tarde</string>
     <string name="time_label">Horário:</string>
-    <string name="create">Criar</string>
+    <string name="create">Salvar</string>
     <string name="add_new_time">Adicionar Novo Horário</string>
     <string name="name_required_hint">É bom colocar um nome para lembrar depois.</string>
 
-    <string name="onboarding_empty_title">Nunca esqueça seus horários</string>
+    <string name="onboarding_empty_title">Nunca esqueça seus remédios</string>
     <string name="onboarding_empty_desc">Crie lembretes personalizados para organizar sua rotina e receba avisos na hora exata.</string>
     <string name="onboarding_empty_hint">Escolha um horário padrão ou crie um do seu jeito.</string>
     <string name="onboarding_fab_tooltip">Toque aqui para começar</string>
@@ -21,7 +22,7 @@
 
     <string name="preset_other">Outro</string>
     <string name="unit_other">Outra unidade…</string>
-    <string name="unit_label">Unidade</string>
+    <string name="unit_label">Escolha</string>
     <string name="unit_pill">comprimido</string>
     <string name="unit_capsule">cápsula</string>
     <string name="unit_mg">mg</string>
@@ -29,6 +30,9 @@
     <string name="unit_drops">gotas</string>
     <string name="unit_spoon">colher</string>
     <string name="unit_application">aplicação</string>
+    <string name="unit_g">g</string>
+    <string name="unit_ui">UI</string>
+    <string name="unit_spray">jato</string>
     <string name="permission_dialog_title">Permitir Notificações</string>
     <string name="permission_dialog_desc">Para que possamos te avisar no horário exato dos seus compromissos, precisamos da sua permissão para enviar notificações.</string>
     <string name="permission_dialog_confirm">Permitir</string>
@@ -58,7 +62,7 @@
     <string name="medication_item_format">%1$s (%2$s%3$s)</string>
     <string name="medication_item_format_simple">%1$s</string>
     <string name="med_name_error">Por favor, informe o nome</string>
-    <string name="med_qty_placeholder">Qtd</string>
+    <string name="med_qty_placeholder">Quantidade</string>
     <string name="ok">OK</string>
     <string name="delete_confirm_title">Remover horário?</string>
     <string name="delete_confirm_desc">Tem certeza que deseja remover este horário e todos os medicamentos associados?</string>
@@ -71,6 +75,7 @@
     <string name="save">Salvar</string>
     <string name="medications_label">Medicamentos</string>
     <string name="add_medication_hint">Adicionar medicamento</string>
+    <string name="manage_stock_label">Controlar Estoque</string>
 
     <!-- System and Notification Strings -->
     <string name="notification_channel_name">Lembretes de Medicamentos</string>
@@ -87,7 +92,7 @@
     <string name="stock_remaining_label">%1$s unidades restantes</string>
     <string name="stock_duration_days">, suficiente para %1$d dias</string>
     <string name="current_stock_label">Estoque Atual</string>
-    <string name="low_stock_threshold_label">Aviso de estoque baixo</string>
+    <string name="low_stock_threshold_label">Me avise quando chegar em</string>
     <string name="stock_banner_title">Estoque Baixo</string>
     <string name="stock_banner_more"> e mais…</string>
     <string name="stock_banner_action">Repor</string>
@@ -97,4 +102,14 @@
     <string name="pending_yesterday_desc">Não registrado ontem</string>
     <string name="take_late_action">Tomei</string>
     <string name="skip_action">Pular</string>
+
+    <!-- Sample Data for Previews -->
+    <string name="sample_med_aspirin">Aspirina</string>
+    <string name="sample_med_vitamin_c">Vitamina C</string>
+    <string name="sample_med_vitamin_c_full">Cloridrato de Vitamina C</string>
+    <string name="sample_med_water">Água</string>
+    <string name="sample_med_paracetamol">Paracetamol</string>
+    <string name="demo_field_label">Campo %1$d</string>
+    <string name="demo_info_label">Informação %1$d</string>
+    <string name="edit_label">Editar</string>
 </resources>

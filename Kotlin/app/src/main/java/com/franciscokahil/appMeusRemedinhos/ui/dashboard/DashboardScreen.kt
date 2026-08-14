@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAlarm
@@ -86,6 +85,7 @@ import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepositoryImpl
+import com.franciscokahil.appMeusRemedinhos.ui.components.CombinedPreviews
 import com.franciscokahil.appMeusRemedinhos.ui.theme.MeusRemedinhosTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -94,7 +94,7 @@ import androidx.core.content.ContextCompat
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    onNavigateToInventory: () -> Unit,
+    onNavigateToInventory: (String?) -> Unit,
     highlightedId: String? = null,
     onHighlightedConsumed: () -> Unit = {}
 ) {
@@ -232,7 +232,7 @@ fun DashboardScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToInventory) {
+                    IconButton(onClick = { onNavigateToInventory(null) }) {
                         Icon(
                             imageVector = Icons.Default.Inventory,
                             contentDescription = "Stock",
@@ -312,7 +312,7 @@ fun DashboardScreen(
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }
-                        TextButton(onClick = onNavigateToInventory) {
+                        TextButton(onClick = { onNavigateToInventory(null) }) {
                             Text(stringResource(R.string.stock_banner_action), color = MaterialTheme.colorScheme.error)
                         }
                     }
@@ -415,6 +415,12 @@ fun DashboardScreen(
                                 onSave = { updatedEvent, meds ->
                                     createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type)
                                 },
+                                onManageStock = { updatedEvent, meds, targetMedId ->
+                                    // Save state first
+                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type)
+                                    // Navigate to inventory with the med highlighted
+                                    onNavigateToInventory(targetMedId)
+                                },
                                 onDelete = { },
                                 onToggleTaken = { },
                                 modifier = Modifier.fillParentMaxSize(),
@@ -445,6 +451,13 @@ fun DashboardScreen(
                                 onSave = { updatedEvent, meds ->
                                     viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
                                     expandedEventId = null
+                                },
+                                onManageStock = { updatedEvent, meds, targetMedId ->
+                                    // Save state first
+                                    viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
+                                    expandedEventId = null
+                                    // Navigate to inventory with the med highlighted
+                                    onNavigateToInventory(targetMedId)
                                 },
                                 onDelete = {
                                     viewModel.deleteEvent(eventWithMeds.event)
@@ -569,7 +582,7 @@ fun OnboardingEmptyState(
     }
 }
 
-@Preview(showBackground = true)
+@CombinedPreviews
 @Composable
 fun DashboardPreview() {
     MeusRemedinhosTheme {
