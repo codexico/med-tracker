@@ -166,4 +166,24 @@ class DashboardRefinementTest {
         // Verify we are indeed expanded
         composeTestRule.onNode(hasStateDescription("Expandido") or hasStateDescription("Expanded")).assertIsDisplayed()
     }
+
+    @Test
+    fun testBackdropDimmingVisibility() {
+        // Initially backdrop should not exist or be hidden
+        composeTestRule.onNodeWithTag("fab_backdrop").assertDoesNotExist()
+
+        // Open FAB Menu
+        composeTestRule.onNodeWithTag("add_event_fab").performClick()
+        composeTestRule.waitForIdle()
+
+        // Backdrop should now be visible
+        composeTestRule.onNodeWithTag("fab_backdrop").assertIsDisplayed()
+
+        // Click backdrop to close
+        composeTestRule.onNodeWithTag("fab_backdrop").performClick()
+        composeTestRule.waitForIdle()
+
+        // Backdrop should disappear
+        composeTestRule.onNodeWithTag("fab_backdrop").assertDoesNotExist()
+    }
 }

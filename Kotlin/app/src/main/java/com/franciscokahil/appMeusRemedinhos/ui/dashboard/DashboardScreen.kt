@@ -17,6 +17,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,11 +54,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TooltipState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -70,7 +71,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -285,82 +285,54 @@ fun DashboardScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            // LOW STOCK BANNER
-            val lowStockMeds = allMedications.filter { it.currentStock <= it.lowStockThreshold && it.lowStockThreshold > 0 }
-            if (lowStockMeds.isNotEmpty() && expandedEventId == null) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
-                    tonalElevation = 2.dp
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                // LOW STOCK BANNER
+                val lowStockMeds = allMedications.filter { it.currentStock <= it.lowStockThreshold && it.lowStockThreshold > 0 }
+                if (lowStockMeds.isNotEmpty() && expandedEventId == null) {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = MaterialTheme.shapes.medium,
+                        tonalElevation = 2.dp
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.stock_banner_title),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.error,
-                                fontWeight = FontWeight.Bold
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
                             )
-                            val medNames = lowStockMeds.take(2).joinToString(", ") { it.name }
-                            val suffix = if (lowStockMeds.size > 2) stringResource(R.string.stock_banner_more) else ""
-                            Text(
-                                text = "$medNames$suffix",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onErrorContainer
-                            )
-                        }
-                        TextButton(onClick = { onNavigateToInventory(null) }) {
-                            Text(stringResource(R.string.stock_banner_action), color = MaterialTheme.colorScheme.error)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.stock_banner_title),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                val medNames = lowStockMeds.take(2).joinToString(", ") { it.name }
+                                val suffix = if (lowStockMeds.size > 2) stringResource(R.string.stock_banner_more) else ""
+                                Text(
+                                    text = "$medNames$suffix",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                            TextButton(onClick = { onNavigateToInventory(null) }) {
+                                Text(stringResource(R.string.stock_banner_action), color = MaterialTheme.colorScheme.error)
+                            }
                         }
                     }
                 }
-            }
 
-            if (showPermissionExplanation) {
-                AlertDialog(
-                    onDismissRequest = { 
-                        showPermissionExplanation = false
-                        // Proceed anyway
-                        pendingNewEvent?.let { params ->
-                            val medications = params.medications.map { it.medication.copy(
-                                dosageValue = it.crossRef.dosageValue,
-                                dosageUnit = it.crossRef.dosageUnit
-                            ) }
-                            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
-                            pendingNavigationMedId?.let { onNavigateToInventory(it) }
-                        }
-                        pendingNewEvent = null
-                        pendingNavigationMedId = null
-                        expandedEventId = null
-                    },
-                    title = { Text(stringResource(R.string.permission_dialog_title)) },
-                    text = { Text(stringResource(R.string.permission_dialog_desc)) },
-                    icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
-                    confirmButton = {
-                        TextButton(onClick = {
+                if (showPermissionExplanation) {
+                    AlertDialog(
+                        onDismissRequest = { 
                             showPermissionExplanation = false
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            }
-                        }, modifier = Modifier.testTag("permission_confirm_button")) {
-                            Text(stringResource(R.string.permission_dialog_confirm))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { 
-                            showPermissionExplanation = false
+                            // Proceed anyway
                             pendingNewEvent?.let { params ->
                                 val medications = params.medications.map { it.medication.copy(
                                     dosageValue = it.crossRef.dosageValue,
@@ -372,117 +344,161 @@ fun DashboardScreen(
                             pendingNewEvent = null
                             pendingNavigationMedId = null
                             expandedEventId = null
-                        }) {
-                            Text(stringResource(R.string.permission_dialog_cancel))
+                        },
+                        title = { Text(stringResource(R.string.permission_dialog_title)) },
+                        text = { Text(stringResource(R.string.permission_dialog_desc)) },
+                        icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showPermissionExplanation = false
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            }, modifier = Modifier.testTag("permission_confirm_button")) {
+                                Text(stringResource(R.string.permission_dialog_confirm))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { 
+                                showPermissionExplanation = false
+                                pendingNewEvent?.let { params ->
+                                    val medications = params.medications.map { it.medication.copy(
+                                        dosageValue = it.crossRef.dosageValue,
+                                        dosageUnit = it.crossRef.dosageUnit
+                                    ) }
+                                    viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
+                                    pendingNavigationMedId?.let { onNavigateToInventory(it) }
+                                }
+                                pendingNewEvent = null
+                                pendingNavigationMedId = null
+                                expandedEventId = null
+                            }) {
+                                Text(stringResource(R.string.permission_dialog_cancel))
+                            }
                         }
-                    }
-                )
-            }
+                    )
+                }
 
-            if (events.isEmpty() && expandedEventId != "NEW_EVENT") {
-                OnboardingEmptyState(
-                    paddingValues = PaddingValues(0.dp),
-                    onAddClick = { isFabExpanded = true },
-                    modifier = Modifier.testTag("empty_state")
-                )
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .testTag("event_list"),
-                    verticalArrangement = if (expandedEventId == null) Arrangement.spacedBy(16.dp) else Arrangement.Top,
-                    contentPadding = if (expandedEventId == null) PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 8.dp) else PaddingValues(0.dp)
-                ) {
-                    // PENDING EVENTS FROM YESTERDAY
-                    if (pendingEvents.isNotEmpty() && expandedEventId == null) {
-                        item {
-                            Text(
-                                text = stringResource(R.string.pending_yesterday_title),
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
-                            )
+                if (events.isEmpty() && expandedEventId != "NEW_EVENT") {
+                    OnboardingEmptyState(
+                        paddingValues = PaddingValues(0.dp),
+                        onAddClick = { isFabExpanded = true },
+                        modifier = Modifier.testTag("empty_state")
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag("event_list"),
+                        verticalArrangement = if (expandedEventId == null) Arrangement.spacedBy(16.dp) else Arrangement.Top,
+                        contentPadding = if (expandedEventId == null) PaddingValues(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 8.dp) else PaddingValues(0.dp)
+                    ) {
+                        // PENDING EVENTS FROM YESTERDAY
+                        if (pendingEvents.isNotEmpty() && expandedEventId == null) {
+                            item {
+                                Text(
+                                    text = stringResource(R.string.pending_yesterday_title),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                                )
+                            }
+                            items(pendingEvents) { event ->
+                                PendingEventCard(
+                                    event = event,
+                                    onTakenLate = { viewModel.markAsTakenRetrospectively(event) },
+                                    onSkip = { viewModel.markAsSkippedRetrospectively(event) }
+                                )
+                            }
+                            item { Spacer(modifier = Modifier.height(16.dp)) }
                         }
-                        items(pendingEvents) { event ->
-                            PendingEventCard(
-                                event = event,
-                                onTakenLate = { viewModel.markAsTakenRetrospectively(event) },
-                                onSkip = { viewModel.markAsSkippedRetrospectively(event) }
-                            )
+
+                        if (expandedEventId == "NEW_EVENT" && pendingNewEvent != null) {
+                            item(key = "NEW_EVENT") {
+                                EventCard(
+                                    event = pendingNewEvent!!,
+                                    allMedications = allMedications,
+                                    isTakenToday = false,
+                                    isExpanded = true,
+                                    onExpandClick = {
+                                        expandedEventId = null
+                                        pendingNewEvent = null
+                                    },
+                                    onSave = { updatedEvent, meds ->
+                                        createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type, null)
+                                    },
+                                    onManageStock = { updatedEvent, meds, targetMedId ->
+                                        // Save state first (it will navigate later if permission is needed)
+                                        createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type, targetMedId)
+                                    },
+                                    onDelete = { },
+                                    onToggleTaken = { },
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    isNewEvent = true
+                                )
+                            }
                         }
-                        item { Spacer(modifier = Modifier.height(16.dp)) }
-                    }
 
-                    if (expandedEventId == "NEW_EVENT" && pendingNewEvent != null) {
-                        item(key = "NEW_EVENT") {
-                            EventCard(
-                                event = pendingNewEvent!!,
-                                allMedications = allMedications,
-                                isTakenToday = false,
-                                isExpanded = true,
-                                onExpandClick = {
-                                    expandedEventId = null
-                                    pendingNewEvent = null
-                                },
-                                onSave = { updatedEvent, meds ->
-                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type, null)
-                                },
-                                onManageStock = { updatedEvent, meds, targetMedId ->
-                                    // Save state first (it will navigate later if permission is needed)
-                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type, targetMedId)
-                                },
-                                onDelete = { },
-                                onToggleTaken = { },
-                                modifier = Modifier.fillParentMaxSize(),
-                                isNewEvent = true
+                        items(events, key = { it.eventWithMeds.event.id }) { uiModel ->
+                            val eventWithMeds = uiModel.eventWithMeds
+                            val isHighlighted = activeHighlightId == eventWithMeds.event.id
+                            val isExpanded = expandedEventId == eventWithMeds.event.id
+                            
+                            val highlightColor by animateColorAsState(
+                                targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary.copy(alpha = 0.25f) else Color.Transparent,
+                                animationSpec = tween(500), label = "highlight"
                             )
-                        }
-                    }
 
-                    items(events, key = { it.eventWithMeds.event.id }) { uiModel ->
-                        val eventWithMeds = uiModel.eventWithMeds
-                        val isHighlighted = activeHighlightId == eventWithMeds.event.id
-                        val isExpanded = expandedEventId == eventWithMeds.event.id
-                        
-                        val highlightColor by animateColorAsState(
-                            targetValue = if (isHighlighted) MaterialTheme.colorScheme.primary.copy(alpha = 0.25f) else Color.Transparent,
-                            animationSpec = tween(500), label = "highlight"
-                        )
-
-                        if (expandedEventId == null || isExpanded) {
-                            EventCard(
-                                event = eventWithMeds,
-                                allMedications = allMedications,
-                                isTakenToday = uiModel.isTakenToday,
-                                isExpanded = isExpanded,
-                                onExpandClick = {
-                                    expandedEventId = if (isExpanded) null else eventWithMeds.event.id
-                                },
-                                onSave = { updatedEvent, meds ->
-                                    viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
-                                    expandedEventId = null
-                                },
-                                onManageStock = { updatedEvent, meds, targetMedId ->
-                                    // Save state first
-                                    viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
-                                    expandedEventId = null
-                                    // Navigate to inventory with the med highlighted
-                                    onNavigateToInventory(targetMedId)
-                                },
-                                onDelete = {
-                                    viewModel.deleteEvent(eventWithMeds.event)
-                                    expandedEventId = null
-                                },
-                                onToggleTaken = { isTaken ->
-                                    viewModel.toggleEventStatus(eventWithMeds, isTaken)
-                                },
-                                highlightColor = highlightColor,
-                                modifier = if (isExpanded) Modifier.fillParentMaxSize() else Modifier
-                            )
+                            if (expandedEventId == null || isExpanded) {
+                                EventCard(
+                                    event = eventWithMeds,
+                                    allMedications = allMedications,
+                                    isTakenToday = uiModel.isTakenToday,
+                                    isExpanded = isExpanded,
+                                    onExpandClick = {
+                                        expandedEventId = if (isExpanded) null else eventWithMeds.event.id
+                                    },
+                                    onSave = { updatedEvent, meds ->
+                                        viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
+                                        expandedEventId = null
+                                    },
+                                    onManageStock = { updatedEvent, meds, targetMedId ->
+                                        // Save state first
+                                        viewModel.updateEvent(updatedEvent, updatedEvent.title, updatedEvent.time, meds, updatedEvent.type)
+                                        expandedEventId = null
+                                        // Navigate to inventory with the med highlighted
+                                        onNavigateToInventory(targetMedId)
+                                    },
+                                    onDelete = {
+                                        viewModel.deleteEvent(eventWithMeds.event)
+                                        expandedEventId = null
+                                    },
+                                    onToggleTaken = { isTaken ->
+                                        viewModel.toggleEventStatus(eventWithMeds, isTaken)
+                                    },
+                                    highlightColor = highlightColor,
+                                    modifier = if (isExpanded) Modifier.fillParentMaxSize() else Modifier
+                                )
+                            }
                         }
                     }
                 }
+            }
+
+            // BACKDROP DIMMING (When FAB is expanded)
+            AnimatedVisibility(
+                visible = isFabExpanded,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.4f))
+                        .testTag("fab_backdrop")
+                        .clickable { isFabExpanded = false }
+                )
             }
         }
     }
@@ -599,5 +615,37 @@ fun OnboardingEmptyState(
 fun DashboardPreview() {
     MeusRemedinhosTheme {
         DashboardScreen(onNavigateToInventory = {})
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@CombinedPreviews
+@Composable
+fun OnboardingWithExpandedFabPreview() {
+    MeusRemedinhosTheme {
+        Scaffold(
+            floatingActionButton = {
+                FabMenu(
+                    isExpanded = true,
+                    onToggle = {},
+                    onOptionSelected = {},
+                    tooltipState = rememberTooltipState(initialIsVisible = true),
+                    tooltipOffsetX = 0f
+                )
+            }
+        ) { padding ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                OnboardingEmptyState(
+                    paddingValues = padding,
+                    onAddClick = {}
+                )
+                // Mock the backdrop dimming manually for the preview
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.4f))
+                )
+            }
+        }
     }
 }

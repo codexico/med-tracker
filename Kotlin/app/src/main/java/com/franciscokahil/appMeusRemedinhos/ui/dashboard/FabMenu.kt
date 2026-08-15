@@ -9,12 +9,14 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,7 +27,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -67,11 +68,12 @@ fun FabMenu(
     isExpanded: Boolean,
     onToggle: () -> Unit,
     onOptionSelected: (PresetOption?) -> Unit,
-    tooltipState: TooltipState,
+    tooltipState: TooltipState, // Kept for compatibility if needed elsewhere
     tooltipOffsetX: Float,
     modifier: Modifier = Modifier
 ) {
     val rotation by animateFloatAsState(if (isExpanded) 45f else 0f, label = "rotation")
+    val tertiaryColor = MaterialTheme.colorScheme.tertiary
     
     val presets = listOf(
         PresetOption(stringResource(R.string.wake_up), "07:00", "🕐", EventType.WAKE_UP),
@@ -89,63 +91,90 @@ fun FabMenu(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
     ) {
-        TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                positioning = TooltipAnchorPosition.Left
-            ),
-            tooltip = {
-                PlainTooltip(
-                    containerColor = MaterialTheme.colorScheme.primary, // Using primary for tooltip
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    caretShape = TooltipDefaults.caretShape(),
-                    modifier = Modifier.offset { IntOffset(tooltipOffsetX.dp.roundToPx() - 30, 0) }
+        // CUSTOM ONBOARDING TOOLTIP
+        AnimatedVisibility(
+            visible = tooltipState.isVisible,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .offset { IntOffset(tooltipOffsetX.dp.roundToPx(), 0) }
+                    .padding(bottom = 4.dp)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                    shape = MaterialTheme.shapes.medium,
+                    tonalElevation = 12.dp,
+                    shadowElevation = 8.dp,
+                    modifier = Modifier.padding(end = 4.dp)
                 ) {
                     Text(
                         text = stringResource(
                             if (isExpanded) R.string.onboarding_fab_menu_tooltip 
                             else R.string.onboarding_fab_tooltip
                         ),
-                        textAlign = TextAlign.End
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
                     )
                 }
-            },
-            state = tooltipState
-        ) {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                AnimatedVisibility(
-                    visible = isExpanded,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
+                // Caret (Triangle pointing down)
+                androidx.compose.foundation.Canvas(
+                    modifier = Modifier
+                        .size(24.dp, 12.dp)
+                        .align(Alignment.End)
+                        .offset(x = (-16).dp, y = (-4).dp)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.spacedBy(6.dp), // Slightly more space
-                        modifier = Modifier.testTag("fab_menu_presets")
-                    ) {
-                        presets.forEach { preset ->
-                            PresetFabItem(preset) { onOptionSelected(preset) }
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
+                    val path = androidx.compose.ui.graphics.Path().apply {
+                        moveTo(0f, 0f)
+                        lineTo(size.width, 0f)
+                        lineTo(size.width / 2f, size.height)
+                        close()
                     }
+                    drawPath(path, color = tertiaryColor)
                 }
+            }
+        }
 
-                FloatingActionButton(
-                    onClick = onToggle,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shape = CircleShape,
-                    elevation = FloatingActionButtonDefaults.elevation(8.dp, 12.dp),
-                    modifier = Modifier.testTag("add_event_fab")
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.testTag("fab_menu_presets")
+                        .width(IntrinsicSize.Max)
                 ) {
-                    Icon(
-                        if (isExpanded) Icons.Default.Close else Icons.Default.Add,
-                        contentDescription = stringResource(if (isExpanded) R.string.cancel else R.string.add_new_time),
-                        modifier = Modifier.rotate(rotation)
-                    )
+                    presets.forEach { preset ->
+                        PresetFabItem(preset) { onOptionSelected(preset) }
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
+            }
+
+            FloatingActionButton(
+                onClick = onToggle,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = CircleShape,
+                elevation = FloatingActionButtonDefaults.elevation(8.dp, 12.dp),
+                modifier = Modifier.testTag("add_event_fab")
+            ) {
+                Icon(
+                    if (isExpanded) Icons.Default.Close else Icons.Default.Add,
+                    contentDescription = stringResource(if (isExpanded) R.string.cancel else R.string.add_new_time),
+                    modifier = Modifier.rotate(rotation)
+                )
             }
         }
     }
@@ -165,7 +194,9 @@ fun PresetFabItem(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 12.dp)
+                .fillMaxWidth()
         ) {
             Text(text = preset.icon, fontSize = 20.sp)
 

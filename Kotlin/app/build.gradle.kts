@@ -16,8 +16,8 @@ android {
         applicationId = "com.franciscokahil.appMeusRemedinhos"
         minSdk = 24
         targetSdk = 36
-        versionCode = 17
-        versionName = "4.1.2"
+        versionCode = 18
+        versionName = "4.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
