@@ -1,6 +1,7 @@
 package com.franciscokahil.appMeusRemedinhos.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,6 +17,17 @@ fun MainNavigation(
 ) {
     val startDestination = "dashboard"
     val navController = rememberNavController()
+
+    // Handle navigation to dashboard when a deep link is received (e.g. from widget)
+    LaunchedEffect(highlightedId) {
+        if (highlightedId != null) {
+            navController.navigate("dashboard") {
+                // Ensure we don't build up a backstack of dashboards
+                popUpTo("dashboard") { inclusive = false }
+                launchSingleTop = true
+            }
+        }
+    }
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable("dashboard") {

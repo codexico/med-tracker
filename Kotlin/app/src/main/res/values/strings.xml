@@ -90,6 +90,7 @@
     <string name="no_meds_registered">Nenhum medicamento cadastrado ainda.</string>
     <string name="low_stock_label">ESTOQUE BAIXO</string>
     <string name="stock_remaining_label">%1$s unidades restantes</string>
+    <string name="stock_remaining_with_unit_label">%1$s %2$s restantes</string>
     <string name="stock_duration_days">, suficiente para %1$d dias</string>
     <string name="current_stock_label">Estoque Atual</string>
     <string name="low_stock_threshold_label">Me avise quando chegar em</string>

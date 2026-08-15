@@ -42,15 +42,15 @@ class DashboardViewModel(
     val events: StateFlow<List<DashboardEventUIModel>> = combine(
         eventRepository.allEvents,
         medicationRepository.allHistory,
-        ticker
+        ticker,
     ) { allEvents, history, currentTime ->
         val todayStart = getStartOfDay(currentTime)
 
         allEvents.map { eventWithMeds ->
             val isTaken = history.any { 
-                it.eventId == eventWithMeds.event.id && 
-                it.timestamp >= todayStart && 
-                it.status == "TAKEN" 
+                (it.eventId == eventWithMeds.event.id) && 
+                (it.timestamp >= todayStart) && 
+                (it.status == "TAKEN") 
             }
             DashboardEventUIModel(eventWithMeds, isTaken)
         }
@@ -63,7 +63,7 @@ class DashboardViewModel(
     val pendingEvents: StateFlow<List<EventWithMedications>> = combine(
         eventRepository.allEvents,
         medicationRepository.allHistory,
-        ticker
+        ticker,
     ) { allEvents, history, currentTime ->
         val todayStart = getStartOfDay(currentTime)
         val yesterdayStart = getStartOfDay(currentTime - 24 * 60 * 60 * 1000)

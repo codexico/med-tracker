@@ -17,6 +17,9 @@ interface DoseHistoryDao {
     @Query("SELECT * FROM dose_history WHERE eventId = :eventId AND timestamp >= :startOfDay")
     suspend fun getDosesForEventTodaySync(eventId: String, startOfDay: Long): List<DoseHistoryEntity>
 
+    @Query("SELECT DISTINCT eventId FROM dose_history WHERE timestamp >= :startOfDay AND status = 'TAKEN'")
+    suspend fun getTakenEventIdsToday(startOfDay: Long): List<String>
+
     @Query("DELETE FROM dose_history WHERE id = :id")
     suspend fun deleteDose(id: Long)
 

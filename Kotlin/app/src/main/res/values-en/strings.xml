@@ -90,6 +90,7 @@
     <string name="no_meds_registered">No medications registered yet.</string>
     <string name="low_stock_label">LOW STOCK</string>
     <string name="stock_remaining_label">%1$s units remaining</string>
+    <string name="stock_remaining_with_unit_label">%1$s %2$s remaining</string>
     <string name="stock_duration_days">, enough for %1$d days</string>
     <string name="current_stock_label">Current Stock</string>
     <string name="low_stock_threshold_label">Notify me when it reaches</string>

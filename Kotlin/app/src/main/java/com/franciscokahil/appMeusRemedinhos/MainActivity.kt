@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.franciscokahil.appMeusRemedinhos.background.NotificationHelper
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
@@ -36,11 +35,11 @@ class MainActivity : ComponentActivity() {
             MeusRemedinhosTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     MainNavigation(
                         highlightedId = highlightedEventId.value,
-                        onHighlightedConsumed = { highlightedEventId.value = null }
+                        onHighlightedConsumed = { highlightedEventId.value = null },
                     )
                 }
             }
@@ -55,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleIntent(intent: Intent?) {
         intent?.data?.let { uri ->
-            if (uri.scheme == "meusremedinhos" && uri.host == "event") {
+            if (uri.scheme == "meusremedinhos" && (uri.host == "event")) {
                 val eventId = uri.lastPathSegment
                 if (!eventId.isNullOrEmpty()) {
                     highlightedEventId.value = eventId

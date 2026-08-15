@@ -2,10 +2,12 @@ package com.franciscokahil.appMeusRemedinhos.ui.inventory
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -75,7 +78,9 @@ fun InventoryScreen(
                         showDeleteConfirm = null
                         expandedMedicationId = null
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error,
+                    )
                 ) {
                     Text(stringResource(R.string.remove))
                 }
@@ -119,8 +124,8 @@ fun InventoryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentPadding = PaddingValues(bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(if (expandedMedicationId != null) 0.dp else 12.dp)
+                contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(uiModels, key = { it.medication.id }) { uiModel ->
                     val isExpanded = expandedMedicationId == uiModel.medication.id
@@ -154,28 +159,36 @@ fun MedicationStockCard(
     val medication = uiModel.medication
     val isLowStock = (medication.currentStock <= medication.lowStockThreshold) && (medication.lowStockThreshold > 0)
 
-    var nameText by remember(medication.name, isExpanded) { mutableStateOf(medication.name) }
-    var stockText by remember(medication.currentStock, isExpanded) { mutableStateOf(medication.currentStock.toString()) }
-    var thresholdText by remember(medication.lowStockThreshold, isExpanded) { mutableStateOf(medication.lowStockThreshold.toString()) }
+    val formatFloat = { f: Float -> if ((f % 1f) == 0f) f.toInt().toString() else f.toString() }
 
-    ElevatedCard(
+    var nameText by remember(medication.name, isExpanded) { mutableStateOf(medication.name) }
+    var stockText by remember(medication.currentStock, isExpanded) { mutableStateOf(formatFloat(medication.currentStock)) }
+    var thresholdText by remember(medication.lowStockThreshold, isExpanded) { mutableStateOf(formatFloat(medication.lowStockThreshold)) }
+
+    Card(
         onClick = onExpandClick,
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
-            .padding(horizontal = if (isExpanded) 0.dp else 16.dp),
-        shape = if (isExpanded) RectangleShape else MaterialTheme.shapes.medium,
-        colors = CardDefaults.elevatedCardColors(
+            .padding(horizontal = if (isExpanded) 0.dp else 16.dp)
+            .testTag("medication_stock_card_${medication.id}"),
+        shape = if (isExpanded) RectangleShape else RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
             containerColor = if (isExpanded) MaterialTheme.colorScheme.surface
-                             else if (isLowStock) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f) 
+                             else if (isLowStock) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f) 
                              else MaterialTheme.colorScheme.surface,
         ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = if (isExpanded) 0.dp else 3.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isExpanded) 0.dp else 2.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (isLowStock && !isExpanded) MaterialTheme.colorScheme.error.copy(alpha = 0.5f) 
+                    else MaterialTheme.colorScheme.outlineVariant
+        )
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 20.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -187,7 +200,13 @@ fun MedicationStockCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     
-                    val stockTextDisplay = stringResource(R.string.stock_remaining_label, medication.currentStock)
+                    val stockValue = formatFloat(medication.currentStock)
+                    val stockTextDisplay = if (medication.dosageUnit.isNotEmpty()) {
+                        stringResource(R.string.stock_remaining_with_unit_label, stockValue, medication.dosageUnit)
+                    } else {
+                        stringResource(R.string.stock_remaining_label, stockValue)
+                    }
+                    
                     val daysText = uiModel.daysRemaining?.let { stringResource(R.string.stock_duration_days, it) } ?: ""
                     
                     Text(
@@ -199,10 +218,11 @@ fun MedicationStockCard(
 
                 if (isLowStock && !isExpanded) {
                     Text(
-                        text = stringResource(R.string.low_stock_label),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Black
+                        text = "⚠️",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .testTag("low_stock_emoji")
                     )
                 }
             }
@@ -316,6 +336,33 @@ fun MedicationStockCardPreview() {
     val uiModel = MedicationStockUIModel(
         medication = sampleMedication,
         daysRemaining = 5,
+        dailyDosage = 2f
+    )
+    MeusRemedinhosTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            MedicationStockCard(
+                uiModel = uiModel,
+                isExpanded = false,
+                onExpandClick = {},
+                onSave = { }
+            ) { }
+        }
+    }
+}
+
+@CombinedPreviews
+@Composable
+fun MedicationStockCardLowStockPreview() {
+    val sampleMedication = Medication(
+        id = "2",
+        name = stringResource(R.string.sample_med_paracetamol),
+        currentStock = 2f,
+        lowStockThreshold = 5f,
+        dosageUnit = "comprimidos"
+    )
+    val uiModel = MedicationStockUIModel(
+        medication = sampleMedication,
+        daysRemaining = 1,
         dailyDosage = 2f
     )
     MeusRemedinhosTheme {

@@ -40,7 +40,6 @@ import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -96,7 +95,7 @@ import androidx.core.content.ContextCompat
 fun DashboardScreen(
     onNavigateToInventory: (String?) -> Unit,
     highlightedId: String? = null,
-    onHighlightedConsumed: () -> Unit = {}
+    onHighlightedConsumed: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val database = remember { AppDatabase.getDatabase(context) }
@@ -113,7 +112,7 @@ fun DashboardScreen(
     var expandedEventId by remember { mutableStateOf<String?>(null) }
     
     // FAB Menu State
-    var isFabExpanded by remember { mutableStateOf(false) }
+    var isFabExpanded by remember { mutableStateOf(value = false) }
     var pendingNewEvent by remember { mutableStateOf<EventWithMedications?>(null) }
     var pendingNavigationMedId by remember { mutableStateOf<String?>(null) }
     
@@ -170,7 +169,7 @@ fun DashboardScreen(
 
     // Scroll to highlighted item from widget deep-link
     LaunchedEffect(highlightedId, events) {
-        if (highlightedId != null && events.isNotEmpty()) {
+        if ((highlightedId != null) && events.isNotEmpty()) {
             // Auto-collapse any expanded card when navigating via deep-link
             expandedEventId = null
 
@@ -201,7 +200,7 @@ fun DashboardScreen(
                 viewModel.addEvent(label, time, icon, meds, type)
                 expandedEventId = null
                 pendingNewEvent = null
-                if (navMedId != null) onNavigateToInventory(navMedId)
+                navMedId?.let { onNavigateToInventory(it) }
             } else {
                 pendingNewEvent = EventWithMedications(
                     event = EventEntity(
@@ -225,7 +224,7 @@ fun DashboardScreen(
             viewModel.addEvent(label, time, icon, meds, type)
             expandedEventId = null
             pendingNewEvent = null
-            if (navMedId != null) onNavigateToInventory(navMedId)
+            navMedId?.let { onNavigateToInventory(it) }
         }
     }
 
@@ -313,7 +312,7 @@ fun DashboardScreen(
                                     color = MaterialTheme.colorScheme.error,
                                     fontWeight = FontWeight.Bold
                                 )
-                                val medNames = lowStockMeds.take(2).joinToString(", ") { it.name }
+                                val medNames = lowStockMeds.asSequence().take(2).joinToString(", ") { it.name }
                                 val suffix = if (lowStockMeds.size > 2) stringResource(R.string.stock_banner_more) else ""
                                 Text(
                                     text = "$medNames$suffix",
@@ -359,7 +358,8 @@ fun DashboardScreen(
                             }
                         },
                         dismissButton = {
-                            TextButton(onClick = { 
+                            TextButton(
+                            onClick = { 
                                 showPermissionExplanation = false
                                 pendingNewEvent?.let { params ->
                                     val medications = params.medications.map { it.medication.copy(
@@ -372,9 +372,10 @@ fun DashboardScreen(
                                 pendingNewEvent = null
                                 pendingNavigationMedId = null
                                 expandedEventId = null
-                            }) {
-                                Text(stringResource(R.string.permission_dialog_cancel))
                             }
+                        ) {
+                            Text(stringResource(R.string.permission_dialog_cancel))
+                        }
                         }
                     )
                 }
@@ -406,10 +407,10 @@ fun DashboardScreen(
                             }
                             items(pendingEvents) { event ->
                                 PendingEventCard(
-                                    event = event,
-                                    onTakenLate = { viewModel.markAsTakenRetrospectively(event) },
-                                    onSkip = { viewModel.markAsSkippedRetrospectively(event) }
-                                )
+                                event = event,
+                                onTakenLate = { viewModel.markAsTakenRetrospectively(event) },
+                                onSkip = { viewModel.markAsSkippedRetrospectively(event) }
+                            )
                             }
                             item { Spacer(modifier = Modifier.height(16.dp)) }
                         }

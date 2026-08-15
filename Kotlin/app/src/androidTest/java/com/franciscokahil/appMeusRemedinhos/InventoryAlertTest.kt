@@ -37,6 +37,25 @@ class InventoryAlertTest {
                             lowStockThreshold = 5f
                         )
                     )
+                    // Insert a medication with low stock and unit
+                    db.medicationDao().insertMedication(
+                        Medication(
+                            id = "low_stock_unit_med",
+                            name = "Remedio com Unidade",
+                            currentStock = 3f,
+                            lowStockThreshold = 10f,
+                            dosageUnit = "comprimidos"
+                        )
+                    )
+                    // Insert a medication with decimal stock
+                    db.medicationDao().insertMedication(
+                        Medication(
+                            id = "decimal_stock_med",
+                            name = "Remedio Decimal",
+                            currentStock = 4.5f,
+                            lowStockThreshold = 0f
+                        )
+                    )
                 }
                 base.evaluate()
             }
@@ -49,18 +68,42 @@ class InventoryAlertTest {
         .around(composeTestRule)
 
     @Test
-    fun testLowStockAlertVisibilityInInventory() {
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val lowStockLabel = targetContext.getString(R.string.low_stock_label)
-        val inventoryCd = "Stock" // From DashboardScreen.kt actions
+    fun testStockFormatting() {
+        val inventoryCd = "Stock"
 
         // 1. Navigate to Inventory
         composeTestRule.onNodeWithContentDescription(inventoryCd, substring = true).performClick()
 
-        // 2. Verify the medication is listed
-        composeTestRule.onNodeWithText("Remedio Alerta", substring = true).assertIsDisplayed()
+        // 2. Verify "Remedio Alerta" shows "2" not "2.0"
+        composeTestRule.onNodeWithText("2 ", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("2.0 ", substring = true).assertDoesNotExist()
 
-        // 3. Verify the "LOW STOCK" alert is visible
-        composeTestRule.onNodeWithText(lowStockLabel, substring = true, ignoreCase = true).assertIsDisplayed()
+        // 3. Verify "Remedio Decimal" shows "4.5"
+        composeTestRule.onNodeWithText("4.5 ", substring = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun testLowStockAlertAndUnitVisibilityInInventory() {
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val inventoryCd = "Stock" // From DashboardScreen.kt actions
+        val stockRemainingLabel = targetContext.getString(R.string.stock_remaining_label, "2")
+
+        // 1. Navigate to Inventory
+        composeTestRule.onNodeWithContentDescription(inventoryCd, substring = true).performClick()
+
+        // 2. Verify "Remedio Alerta" (empty unit) shows formatted stock
+        composeTestRule.onNodeWithText("Remedio Alerta", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stockRemainingLabel, substring = true).assertIsDisplayed()
+
+        // 3. Verify "Remedio com Unidade" shows custom unit
+        composeTestRule.onNodeWithText("Remedio com Unidade", substring = true).assertIsDisplayed()
+        val stockWithUnitLabel = targetContext.getString(R.string.stock_remaining_with_unit_label, "3", "comprimidos")
+        composeTestRule.onNodeWithText(stockWithUnitLabel, substring = true).assertIsDisplayed()
+
+        // 4. Verify the alert emoji is visible via tag
+        composeTestRule.waitUntil(10000) {
+            composeTestRule.onAllNodesWithTag("low_stock_emoji", useUnmergedTree = true).fetchSemanticsNodes().size == 2
+        }
+        composeTestRule.onAllNodesWithTag("low_stock_emoji", useUnmergedTree = true).onFirst().assertIsDisplayed()
     }
 }

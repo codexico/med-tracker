@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipState
@@ -59,7 +58,7 @@ data class PresetOption(
     val label: String,
     val time: String,
     val icon: String,
-    val type: EventType
+    val type: EventType,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -234,7 +233,7 @@ fun FabMenuExpandedPreview() {
 @Composable
 fun FabMenuInteractivePreview() {
     MeusRemedinhosTheme {
-        var isExpanded by remember { mutableStateOf(false) }
+        var isExpanded by remember { mutableStateOf(value = false) }
         Box(modifier = Modifier.padding(16.dp).fillMaxWidth(), contentAlignment = Alignment.BottomEnd) {
             FabMenu(
                 isExpanded = isExpanded,
