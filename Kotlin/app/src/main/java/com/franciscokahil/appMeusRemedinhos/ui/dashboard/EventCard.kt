@@ -803,7 +803,7 @@ fun EventCard(
                                         onManageStock(finalEvent, finalMeds, targetMedId)
                                     }
                                 },
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth().testTag("manage_stock_button"),
                                 shape = MaterialTheme.shapes.small,
                                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
                             ) {

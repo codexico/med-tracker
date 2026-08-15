@@ -81,7 +81,7 @@ class InventoryTests {
         
         coVerify { medicationDao.subtractFromStock(medicationId, amount) }
         coVerify { doseHistoryDao.insertDose(match { 
-            it.medicationId == medicationId && it.amountTaken == amount && it.status == "TAKEN"
+            (it.medicationId == medicationId) && (it.amountTaken == amount) && (it.status == "TAKEN")
         }) }
     }
 

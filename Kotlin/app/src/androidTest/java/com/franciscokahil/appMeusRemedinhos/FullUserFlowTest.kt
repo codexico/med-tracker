@@ -65,6 +65,11 @@ class FullUserFlowTest {
         
         val testLabel = "Teste Automatizado"
         composeTestRule.onNodeWithTag("edit_event_title_input").performTextInput(testLabel)
+        
+        // Add a medication to ensure status can be toggled
+        composeTestRule.onNodeWithTag("medication_input").performTextInput("Med Teste")
+        composeTestRule.onNodeWithTag("add_medication_button").performClick()
+
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
 
         // 5. Verify added event

@@ -22,4 +22,7 @@ interface DoseHistoryDao {
 
     @Query("DELETE FROM dose_history WHERE eventId = :eventId AND timestamp >= :startOfDay")
     suspend fun deleteDosesForEventToday(eventId: String, startOfDay: Long)
+
+    @Query("DELETE FROM dose_history")
+    suspend fun deleteAll()
 }

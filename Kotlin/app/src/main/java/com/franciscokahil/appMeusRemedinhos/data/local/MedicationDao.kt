@@ -28,4 +28,7 @@ interface MedicationDao {
 
     @Query("UPDATE medications SET currentStock = :newStock WHERE id = :medicationId")
     suspend fun updateStock(medicationId: String, newStock: Float)
+
+    @Query("DELETE FROM medications")
+    suspend fun deleteAll()
 }

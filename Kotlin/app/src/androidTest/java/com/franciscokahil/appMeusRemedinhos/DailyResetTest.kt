@@ -55,9 +55,14 @@ class DailyResetTest {
         // If empty, add a default event manually to satisfy tests that expect data
         val emptyState = composeTestRule.onAllNodesWithTag("empty_state")
         if (emptyState.fetchSemanticsNodes().isNotEmpty()) {
-            composeTestRule.onNodeWithTag("add_event_fab").performClick()
+            composeTestRule.onNodeWithTag("onboarding_add_button").performClick()
             // Try matching "Ao acordar" or "Wake up"
             composeTestRule.onNode(hasText("acordar", substring = true, ignoreCase = true) or hasText("Wake", substring = true, ignoreCase = true)).performClick()
+            
+            // Add a medication to ensure status can be toggled
+            composeTestRule.onNodeWithTag("medication_input").performTextInput("Med Teste")
+            composeTestRule.onNodeWithTag("add_medication_button").performClick()
+
             composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         }
 
@@ -90,10 +95,18 @@ class DailyResetTest {
         // Add more events if needed for "Multiple" test
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
         composeTestRule.onNode(hasText("Café", substring = true, ignoreCase = true) or hasText("Breakfast", substring = true, ignoreCase = true)).performClick()
+        
+        // Add medication
+        composeTestRule.onNodeWithTag("medication_input").performTextInput("Med 1")
+        composeTestRule.onNodeWithTag("add_medication_button").performClick()
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
         
         composeTestRule.onNodeWithTag("add_event_fab").performClick()
         composeTestRule.onNode(hasText("Almoço", substring = true, ignoreCase = true) or hasText("Lunch", substring = true, ignoreCase = true)).performClick()
+
+        // Add medication
+        composeTestRule.onNodeWithTag("medication_input").performTextInput("Med 2")
+        composeTestRule.onNodeWithTag("add_medication_button").performClick()
         composeTestRule.onNodeWithTag("confirm_add_event").performClick()
 
         // Click all visible checkboxes

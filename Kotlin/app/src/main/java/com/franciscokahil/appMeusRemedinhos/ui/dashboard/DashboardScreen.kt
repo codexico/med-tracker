@@ -115,6 +115,7 @@ fun DashboardScreen(
     // FAB Menu State
     var isFabExpanded by remember { mutableStateOf(false) }
     var pendingNewEvent by remember { mutableStateOf<EventWithMedications?>(null) }
+    var pendingNavigationMedId by remember { mutableStateOf<String?>(null) }
     
     // Tooltip State (shared for onboarding)
     val tooltipState = remember { TooltipState() }
@@ -154,8 +155,13 @@ fun DashboardScreen(
                 dosageUnit = it.crossRef.dosageUnit
             ) }
             viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
+            
+            pendingNavigationMedId?.let { navId ->
+                onNavigateToInventory(navId)
+            }
         }
         pendingNewEvent = null
+        pendingNavigationMedId = null
         expandedEventId = null
     }
 
@@ -189,12 +195,13 @@ fun DashboardScreen(
         }
     }
 
-    val createNewEvent = { label: String, time: String, icon: String?, meds: List<Medication>, type: EventType ->
+    val createNewEvent = { label: String, time: String, icon: String?, meds: List<Medication>, type: EventType, navMedId: String? ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 viewModel.addEvent(label, time, icon, meds, type)
                 expandedEventId = null
                 pendingNewEvent = null
+                if (navMedId != null) onNavigateToInventory(navMedId)
             } else {
                 pendingNewEvent = EventWithMedications(
                     event = EventEntity(
@@ -211,12 +218,14 @@ fun DashboardScreen(
                         )
                     }
                 )
+                pendingNavigationMedId = navMedId
                 showPermissionExplanation = true
             }
         } else {
             viewModel.addEvent(label, time, icon, meds, type)
             expandedEventId = null
             pendingNewEvent = null
+            if (navMedId != null) onNavigateToInventory(navMedId)
         }
     }
 
@@ -260,7 +269,7 @@ fun DashboardScreen(
                         pendingNewEvent = EventWithMedications(
                             event = EventEntity(
                                 id = "NEW_EVENT",
-                                title = preset?.label ?: "",
+                                title = if (preset?.type == EventType.OTHER) "" else (preset?.label ?: ""),
                                 time = preset?.time ?: "12:00",
                                 icon = preset?.icon ?: "access_time",
                                 type = preset?.type ?: EventType.OTHER
@@ -329,9 +338,11 @@ fun DashboardScreen(
                                 dosageValue = it.crossRef.dosageValue,
                                 dosageUnit = it.crossRef.dosageUnit
                             ) }
-                            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications)
+                            viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
+                            pendingNavigationMedId?.let { onNavigateToInventory(it) }
                         }
                         pendingNewEvent = null
+                        pendingNavigationMedId = null
                         expandedEventId = null
                     },
                     title = { Text(stringResource(R.string.permission_dialog_title)) },
@@ -343,7 +354,7 @@ fun DashboardScreen(
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                             }
-                        }) {
+                        }, modifier = Modifier.testTag("permission_confirm_button")) {
                             Text(stringResource(R.string.permission_dialog_confirm))
                         }
                     },
@@ -355,9 +366,11 @@ fun DashboardScreen(
                                     dosageValue = it.crossRef.dosageValue,
                                     dosageUnit = it.crossRef.dosageUnit
                                 ) }
-                                viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications)
+                                viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
+                                pendingNavigationMedId?.let { onNavigateToInventory(it) }
                             }
                             pendingNewEvent = null
+                            pendingNavigationMedId = null
                             expandedEventId = null
                         }) {
                             Text(stringResource(R.string.permission_dialog_cancel))
@@ -413,13 +426,11 @@ fun DashboardScreen(
                                     pendingNewEvent = null
                                 },
                                 onSave = { updatedEvent, meds ->
-                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type)
+                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type, null)
                                 },
                                 onManageStock = { updatedEvent, meds, targetMedId ->
-                                    // Save state first
-                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type)
-                                    // Navigate to inventory with the med highlighted
-                                    onNavigateToInventory(targetMedId)
+                                    // Save state first (it will navigate later if permission is needed)
+                                    createNewEvent(updatedEvent.title, updatedEvent.time, updatedEvent.icon, meds, updatedEvent.type, targetMedId)
                                 },
                                 onDelete = { },
                                 onToggleTaken = { },
@@ -567,7 +578,8 @@ fun OnboardingEmptyState(
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = onAddClick,
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.testTag("onboarding_add_button")
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))

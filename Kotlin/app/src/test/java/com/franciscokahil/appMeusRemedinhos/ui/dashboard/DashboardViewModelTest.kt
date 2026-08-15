@@ -99,10 +99,10 @@ class DashboardViewModelTest {
         val crossRef = EventMedicationEntity("1", "med1", "1", "")
         val eventWithMeds = EventWithMedications(
             event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER),
-            medications = listOf(MedicationWithDosage(crossRef, med))
+            medications = listOf(MedicationWithDosage(crossRef, med)),
         )
         
-        viewModel.toggleEventStatus(eventWithMeds, true)
+        viewModel.toggleEventStatus(eventWithMeds, isTaken = true)
         advanceUntilIdle()
 
         coVerify { medicationRepository.markAsTaken("1", "med1", 1f, any()) }
@@ -112,10 +112,10 @@ class DashboardViewModelTest {
     fun `toggleEventStatus to false should call medication repository unmarkAsTaken`() = runTest {
         val eventWithMeds = EventWithMedications(
             event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER),
-            medications = emptyList()
+            medications = emptyList(),
         )
         
-        viewModel.toggleEventStatus(eventWithMeds, false)
+        viewModel.toggleEventStatus(eventWithMeds, isTaken = false)
         advanceUntilIdle()
 
         coVerify { medicationRepository.unmarkAsTaken("1", any()) }
