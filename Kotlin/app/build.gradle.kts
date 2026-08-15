@@ -16,8 +16,8 @@ android {
         applicationId = "com.franciscokahil.appMeusRemedinhos"
         minSdk = 24
         targetSdk = 36
-        versionCode = 18
-        versionName = "4.2.0"
+        versionCode = 19
+        versionName = "4.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.glance.appwidget)
+    debugImplementation(libs.androidx.glance.preview)
     implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.work.runtime)
     ksp(libs.androidx.room.compiler)
@@ -111,7 +112,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.mockk.android)
-    androidTestImplementation(libs.kotlinxCoroutinesCore)
     androidTestImplementation(libs.kotlinxCoroutinesAndroid)
     androidTestImplementation(libs.kotlinxCoroutinesTest)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
@@ -119,6 +119,7 @@ dependencies {
 }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
+    description = ""
     dependsOn("testDebugUnitTest")
 
     reports {
