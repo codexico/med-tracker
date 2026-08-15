@@ -107,15 +107,15 @@ fun MedicationWidgetContent(
             .fillMaxSize()
             .appWidgetBackground()
             .background(ColorProvider(colorBackground))
-            .padding(12.dp)
+            .padding(12.dp),
     ) {
         Text(
             text = context.getString(R.string.widget_title),
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 color = ColorProvider(colorPrimary),
-                fontSize = 16.sp
-            )
+                fontSize = 16.sp,
+            ),
         )
 
         Spacer(modifier = GlanceModifier.height(8.dp))
@@ -124,7 +124,7 @@ fun MedicationWidgetContent(
             Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
                     text = context.getString(R.string.widget_empty_text),
-                    style = TextStyle(color = ColorProvider(colorTextSecondary))
+                    style = TextStyle(color = ColorProvider(colorTextSecondary)),
                 )
             }
         } else {
@@ -133,7 +133,7 @@ fun MedicationWidgetContent(
                     WidgetEventItem(
                         context = context,
                         eventWithMeds = event,
-                        isTakenToday = takenEventIds.contains(event.event.id)
+                        isTakenToday = takenEventIds.contains(event.event.id),
                     )
                 }
             }
@@ -145,7 +145,7 @@ fun MedicationWidgetContent(
 private fun WidgetEventItem(
     context: Context,
     eventWithMeds: EventWithMedications,
-    isTakenToday: Boolean
+    isTakenToday: Boolean,
 ) {
     val event = eventWithMeds.event
     // Explicit intent for Deep Link
@@ -162,18 +162,18 @@ private fun WidgetEventItem(
             .background(ColorProvider(colorSurface))
             .cornerRadius(12.dp)
             .padding(12.dp)
-            .clickable(action)
+            .clickable(action),
     ) {
         Row(
             modifier = GlanceModifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier = GlanceModifier
                     .size(32.dp)
                     .background(ColorProvider(colorPrimary.copy(alpha = 0.1f)))
                     .cornerRadius(6.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(text = event.icon, style = TextStyle(fontSize = 16.sp))
             }
@@ -187,16 +187,16 @@ private fun WidgetEventItem(
                         fontWeight = FontWeight.Bold,
                         color = if (isTakenToday) ColorProvider(colorTextSecondary) else ColorProvider(colorTextPrimary),
                         fontSize = 14.sp,
-                        textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None
-                    )
+                        textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None,
+                    ),
                 )
                 Text(
                     text = event.time,
                     style = TextStyle(
                         color = ColorProvider(colorTextSecondary),
                         fontSize = 12.sp,
-                        textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None
-                    )
+                        textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None,
+                    ),
                 )
             }
         }
@@ -212,31 +212,31 @@ fun MedicationWidgetPreview() {
     val mockEvents = listOf(
         EventWithMedications(
             event = EventEntity("1", "Café da manhã", "08:00", EventType.BREAKFAST, icon = "🍳"),
-            medications = emptyList()
+            medications = emptyList(),
         ),
         EventWithMedications(
             event = EventEntity("2", "Almoço", "12:00", EventType.LUNCH, icon = "🍽️"),
-            medications = emptyList()
+            medications = emptyList(),
         ),
         EventWithMedications(
             event = EventEntity("3", "Remédio Noite", "22:00", EventType.SLEEP, icon = "🌙"),
-            medications = emptyList()
-        )
+            medications = emptyList(),
+        ),
     )
     
     ComposeColumn(
         modifier = ComposeModifier
             .composeFillMaxSize()
             .composeBackground(colorBackground)
-            .composePadding(12.dp)
+            .composePadding(12.dp),
     ) {
         ComposeText(
             text = "Meus Remedinhos",
             style = ComposeTextStyle(
                 fontWeight = ComposeFontWeight.Bold,
                 color = colorPrimary,
-                fontSize = 16.sp
-            )
+                fontSize = 16.sp,
+            ),
         )
         
         ComposeSpacer(modifier = ComposeModifier.composeHeight(8.dp))
@@ -256,17 +256,17 @@ private fun WidgetEventItemPreview(event: EventEntity, isTakenToday: Boolean) {
             .composeFillMaxWidth()
             .composePadding(vertical = 4.dp)
             .composeBackground(colorSurface, shape = RoundedCornerShape(12.dp))
-            .composePadding(12.dp)
+            .composePadding(12.dp),
     ) {
         ComposeRow(
             modifier = ComposeModifier.composeFillMaxWidth(),
-            verticalAlignment = ComposeAlignment.CenterVertically
+            verticalAlignment = ComposeAlignment.CenterVertically,
         ) {
             ComposeBox(
                 modifier = ComposeModifier
                     .composeSize(32.dp)
                     .composeBackground(colorPrimary.copy(alpha = 0.1f), shape = RoundedCornerShape(6.dp)),
-                contentAlignment = ComposeAlignment.Center
+                contentAlignment = ComposeAlignment.Center,
             ) {
                 ComposeText(text = event.icon, style = ComposeTextStyle(fontSize = 16.sp))
             }
@@ -280,16 +280,16 @@ private fun WidgetEventItemPreview(event: EventEntity, isTakenToday: Boolean) {
                         fontWeight = ComposeFontWeight.Bold,
                         color = if (isTakenToday) colorTextSecondary else colorTextPrimary,
                         fontSize = 14.sp,
-                        textDecoration = if (isTakenToday) ComposeTextDecoration.LineThrough else ComposeTextDecoration.None
-                    )
+                        textDecoration = if (isTakenToday) ComposeTextDecoration.LineThrough else ComposeTextDecoration.None,
+                    ),
                 )
                 ComposeText(
                     text = event.time,
                     style = ComposeTextStyle(
                         color = colorTextSecondary,
                         fontSize = 12.sp,
-                        textDecoration = if (isTakenToday) ComposeTextDecoration.LineThrough else ComposeTextDecoration.None
-                    )
+                        textDecoration = if (isTakenToday) ComposeTextDecoration.LineThrough else ComposeTextDecoration.None,
+                    ),
                 )
             }
         }

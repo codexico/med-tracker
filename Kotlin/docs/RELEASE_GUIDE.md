@@ -1,82 +1,82 @@
 # 🚀 Guia de Release e Publicação
 
-Este documento descreve o procedimento padrão para gerar uma nova versão do app **Meus Remedinhos** para envio ao Google Play Console.
+Este documento descreve o procedimento padrão para gerar uma nova versão do app **Meus Remedinhos**.
 
 ---
 
-## 🛠 Procedimento Passo a Passo
+## 🛠 Script de Automação (Recomendado)
 
-Siga estas etapas rigorosamente para garantir a consistência do versionamento e a integridade do binário.
+Para facilitar o processo, existe um script que executa todas as etapas abaixo automaticamente.
 
-### 1. Preparação e Testes
-Antes de qualquer bump, garanta que o código está estável e todos os testes passam.
+**Uso:**
 ```bash
-./gradlew clean testDebugUnitTest connectedAndroidTest
+./scripts/release.sh [patch|minor|major]
+```
+*(Se não especificado, o padrão é `patch`)*
+
+---
+
+## 📋 Procedimento Detalhado (Manual ou via Script)
+
+As etapas a seguir são executadas na ordem correta para garantir a integridade do release:
+
+### 1. Testes Automatizados
+O primeiro passo de qualquer release é garantir que nada foi quebrado.
+```bash
+./gradlew testDebugUnitTest
 ```
 
-### 2. Bump de Versão
-No arquivo `app/build.gradle.kts`, localize o bloco `defaultConfig` e atualize:
-- **`versionCode`**: Incremente em +1 (ex: de 13 para 14).
-- **`versionName`**: Atualize seguindo o versionamento semântico (ex: `3.6.0` para `4.0.0`).
+### 2. Commit de Alterações Pendentes
+Nenhuma alteração deve ficar de fora do binário gerado.
+```bash
+git add .
+git commit -m "feat/fix: descrição das mudanças antes do release"
+```
 
-### 3. Geração do Bundle (AAB)
-Gere o binário otimizado para a Play Store:
+### 3. Bump de Versão (Gradle)
+No arquivo `app/build.gradle.kts`, atualize o bloco `defaultConfig`:
+- **`versionCode`**: Incremente em +1 obrigatoriamente.
+- **`versionName`**: Atualize conforme o tipo de release (Major, Minor ou Patch).
+
+### 4. Build para Produção
+Gere o binário de produção (Bundle) para a Play Store.
 ```bash
 ./gradlew clean :app:bundleRelease
 ```
-O arquivo será gerado em: `app/build/outputs/bundle/release/app-release.aab`.
 
-### 4. Versionamento (Commit e Tag)
-Após gerar o AAB e validar localmente, realize o commit das alterações de versão e crie a tag de release.
-
-**Commit:**
+### 5. Commit de Versão e Tagging
+Realize o commit apenas da alteração no `build.gradle.kts` e crie a tag Git correspondente.
 ```bash
-git add .
-git commit -m "Release version <versionName> (code <versionCode>)"
-```
-
-**Tag:**
-```bash
+git add app/build.gradle.kts
+git commit -m "Release v<versionName> (<versionCode>)"
 git tag -a v<versionName> -m "Release version <versionName>"
 ```
 
-### 5. Sincronização Remota
-Envie o commit e a tag para o repositório principal:
+### 6. Sincronização do Repositório (Push)
+Envie todos os commits e a tag para o servidor remoto.
 ```bash
-git push origin main
-git push origin v<versionName>
+git push origin main --follow-tags
 ```
+
+---
+
+## 📋 Instruções para o AI Agent
+
+Quando o usuário solicitar um **"Release"**, o Agent deve agir como um pair programmer sênior e pode optar por rodar o script `./scripts/release.sh` ou seguir este protocolo:
+
+1.  **Tests**: Rodar `./gradlew testDebugUnitTest`.
+2.  **Check-in**: Verificar se há arquivos não commitados e realizar o commit.
+3.  **Version Bump**: Incrementar `versionCode` (+1) e `versionName` (Minor ou Patch).
+4.  **Build**: Executar `./gradlew :app:bundleRelease`.
+5.  **Finalize Git**: Commitar o bump, criar a tag e executar o `push` com `--follow-tags`.
+6.  **Relatório**: Informar o sucesso, a nova versão e o local do arquivo `.aab`.
+
+> [!IMPORTANT]
+> O processo de release só é considerado completo após o **Push** bem-sucedido para o repositório remoto.
 
 ---
 
 ## 🌍 Publicação na Play Store
 
-Após gerar o arquivo `.aab`, siga os passos abaixo no [Google Play Console](https://play.google.com/console/):
-
-1.  **Acesse o App:** Selecione "Meus Remedinhos" no painel.
-2.  **Produção:** No menu lateral, vá em "Produção" -> "Versões".
-3.  **Criar Nova Versão:** Clique em "Criar nova versão" no canto superior direito.
-4.  **Upload:** Arraste o arquivo `app-release.aab` para a área de upload.
-5.  **Notas de Versão:** Descreva as novidades no campo `pt-BR`.
-6.  **Revisão:** Clique em "Próximo", revise os detalhes e clique em "Iniciar lançamento para Produção".
-
-> [!TIP]
-> Para atualizações menores, considere usar o canal de **Teste Interno** antes de promover para produção.
-
----
-
-## 📋 Resumo para o AI Agent
-
-Quando solicitado para "fazer um release", o Agent deve:
-1. Executar os testes unitários.
-2. Realizar o commit de todas as mudanças de código pendentes com uma mensagem descritiva.
-3. Ler o `versionCode` e `versionName` atual no `build.gradle.kts`.
-4. Incrementar a versão (Sugerir `minor` ou aguardar confirmação).
-5. Atualizar o arquivo `build.gradle.kts`.
-6. Gerar o AAB via `:app:bundleRelease`.
-7. Realizar o commit com a mensagem padrão de release.
-8. Criar a tag seguindo o padrão `vX.Y.Z`.
-9. Notificar o caminho do arquivo `.aab` gerado e confirmar o sucesso.
-
-> [!IMPORTANT]
-> Nunca realize o push sem a confirmação final do usuário sobre os novos valores de versão.
+1.  O arquivo gerado estará em: `app/build/outputs/bundle/release/app-release.aab`.
+2.  Faça o upload manualmente no [Google Play Console](https://play.google.com/console/).
