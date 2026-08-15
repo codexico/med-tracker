@@ -3,7 +3,6 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
@@ -13,14 +12,18 @@ import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
 import com.franciscokahil.appMeusRemedinhos.data.local.EventType
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.UUID
+import kotlin.time.Duration.Companion.minutes
 
 class DashboardViewModel(
     private val eventRepository: EventRepository,
@@ -28,16 +31,20 @@ class DashboardViewModel(
     private val alarmScheduler: AlarmScheduler,
 ) : ViewModel() {
 
+    // Ticker that emits every minute to ensure todayStart is updated even if the app is left open
+    private val ticker = flow {
+        while (true) {
+            delay(1.minutes)
+            emit(System.currentTimeMillis())
+        }
+    }.onStart { emit(System.currentTimeMillis()) }
+
     val events: StateFlow<List<DashboardEventUIModel>> = combine(
         eventRepository.allEvents,
-        medicationRepository.allHistory
-    ) { allEvents, history ->
-        val todayStart = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
+        medicationRepository.allHistory,
+        ticker
+    ) { allEvents, history, currentTime ->
+        val todayStart = getStartOfDay(currentTime)
 
         allEvents.map { eventWithMeds ->
             val isTaken = history.any { 
@@ -55,24 +62,13 @@ class DashboardViewModel(
 
     val pendingEvents: StateFlow<List<EventWithMedications>> = combine(
         eventRepository.allEvents,
-        medicationRepository.allHistory
-    ) { allEvents, history ->
-        val calendar = Calendar.getInstance()
-        
-        // Start of today
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        val todayStart = calendar.timeInMillis
-        
-        // Start of yesterday
-        calendar.add(Calendar.DAY_OF_YEAR, -1)
-        val yesterdayStart = calendar.timeInMillis
+        medicationRepository.allHistory,
+        ticker
+    ) { allEvents, history, currentTime ->
+        val todayStart = getStartOfDay(currentTime)
+        val yesterdayStart = getStartOfDay(currentTime - 24 * 60 * 60 * 1000)
 
         allEvents.filter { eventWithMeds ->
-            // An event is pending ONLY if it was created before today.
-            // This prevents new events from showing up as overdue on their first day.
             val wasCreatedBeforeToday = eventWithMeds.event.createdAt < todayStart
 
             val hasEntryYesterday = history.any { 
@@ -101,12 +97,21 @@ class DashboardViewModel(
         initialValue = emptyList()
     )
 
+    private fun getStartOfDay(timeMillis: Long): Long {
+        return Calendar.getInstance().apply {
+            this.timeInMillis = timeMillis
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
     fun toggleEventStatus(event: EventWithMedications, isTaken: Boolean) {
         viewModelScope.launch {
-            // New logic: Register in DoseHistory
-            val timestamp = System.currentTimeMillis()
-            event.medications.forEach { medWithDosage ->
-                if (isTaken) {
+            if (isTaken) {
+                val timestamp = System.currentTimeMillis()
+                event.medications.forEach { medWithDosage ->
                     val amount = medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f
                     medicationRepository.markAsTaken(
                         eventId = event.event.id,
@@ -114,9 +119,10 @@ class DashboardViewModel(
                         amount = amount,
                         timestamp = timestamp
                     )
-                } else {
-                    // Skip or undo logic
                 }
+            } else {
+                val todayStart = getStartOfDay(System.currentTimeMillis())
+                medicationRepository.unmarkAsTaken(event.event.id, todayStart)
             }
         }
     }
@@ -189,11 +195,9 @@ class DashboardViewModel(
 
     fun updateEvent(event: EventEntity, newTitle: String, newTime: String, medications: List<Medication>? = null, type: EventType? = null) {
         viewModelScope.launch {
-            // Only update the icon if the original icon was the "Other" preset icon (⏰)
-            // or if it's already one of the dynamic clock emojis.
             val clockEmojis = listOf(
                 "🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", "🕟", "🕔", "🕠",
-                "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "耽", "🕦", "⏰"
+                "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", "🕦", "⏰"
             )
             
             val finalIcon = if (event.icon in clockEmojis) getClockEmoji(newTime) else event.icon

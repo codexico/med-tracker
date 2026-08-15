@@ -17,6 +17,7 @@ interface MedicationRepository {
     suspend fun deleteMedication(medication: Medication)
     suspend fun markAsTaken(eventId: String, medicationId: String, amount: Float, timestamp: Long)
     suspend fun markAsSkipped(eventId: String, medicationId: String, timestamp: Long)
+    suspend fun unmarkAsTaken(eventId: String, startOfDay: Long)
     fun getDosesForEventToday(eventId: String, startOfDay: Long): Flow<List<DoseHistoryEntity>>
 }
 
@@ -75,6 +76,21 @@ class MedicationRepositoryImpl(
             status = "SKIPPED"
         )
         doseHistoryDao.insertDose(dose)
+    }
+
+    override suspend fun unmarkAsTaken(eventId: String, startOfDay: Long) {
+        mutex.withLock {
+            val dosesToday = doseHistoryDao.getDosesForEventTodaySync(eventId, startOfDay)
+            dosesToday.forEach { dose ->
+                if (dose.status == "TAKEN") {
+                    medicationDao.updateStock(
+                        dose.medicationId,
+                        (medicationDao.getMedicationById(dose.medicationId)?.currentStock ?: 0f) + dose.amountTaken
+                    )
+                }
+            }
+            doseHistoryDao.deleteDosesForEventToday(eventId, startOfDay)
+        }
     }
 
     override fun getDosesForEventToday(eventId: String, startOfDay: Long): Flow<List<DoseHistoryEntity>> {

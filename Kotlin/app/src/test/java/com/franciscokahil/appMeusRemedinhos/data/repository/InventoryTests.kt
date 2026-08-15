@@ -139,4 +139,26 @@ class InventoryTests {
         
         coVerify { medicationDao.deleteMedication(med) }
     }
+
+    @Test
+    fun `unmarkAsTaken should restore stock and delete today's doses`() = runTest {
+        val eventId = "event1"
+        val medId = "med1"
+        val startOfDay = 1000L
+        val amount = 1.5f
+        
+        val doses = listOf(
+            DoseHistoryEntity(1, eventId, medId, startOfDay + 100, amount, "TAKEN"),
+            DoseHistoryEntity(2, eventId, medId, startOfDay + 200, 0f, "SKIPPED")
+        )
+        
+        coEvery { doseHistoryDao.getDosesForEventTodaySync(eventId, startOfDay) } returns doses
+        coEvery { medicationDao.getMedicationById(medId) } returns Medication(id = medId, name = "Med", currentStock = 10f)
+        
+        medicationRepository.unmarkAsTaken(eventId, startOfDay)
+        
+        // Stock should be updated: 10 + 1.5 = 11.5
+        coVerify { medicationDao.updateStock(medId, 11.5f) }
+        coVerify { doseHistoryDao.deleteDosesForEventToday(eventId, startOfDay) }
+    }
 }

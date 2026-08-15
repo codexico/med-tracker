@@ -3,9 +3,11 @@ package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 import app.cash.turbine.test
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
+import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
 import io.mockk.*
@@ -93,15 +95,29 @@ class DashboardViewModelTest {
 
     @Test
     fun `toggleEventStatus should call medication repository markAsTaken`() = runTest {
+        val med = Medication(id = "med1", name = "Med", dosageValue = "1")
+        val crossRef = EventMedicationEntity("1", "med1", "1", "")
         val eventWithMeds = EventWithMedications(
             event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER),
-            medications = emptyList()
+            medications = listOf(MedicationWithDosage(crossRef, med))
         )
         
         viewModel.toggleEventStatus(eventWithMeds, true)
         advanceUntilIdle()
 
-        // Verify it doesn't crash even with no meds, but in a real scenario we'd have meds
-        coVerify(exactly = 0) { medicationRepository.markAsTaken(any(), any(), any(), any()) }
+        coVerify { medicationRepository.markAsTaken("1", "med1", 1f, any()) }
+    }
+
+    @Test
+    fun `toggleEventStatus to false should call medication repository unmarkAsTaken`() = runTest {
+        val eventWithMeds = EventWithMedications(
+            event = EventEntity("1", "Teste", "12:00", type = EventType.OTHER),
+            medications = emptyList()
+        )
+        
+        viewModel.toggleEventStatus(eventWithMeds, false)
+        advanceUntilIdle()
+
+        coVerify { medicationRepository.unmarkAsTaken("1", any()) }
     }
 }
