@@ -1,6 +1,5 @@
 package com.franciscokahil.appMeusRemedinhos
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.*
@@ -52,7 +51,12 @@ class WidgetNavigationTest {
         
         runBlocking {
             database.eventDao().insertEvent(
-                EventEntity(id = eventId, title = eventTitle, time = "09:00", type = EventType.OTHER)
+                EventEntity(
+                    id = eventId,
+                    title = eventTitle,
+                    time = "09:00",
+                    type = EventType.OTHER,
+                )
             )
         }
 

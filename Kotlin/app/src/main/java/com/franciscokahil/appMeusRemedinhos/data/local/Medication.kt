@@ -14,7 +14,7 @@ data class Medication(
     val dosageValue: String = "", // Default dosage for this med
     val dosageUnit: String = "",  // Default unit for this med
     val currentStock: Float = 0f,
-    val lowStockThreshold: Float = 0f
+    val lowStockThreshold: Float = 0f,
 ) {
     val displayName: String
         get() {
@@ -38,7 +38,7 @@ data class Medication(
         if (dosageUnit.isEmpty()) return ""
         // For predefined units (which look like "💊 comprimido"), we only want the emoji
         // For custom units, we use the whole string.
-        return if (dosageUnit[0].isSurrogate() || dosageUnit[0].code > 127) {
+        return if (dosageUnit[0].isSurrogate() || (dosageUnit[0].code > 127)) {
             dosageUnit.split(" ").firstOrNull() ?: dosageUnit
         } else {
             dosageUnit

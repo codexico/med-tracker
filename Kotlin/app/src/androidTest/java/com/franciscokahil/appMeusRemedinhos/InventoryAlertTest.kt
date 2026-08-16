@@ -1,6 +1,5 @@
 package com.franciscokahil.appMeusRemedinhos
 
-import android.content.Context
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -24,7 +23,7 @@ class InventoryAlertTest {
         object : Statement() {
             override fun evaluate() {
                 val context = InstrumentationRegistry.getInstrumentation().targetContext
-                runBlocking<Unit> {
+                runBlocking {
                     val db = AppDatabase.getDatabase(context)
                     db.clearAllTables()
                     
@@ -34,7 +33,7 @@ class InventoryAlertTest {
                             id = "low_stock_med",
                             name = "Remedio Alerta",
                             currentStock = 2f,
-                            lowStockThreshold = 5f
+                            lowStockThreshold = 5f,
                         )
                     )
                     // Insert a medication with low stock and unit
@@ -44,7 +43,7 @@ class InventoryAlertTest {
                             name = "Remedio com Unidade",
                             currentStock = 3f,
                             lowStockThreshold = 10f,
-                            dosageUnit = "comprimidos"
+                            dosageUnit = "comprimidos",
                         )
                     )
                     // Insert a medication with decimal stock
@@ -53,7 +52,7 @@ class InventoryAlertTest {
                             id = "decimal_stock_med",
                             name = "Remedio Decimal",
                             currentStock = 4.5f,
-                            lowStockThreshold = 0f
+                            lowStockThreshold = 0f,
                         )
                     )
                 }

@@ -45,13 +45,14 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
+import androidx.glance.material3.ColorProviders
 import com.franciscokahil.appMeusRemedinhos.MainActivity
 import com.franciscokahil.appMeusRemedinhos.R
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
+import com.franciscokahil.appMeusRemedinhos.ui.theme.*
 import kotlinx.coroutines.flow.first
 import java.util.Calendar
 
@@ -79,7 +80,13 @@ class MedicationWidget : GlanceAppWidget() {
         }
 
         provideContent {
-            GlanceTheme {
+            val colors = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                GlanceTheme.colors
+            } else {
+                MedicationWidgetTheme.colors
+            }
+
+            GlanceTheme(colors = colors) {
                 MedicationWidgetContent(
                     context = context,
                     events = events,
@@ -90,6 +97,46 @@ class MedicationWidget : GlanceAppWidget() {
     }
 }
 
+/**
+ * Custom Theme for the Widget to avoid manual ColorProvider calls.
+ * This maps our brand colors to the Glance theme system.
+ */
+object MedicationWidgetTheme {
+    private val lightColors = androidx.compose.material3.lightColorScheme(
+        primary = md_theme_light_primary,
+        onPrimary = md_theme_light_onPrimary,
+        primaryContainer = md_theme_light_primaryContainer,
+        onPrimaryContainer = md_theme_light_onPrimaryContainer,
+        secondary = md_theme_light_secondary,
+        onSecondary = md_theme_light_onSecondary,
+        background = Color(0xFFF0D4BD), // Brand background for the widget
+        onBackground = md_theme_light_onBackground,
+        surface = md_theme_light_surface,
+        onSurface = md_theme_light_onSurface,
+        onSurfaceVariant = md_theme_light_onSurfaceVariant,
+    )
+
+    private val darkColors = androidx.compose.material3.darkColorScheme(
+        primary = md_theme_dark_primary,
+        onPrimary = md_theme_dark_onPrimary,
+        primaryContainer = md_theme_dark_primaryContainer,
+        onPrimaryContainer = md_theme_dark_onPrimaryContainer,
+        secondary = md_theme_dark_secondary,
+        onSecondary = md_theme_dark_onSecondary,
+        background = Color(0xFF2D241B), // Darker brand background
+        onBackground = md_theme_dark_onBackground,
+        surface = md_theme_dark_surface,
+        onSurface = md_theme_dark_onSurface,
+        onSurfaceVariant = md_theme_dark_onSurfaceVariant,
+    )
+
+    val colors = ColorProviders(
+        light = lightColors,
+        dark = darkColors,
+    )
+}
+
+// Preview/Brand Colors
 private val colorPrimary = Color(0xFF8B6F47)
 private val colorBackground = Color(0xFFF0D4BD)
 private val colorSurface = Color(0xFFFFFFFF)
@@ -106,14 +153,14 @@ fun MedicationWidgetContent(
         modifier = GlanceModifier
             .fillMaxSize()
             .appWidgetBackground()
-            .background(ColorProvider(colorBackground))
+            .background(GlanceTheme.colors.background)
             .padding(12.dp),
     ) {
         Text(
             text = context.getString(R.string.widget_title),
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
-                color = ColorProvider(colorPrimary),
+                color = GlanceTheme.colors.primary,
                 fontSize = 16.sp,
             ),
         )
@@ -121,10 +168,13 @@ fun MedicationWidgetContent(
         Spacer(modifier = GlanceModifier.height(8.dp))
 
         if (events.isEmpty()) {
-            Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = GlanceModifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
                 Text(
                     text = context.getString(R.string.widget_empty_text),
-                    style = TextStyle(color = ColorProvider(colorTextSecondary)),
+                    style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant),
                 )
             }
         } else {
@@ -159,7 +209,7 @@ private fun WidgetEventItem(
         modifier = GlanceModifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .background(ColorProvider(colorSurface))
+            .background(GlanceTheme.colors.surface)
             .cornerRadius(12.dp)
             .padding(12.dp)
             .clickable(action),
@@ -171,7 +221,7 @@ private fun WidgetEventItem(
             Box(
                 modifier = GlanceModifier
                     .size(32.dp)
-                    .background(ColorProvider(colorPrimary.copy(alpha = 0.1f)))
+                    .background(GlanceTheme.colors.primaryContainer)
                     .cornerRadius(6.dp),
                 contentAlignment = Alignment.Center,
             ) {
@@ -185,7 +235,7 @@ private fun WidgetEventItem(
                     text = event.title,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = if (isTakenToday) ColorProvider(colorTextSecondary) else ColorProvider(colorTextPrimary),
+                        color = if (isTakenToday) GlanceTheme.colors.onSurfaceVariant else GlanceTheme.colors.onSurface,
                         fontSize = 14.sp,
                         textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None,
                     ),
@@ -193,7 +243,7 @@ private fun WidgetEventItem(
                 Text(
                     text = event.time,
                     style = TextStyle(
-                        color = ColorProvider(colorTextSecondary),
+                        color = GlanceTheme.colors.onSurfaceVariant,
                         fontSize = 12.sp,
                         textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None,
                     ),
@@ -204,8 +254,6 @@ private fun WidgetEventItem(
 }
 
 // GLANCE PREVIEW
-// Fixed render issue "Invalid applier" by using standard Compose components for the preview.
-// Glance components require a Glance applier which is not provided by default in standard @Preview.
 @Preview(showBackground = true)
 @Composable
 fun MedicationWidgetPreview() {

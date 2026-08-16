@@ -13,7 +13,7 @@ import com.franciscokahil.appMeusRemedinhos.ui.inventory.InventoryScreen
 @Composable
 fun MainNavigation(
     highlightedId: String? = null,
-    onHighlightedConsumed: () -> Unit
+    onHighlightedConsumed: () -> Unit,
 ) {
     val startDestination = "dashboard"
     val navController = rememberNavController()
@@ -42,17 +42,20 @@ fun MainNavigation(
         }
         composable(
             route = "inventory?medId={medId}",
-            arguments = listOf(navArgument("medId") { 
-                type = NavType.StringType
-                nullable = true
-                defaultValue = null
-            })
+            arguments = listOf(
+                navArgument("medId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
         ) { backStackEntry ->
             val medId = backStackEntry.arguments?.getString("medId")
             InventoryScreen(
                 highlightedMedId = medId,
-                onNavigateBack = { navController.popBackStack() }
-            )
+            ) {
+                navController.popBackStack()
+            }
         }
     }
 }

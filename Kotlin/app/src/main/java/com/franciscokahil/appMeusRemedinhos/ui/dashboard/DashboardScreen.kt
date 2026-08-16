@@ -126,7 +126,7 @@ fun DashboardScreen(
         targetValue = 10f,
         animationSpec = infiniteRepeatable(
             animation = tween(1000),
-            repeatMode = RepeatMode.Reverse
+            repeatMode = RepeatMode.Reverse,
         ),
         label = "offset"
     )
@@ -142,7 +142,7 @@ fun DashboardScreen(
     }
     
     // Permission State
-    var showPermissionExplanation by remember { mutableStateOf(false) }
+    var showPermissionExplanation by remember { mutableStateOf(value = false) }
     
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -287,7 +287,7 @@ fun DashboardScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
                 // LOW STOCK BANNER
-                val lowStockMeds = allMedications.filter { it.currentStock <= it.lowStockThreshold && it.lowStockThreshold > 0 }
+                val lowStockMeds = allMedications.filter { (it.currentStock <= it.lowStockThreshold) && (it.lowStockThreshold > 0) }
                 if (lowStockMeds.isNotEmpty() && expandedEventId == null) {
                     Surface(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -320,7 +320,9 @@ fun DashboardScreen(
                                     color = MaterialTheme.colorScheme.onErrorContainer
                                 )
                             }
-                            TextButton(onClick = { onNavigateToInventory(null) }) {
+                            TextButton(
+                                onClick = { onNavigateToInventory(null) }
+                            ) {
                                 Text(stringResource(R.string.stock_banner_action), color = MaterialTheme.colorScheme.error)
                             }
                         }
@@ -409,8 +411,9 @@ fun DashboardScreen(
                                 PendingEventCard(
                                 event = event,
                                 onTakenLate = { viewModel.markAsTakenRetrospectively(event) },
-                                onSkip = { viewModel.markAsSkippedRetrospectively(event) }
-                            )
+                            ) {
+                                viewModel.markAsSkippedRetrospectively(event)
+                            }
                             }
                             item { Spacer(modifier = Modifier.height(16.dp)) }
                         }

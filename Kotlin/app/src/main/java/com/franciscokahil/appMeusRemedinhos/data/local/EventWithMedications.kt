@@ -8,7 +8,7 @@ data class EventWithMedications(
     @Relation(
         entity = EventMedicationEntity::class,
         parentColumn = "id",
-        entityColumn = "eventId"
+        entityColumn = "eventId",
     )
     val medications: List<MedicationWithDosage>
 )
@@ -26,7 +26,7 @@ data class MedicationWithDosage(
             if (crossRef.dosageValue.isEmpty()) return medication.name
             
             // Extract emoji from predefined units if possible
-            val unitDisplay = if (crossRef.dosageUnit.isNotEmpty() && (crossRef.dosageUnit[0].isSurrogate() || crossRef.dosageUnit[0].code > 127)) {
+            val unitDisplay = if (crossRef.dosageUnit.isNotEmpty() && (crossRef.dosageUnit[0].isSurrogate() || (crossRef.dosageUnit[0].code > 127))) {
                 crossRef.dosageUnit.split(" ").firstOrNull() ?: crossRef.dosageUnit
             } else {
                 crossRef.dosageUnit

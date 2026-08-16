@@ -32,5 +32,5 @@ data class EventEntity(
     val type: EventType,
     val createdAt: Long = System.currentTimeMillis(),
     val isEnabled: Boolean = true,
-    val icon: String = "⏰"
+    val icon: String = "⏰",
 )

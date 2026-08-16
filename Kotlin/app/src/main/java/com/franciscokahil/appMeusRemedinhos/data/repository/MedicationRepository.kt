@@ -23,7 +23,7 @@ interface MedicationRepository {
 
 class MedicationRepositoryImpl(
     private val medicationDao: MedicationDao,
-    private val doseHistoryDao: DoseHistoryDao
+    private val doseHistoryDao: DoseHistoryDao,
 ) : MedicationRepository {
     private val mutex = Mutex()
 

@@ -66,7 +66,7 @@ class DashboardViewModel(
         ticker,
     ) { allEvents, history, currentTime ->
         val todayStart = getStartOfDay(currentTime)
-        val yesterdayStart = getStartOfDay(currentTime - 24 * 60 * 60 * 1000)
+        val yesterdayStart = getStartOfDay(currentTime - (24 * 60 * 60 * 1000))
 
         allEvents.filter { eventWithMeds ->
             val wasCreatedBeforeToday = eventWithMeds.event.createdAt < todayStart
@@ -88,7 +88,7 @@ class DashboardViewModel(
     val shouldShowOnboarding: StateFlow<Boolean> = events.map { it.isEmpty() }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = true
+        initialValue = true,
     )
 
     val allMedications: StateFlow<List<Medication>> = medicationRepository.allMedications.stateIn(

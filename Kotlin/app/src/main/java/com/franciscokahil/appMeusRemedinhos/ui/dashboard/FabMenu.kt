@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
@@ -69,7 +68,7 @@ fun FabMenu(
     onOptionSelected: (PresetOption?) -> Unit,
     tooltipState: TooltipState, // Kept for compatibility if needed elsewhere
     tooltipOffsetX: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val rotation by animateFloatAsState(if (isExpanded) 45f else 0f, label = "rotation")
     val tertiaryColor = MaterialTheme.colorScheme.tertiary

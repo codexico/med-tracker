@@ -21,7 +21,7 @@ interface EventRepository {
 
 class EventRepositoryImpl(
     private val context: Context,
-    private val eventDao: EventDao
+    private val eventDao: EventDao,
 ) : EventRepository {
     override val allEvents: Flow<List<EventWithMedications>> = eventDao.getAllEventsWithMedications()
 
@@ -53,7 +53,7 @@ class EventRepositoryImpl(
                     Log.e("EventRepository", "Failed to update widgets", e)
                 }
             }
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             // Extra safety to prevent any exception from bubbling up to the caller
         }
     }

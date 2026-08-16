@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class InventoryViewModel(
     private val medicationRepository: MedicationRepository,
-    private val eventRepository: EventRepository
+    eventRepository: EventRepository,
 ) : ViewModel() {
 
     val medications: StateFlow<List<MedicationStockUIModel>> = combine(

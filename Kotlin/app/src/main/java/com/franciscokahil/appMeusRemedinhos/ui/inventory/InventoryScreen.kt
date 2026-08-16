@@ -80,7 +80,7 @@ fun InventoryScreen(
                     },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error,
-                    )
+                    ),
                 ) {
                     Text(stringResource(R.string.remove))
                 }

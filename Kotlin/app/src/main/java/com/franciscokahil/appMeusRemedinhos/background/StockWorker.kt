@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 class StockWorker(
     context: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -20,7 +20,7 @@ class StockWorker(
         val medications = database.medicationDao().getAllMedications().first()
         
         val lowStockMeds = medications.filter { 
-            it.currentStock <= it.lowStockThreshold && it.lowStockThreshold > 0 
+            (it.currentStock <= it.lowStockThreshold) && (it.lowStockThreshold > 0)
         }
 
         if (lowStockMeds.isNotEmpty()) {

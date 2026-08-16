@@ -51,7 +51,7 @@ class PendingEventsTest {
         
         val event = EventWithMedications(
             event = EventEntity(id = "1", title = "New Event", time = "08:00", createdAt = today, type = EventType.OTHER),
-            medications = emptyList()
+            medications = emptyList(),
         )
         
         eventsFlow.value = listOf(event)
@@ -71,7 +71,7 @@ class PendingEventsTest {
         
         val event = EventWithMedications(
             event = EventEntity(id = "2", title = "Old Event", time = "08:00", createdAt = createdYesterday, type = EventType.OTHER),
-            medications = emptyList()
+            medications = emptyList(),
         )
         
         eventsFlow.value = listOf(event)

@@ -52,7 +52,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -115,7 +114,7 @@ fun EventCard(
         event.medications.map { medWithDosage ->
             medWithDosage.medication.copy(
                 dosageValue = medWithDosage.crossRef.dosageValue,
-                dosageUnit = medWithDosage.crossRef.dosageUnit
+                dosageUnit = medWithDosage.crossRef.dosageUnit,
             )
         }
     }
@@ -127,7 +126,7 @@ fun EventCard(
     var newMedUnit by remember(isExpanded) { mutableStateOf("") }
     var customUnit by remember(isExpanded) { mutableStateOf("") }
     var unitExpanded by remember { mutableStateOf(value = false) }
-    var medNameError by remember { mutableStateOf(false) }
+    var medNameError by remember { mutableStateOf(value = false) }
     var medNameExpanded by remember { mutableStateOf(false) }
     var selectedMedicationId by remember(isExpanded) { mutableStateOf<String?>(null) }
     
@@ -551,9 +550,9 @@ fun EventCard(
                                     isError = medNameError
                                 )
 
-                                val filteredOptions = allMedications.filter { 
+                                val filteredOptions = allMedications.asSequence().filter {
                                     it.name.contains(newMedName, ignoreCase = true) 
-                                }.take(5)
+                                }.take(5).toList()
 
                                 if (filteredOptions.isNotEmpty()) {
                                     ExposedDropdownMenu(

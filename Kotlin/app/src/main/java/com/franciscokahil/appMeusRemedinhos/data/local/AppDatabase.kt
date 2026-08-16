@@ -11,7 +11,7 @@ import androidx.room.TypeConverters
         EventEntity::class,
         Medication::class,
         EventMedicationEntity::class,
-        DoseHistoryEntity::class
+        DoseHistoryEntity::class,
     ],
     version = 5,
     exportSchema = false
@@ -22,12 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao
     abstract fun doseHistoryDao(): DoseHistoryDao
 
-    fun ensureSeeded() {
-        // Seeding removed for UX 2.0. Users start with an empty state.
-    }
-
     companion object {
-        private const val TAG = "AppDatabase"
 
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -39,7 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "med_tracker_database"
                 )
-                .fallbackToDestructiveMigration(true)
+                .fallbackToDestructiveMigration(dropAllTables = true)
                 .build()
                 INSTANCE = instance
                 instance
