@@ -72,7 +72,7 @@ class DashboardViewModelTest {
             // Emit a non-empty list
             val event = EventWithMedications(
                 event = EventEntity("1", "Teste", "08:00", type = EventType.OTHER),
-                medications = emptyList()
+                medications = emptyList(),
             )
             eventsFlow.value = listOf(event)
             
@@ -89,7 +89,7 @@ class DashboardViewModelTest {
         viewModel.addEvent(label, time, medications = listOf(Medication(name = "Aspirina")))
         advanceUntilIdle()
 
-        coVerify { eventRepository.insertEvent(match { it.title == label && it.time == time }, match { it.size == 1 }) }
+        coVerify { eventRepository.insertEvent(match { (it.title == label) && (it.time == time) }, match { it.size == 1 }) }
         coVerify { alarmScheduler.scheduleAlarm(any<EventWithMedications>(), any(), any()) }
     }
 

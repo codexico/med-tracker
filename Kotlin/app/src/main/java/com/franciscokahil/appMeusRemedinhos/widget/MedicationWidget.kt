@@ -2,6 +2,7 @@ package com.franciscokahil.appMeusRemedinhos.widget
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.ui.theme.*
-import kotlinx.coroutines.flow.first
+import com.franciscokahil.appMeusRemedinhos.utils.DateTimeUtils
 import java.util.Calendar
 
 class MedicationWidget : GlanceAppWidget() {
@@ -67,15 +68,19 @@ class MedicationWidget : GlanceAppWidget() {
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
+        // Use direct snapshot query to ensure consistency when adding/updating events
         val events = try {
-            database.eventDao().getAllEventsWithMedications().first()
-        } catch (_: Exception) {
+            database.eventDao().getAllEventsWithMedicationsSnapshot()
+                .filter { it.event.isEnabled }
+        } catch (e: Exception) {
+            Log.e("MedicationWidget", "Error loading events for widget", e)
             emptyList()
         }
 
         val takenEventIds = try {
             database.doseHistoryDao().getTakenEventIdsToday(todayStart).toSet()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e("MedicationWidget", "Error loading history for widget", e)
             emptySet()
         }
 
@@ -114,6 +119,8 @@ object MedicationWidgetTheme {
         surface = md_theme_light_surface,
         onSurface = md_theme_light_onSurface,
         onSurfaceVariant = md_theme_light_onSurfaceVariant,
+        error = md_theme_light_error,
+        errorContainer = md_theme_light_errorContainer,
     )
 
     private val darkColors = androidx.compose.material3.darkColorScheme(
@@ -128,6 +135,8 @@ object MedicationWidgetTheme {
         surface = md_theme_dark_surface,
         onSurface = md_theme_dark_onSurface,
         onSurfaceVariant = md_theme_dark_onSurfaceVariant,
+        error = md_theme_dark_error,
+        errorContainer = md_theme_dark_errorContainer,
     )
 
     val colors = ColorProviders(
@@ -142,6 +151,7 @@ private val colorBackground = Color(0xFFF0D4BD)
 private val colorSurface = Color(0xFFFFFFFF)
 private val colorTextPrimary = Color(0xFF2D241B)
 private val colorTextSecondary = Color(0xFF6D5D4B)
+private val colorError = Color(0xFFBA1A1A)
 
 @Composable
 fun MedicationWidgetContent(
@@ -204,12 +214,14 @@ private fun WidgetEventItem(
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     val action = actionStartActivity(intent)
+    
+    val isLate = !isTakenToday && DateTimeUtils.isTimePassed(event.time)
 
     Column(
         modifier = GlanceModifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .background(GlanceTheme.colors.surface)
+            .background(if (isLate) GlanceTheme.colors.errorContainer else GlanceTheme.colors.surface)
             .cornerRadius(12.dp)
             .padding(12.dp)
             .clickable(action),
@@ -221,7 +233,7 @@ private fun WidgetEventItem(
             Box(
                 modifier = GlanceModifier
                     .size(32.dp)
-                    .background(GlanceTheme.colors.primaryContainer)
+                    .background(if (isLate) GlanceTheme.colors.error else GlanceTheme.colors.primaryContainer)
                     .cornerRadius(6.dp),
                 contentAlignment = Alignment.Center,
             ) {
@@ -235,7 +247,11 @@ private fun WidgetEventItem(
                     text = event.title,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = if (isTakenToday) GlanceTheme.colors.onSurfaceVariant else GlanceTheme.colors.onSurface,
+                        color = when {
+                            isTakenToday -> GlanceTheme.colors.onSurfaceVariant
+                            isLate -> GlanceTheme.colors.error
+                            else -> GlanceTheme.colors.onSurface
+                        },
                         fontSize = 14.sp,
                         textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None,
                     ),
@@ -243,17 +259,24 @@ private fun WidgetEventItem(
                 Text(
                     text = event.time,
                     style = TextStyle(
-                        color = GlanceTheme.colors.onSurfaceVariant,
+                        color = if (isLate) GlanceTheme.colors.error else GlanceTheme.colors.onSurfaceVariant,
                         fontSize = 12.sp,
                         textDecoration = if (isTakenToday) TextDecoration.LineThrough else TextDecoration.None,
                     ),
+                )
+            }
+            
+            if (isTakenToday || isLate) {
+                Spacer(modifier = GlanceModifier.width(8.dp))
+                Text(
+                    text = if (isTakenToday) "✅" else "⚠️",
+                    style = TextStyle(fontSize = 16.sp),
                 )
             }
         }
     }
 }
 
-// GLANCE PREVIEW
 @Preview(showBackground = true)
 @Composable
 fun MedicationWidgetPreview() {
@@ -291,19 +314,27 @@ fun MedicationWidgetPreview() {
         
         ComposeLazyColumn(modifier = ComposeModifier.composeFillMaxSize()) {
             composeItems(mockEvents) { event ->
-                WidgetEventItemPreview(event.event, isTakenToday = event.event.id == "1")
+                WidgetEventItemPreview(
+                    event = event.event,
+                    isTakenToday = event.event.id == "1",
+                    isLate = event.event.id == "2",
+                )
             }
         }
     }
 }
 
 @Composable
-private fun WidgetEventItemPreview(event: EventEntity, isTakenToday: Boolean) {
+private fun WidgetEventItemPreview(
+    event: EventEntity,
+    isTakenToday: Boolean,
+    isLate: Boolean,
+) {
     ComposeColumn(
         modifier = ComposeModifier
             .composeFillMaxWidth()
             .composePadding(vertical = 4.dp)
-            .composeBackground(colorSurface, shape = RoundedCornerShape(12.dp))
+            .composeBackground(if (isLate) colorError.copy(alpha = 0.1f) else colorSurface, shape = RoundedCornerShape(12.dp))
             .composePadding(12.dp),
     ) {
         ComposeRow(
@@ -326,7 +357,11 @@ private fun WidgetEventItemPreview(event: EventEntity, isTakenToday: Boolean) {
                     text = event.title,
                     style = ComposeTextStyle(
                         fontWeight = ComposeFontWeight.Bold,
-                        color = if (isTakenToday) colorTextSecondary else colorTextPrimary,
+                        color = when {
+                            isTakenToday -> colorTextSecondary
+                            isLate -> colorError
+                            else -> colorTextPrimary
+                        },
                         fontSize = 14.sp,
                         textDecoration = if (isTakenToday) ComposeTextDecoration.LineThrough else ComposeTextDecoration.None,
                     ),
@@ -334,10 +369,18 @@ private fun WidgetEventItemPreview(event: EventEntity, isTakenToday: Boolean) {
                 ComposeText(
                     text = event.time,
                     style = ComposeTextStyle(
-                        color = colorTextSecondary,
+                        color = if (isLate) colorError else colorTextSecondary,
                         fontSize = 12.sp,
                         textDecoration = if (isTakenToday) ComposeTextDecoration.LineThrough else ComposeTextDecoration.None,
                     ),
+                )
+            }
+            
+            if (isTakenToday || isLate) {
+                ComposeSpacer(modifier = ComposeModifier.composeWidth(8.dp))
+                ComposeText(
+                    text = if (isTakenToday) "✅" else "️",
+                    style = ComposeTextStyle(fontSize = 16.sp),
                 )
             }
         }

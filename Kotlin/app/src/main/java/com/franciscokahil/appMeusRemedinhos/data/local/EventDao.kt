@@ -9,6 +9,10 @@ interface EventDao {
     @Query("SELECT * FROM events ORDER BY time ASC")
     fun getAllEventsWithMedications(): Flow<List<EventWithMedications>>
 
+    @Transaction
+    @Query("SELECT * FROM events ORDER BY time ASC")
+    suspend fun getAllEventsWithMedicationsSnapshot(): List<EventWithMedications>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: EventEntity)
 

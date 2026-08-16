@@ -1,12 +1,17 @@
 package com.franciscokahil.appMeusRemedinhos.data.repository
 
+import android.content.Context
 import com.franciscokahil.appMeusRemedinhos.data.local.DoseHistoryDao
 import com.franciscokahil.appMeusRemedinhos.data.local.DoseHistoryEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationDao
+import com.franciscokahil.appMeusRemedinhos.widget.MedicationWidget
+import androidx.glance.appwidget.updateAll
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 interface MedicationRepository {
     val allMedications: Flow<List<Medication>>
@@ -22,6 +27,7 @@ interface MedicationRepository {
 }
 
 class MedicationRepositoryImpl(
+    private val context: Context,
     private val medicationDao: MedicationDao,
     private val doseHistoryDao: DoseHistoryDao,
 ) : MedicationRepository {
@@ -64,6 +70,7 @@ class MedicationRepositoryImpl(
             )
             doseHistoryDao.insertDose(dose)
             medicationDao.subtractFromStock(medicationId, amount)
+            updateWidgets()
         }
     }
 
@@ -76,6 +83,7 @@ class MedicationRepositoryImpl(
             status = "SKIPPED"
         )
         doseHistoryDao.insertDose(dose)
+        updateWidgets()
     }
 
     override suspend fun unmarkAsTaken(eventId: String, startOfDay: Long) {
@@ -90,6 +98,17 @@ class MedicationRepositoryImpl(
                 }
             }
             doseHistoryDao.deleteDosesForEventToday(eventId, startOfDay)
+            updateWidgets()
+        }
+    }
+
+    private suspend fun updateWidgets() {
+        withContext(NonCancellable) {
+            try {
+                MedicationWidget().updateAll(context)
+            } catch (_: Throwable) {
+                // Ignore widget update errors
+            }
         }
     }
 

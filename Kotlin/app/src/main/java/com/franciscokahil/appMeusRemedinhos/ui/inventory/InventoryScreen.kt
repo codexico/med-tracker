@@ -42,7 +42,7 @@ fun InventoryScreen(
 ) {
     val context = LocalContext.current
     val database = remember { AppDatabase.getDatabase(context) }
-    val medRepository = remember { MedicationRepositoryImpl(database.medicationDao(), database.doseHistoryDao()) }
+    val medRepository = remember { MedicationRepositoryImpl(context, database.medicationDao(), database.doseHistoryDao()) }
     val eventRepository = remember { EventRepositoryImpl(context, database.eventDao()) }
     val factory = remember { InventoryViewModelFactory(medRepository, eventRepository) }
     val viewModel: InventoryViewModel = viewModel(factory = factory)

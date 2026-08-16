@@ -100,7 +100,7 @@ fun DashboardScreen(
     val context = LocalContext.current
     val database = remember { AppDatabase.getDatabase(context) }
     val eventRepository = remember { EventRepositoryImpl(context, database.eventDao()) }
-    val medicationRepository = remember { MedicationRepositoryImpl(database.medicationDao(), database.doseHistoryDao()) }
+    val medicationRepository = remember { MedicationRepositoryImpl(context, database.medicationDao(), database.doseHistoryDao()) }
     val alarmScheduler = remember { AlarmSchedulerImpl(context) }
     val factory = remember { DashboardViewModelFactory(eventRepository, medicationRepository, alarmScheduler) }
     val viewModel: DashboardViewModel = viewModel(factory = factory)
