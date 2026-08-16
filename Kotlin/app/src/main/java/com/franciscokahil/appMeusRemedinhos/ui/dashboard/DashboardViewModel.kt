@@ -1,25 +1,20 @@
 package com.franciscokahil.appMeusRemedinhos.ui.dashboard
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.franciscokahil.appMeusRemedinhos.background.AlarmScheduler
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
+import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
-import com.franciscokahil.appMeusRemedinhos.data.local.EventType
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.UUID
@@ -28,16 +23,15 @@ import kotlin.time.Duration.Companion.minutes
 class DashboardViewModel(
     private val eventRepository: EventRepository,
     private val medicationRepository: MedicationRepository,
-    private val alarmScheduler: AlarmScheduler,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
-    // Ticker that emits every minute to ensure todayStart is updated even if the app is left open
-    private val ticker = flow {
+    private val ticker: Flow<Long> = flow {
         while (true) {
-            delay(1.minutes)
             emit(System.currentTimeMillis())
+            delay(1.minutes) // Refresh every minute
         }
-    }.onStart { emit(System.currentTimeMillis()) }
+    }
 
     val events: StateFlow<List<DashboardEventUIModel>> = combine(
         eventRepository.allEvents,
@@ -63,39 +57,43 @@ class DashboardViewModel(
     val pendingEvents: StateFlow<List<EventWithMedications>> = combine(
         eventRepository.allEvents,
         medicationRepository.allHistory,
-        ticker,
+        ticker
     ) { allEvents, history, currentTime ->
         val todayStart = getStartOfDay(currentTime)
         val yesterdayStart = getStartOfDay(currentTime - (24 * 60 * 60 * 1000))
 
         allEvents.filter { eventWithMeds ->
-            val wasCreatedBeforeToday = eventWithMeds.event.createdAt < todayStart
-
-            val hasEntryYesterday = history.any { 
-                it.eventId == eventWithMeds.event.id && 
-                it.timestamp >= yesterdayStart && 
-                it.timestamp < todayStart 
+            val event = eventWithMeds.event
+            // Event created before today
+            val isOldEvent = event.createdAt < todayStart
+            
+            // Check if it was NOT handled (TAKEN or SKIPPED) since yesterday
+            val isHandled = history.any { 
+                it.eventId == event.id && it.timestamp >= yesterdayStart 
             }
             
-            wasCreatedBeforeToday && !hasEntryYesterday && eventWithMeds.event.isEnabled
+            isOldEvent && !isHandled && event.isEnabled
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList(),
-    )
-
-    val shouldShowOnboarding: StateFlow<Boolean> = events.map { it.isEmpty() }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = true,
-    )
-
-    val allMedications: StateFlow<List<Medication>> = medicationRepository.allMedications.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    val shouldShowOnboarding: StateFlow<Boolean> = events
+        .map { it.isEmpty() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true,
+        )
+
+    val allMedications: StateFlow<List<Medication>> = medicationRepository.allMedications
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private fun getStartOfDay(timeMillis: Long): Long {
         return Calendar.getInstance().apply {
@@ -107,49 +105,62 @@ class DashboardViewModel(
         }.timeInMillis
     }
 
-    fun toggleEventStatus(event: EventWithMedications, isTaken: Boolean) {
+    fun toggleEventStatus(eventWithMeds: EventWithMedications, isTaken: Boolean) {
         viewModelScope.launch {
             if (isTaken) {
-                val timestamp = System.currentTimeMillis()
-                event.medications.forEach { medWithDosage ->
-                    val amount = medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f
+                if (eventWithMeds.medications.isEmpty()) {
+                    // Even if there are no medications, we record the event as taken
                     medicationRepository.markAsTaken(
-                        eventId = event.event.id,
-                        medicationId = medWithDosage.medication.id,
-                        amount = amount,
-                        timestamp = timestamp
+                        eventWithMeds.event.id,
+                        "", // No specific medication
+                        0f,
+                        System.currentTimeMillis()
                     )
+                } else {
+                    eventWithMeds.medications.forEach { medWithDosage ->
+                        medicationRepository.markAsTaken(
+                            eventWithMeds.event.id,
+                            medWithDosage.medication.id,
+                            medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f,
+                            System.currentTimeMillis()
+                        )
+                    }
                 }
             } else {
-                val todayStart = getStartOfDay(System.currentTimeMillis())
-                medicationRepository.unmarkAsTaken(event.event.id, todayStart)
+                medicationRepository.unmarkAsTaken(eventWithMeds.event.id, getStartOfDay(System.currentTimeMillis()))
             }
         }
     }
 
-    fun markAsTakenRetrospectively(event: EventWithMedications) {
+    fun markAsTakenRetrospectively(eventWithMeds: EventWithMedications) {
         viewModelScope.launch {
-            val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
-            event.medications.forEach { medWithDosage ->
-                val amount = medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f
+            if (eventWithMeds.medications.isEmpty()) {
                 medicationRepository.markAsTaken(
-                    eventId = event.event.id,
-                    medicationId = medWithDosage.medication.id,
-                    amount = amount,
-                    timestamp = yesterday
+                    eventWithMeds.event.id,
+                    "",
+                    0f,
+                    System.currentTimeMillis()
                 )
+            } else {
+                eventWithMeds.medications.forEach { medWithDosage ->
+                    medicationRepository.markAsTaken(
+                        eventWithMeds.event.id,
+                        medWithDosage.medication.id,
+                        medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f,
+                        System.currentTimeMillis()
+                    )
+                }
             }
         }
     }
 
-    fun markAsSkippedRetrospectively(event: EventWithMedications) {
+    fun markAsSkippedRetrospectively(eventWithMeds: EventWithMedications) {
         viewModelScope.launch {
-            val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }.timeInMillis
-            event.medications.forEach { medWithDosage ->
+            eventWithMeds.medications.forEach { medWithDosage ->
                 medicationRepository.markAsSkipped(
-                    eventId = event.event.id,
-                    medicationId = medWithDosage.medication.id,
-                    timestamp = yesterday
+                    eventWithMeds.event.id,
+                    medWithDosage.medication.id,
+                    System.currentTimeMillis()
                 )
             }
         }
@@ -157,6 +168,7 @@ class DashboardViewModel(
 
     fun addEvent(label: String, time: String, icon: String? = null, medications: List<Medication> = emptyList(), type: EventType = EventType.OTHER) {
         viewModelScope.launch {
+            safeLogD("DashboardViewModel", "addEvent: title=$label, time=$time")
             val finalIcon = if (icon == "⏰") getClockEmoji(time) else icon ?: getClockEmoji(time)
             val eventId = UUID.randomUUID().toString()
             val newEvent = EventEntity(
@@ -195,20 +207,14 @@ class DashboardViewModel(
 
     fun updateEvent(event: EventEntity, newTitle: String, newTime: String, medications: List<Medication>? = null, type: EventType? = null) {
         viewModelScope.launch {
-            val clockEmojis = listOf(
-                "🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", "🕟", "🕔", "🕠",
-                "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", "🕦", "⏰"
-            )
-            
-            val finalIcon = if (event.icon in clockEmojis) getClockEmoji(newTime) else event.icon
             val updatedEvent = event.copy(
                 title = newTitle,
                 time = newTime,
-                icon = finalIcon,
-                type = type ?: event.type
+                type = type ?: event.type,
+                icon = if (event.icon.startsWith("🕒") || event.icon.startsWith("🕐") || event.icon == "⏰") getClockEmoji(newTime) else event.icon
             )
             
-            val medicationLinks = (medications ?: emptyList()).map { med ->
+            val medicationLinks = medications?.map { med ->
                 val effectiveId = medicationRepository.insertMedication(med)
                 EventMedicationEntity(
                     eventId = event.id,
@@ -216,38 +222,40 @@ class DashboardViewModel(
                     dosageValue = med.dosageValue,
                     dosageUnit = med.dosageUnit
                 )
-            }
+            } ?: emptyList()
             
             eventRepository.updateEvent(updatedEvent, medicationLinks)
-            if (updatedEvent.isEnabled) {
-                val fullEvent = EventWithMedications(
-                    event = updatedEvent,
-                    medications = (medications ?: emptyList()).mapIndexed { index, med ->
-                        MedicationWithDosage(
-                            crossRef = medicationLinks[index],
-                            medication = med.copy(id = medicationLinks[index].medicationId)
-                        )
-                    }
-                )
-                scheduleEventAlarm(fullEvent)
-            }
+            
+            // Reschedule alarm
+            val medicationsList = medications ?: emptyList()
+            val fullEvent = EventWithMedications(
+                event = updatedEvent,
+                medications = medicationsList.mapIndexed { index, med ->
+                    MedicationWithDosage(
+                        crossRef = medicationLinks[index],
+                        medication = med.copy(id = medicationLinks[index].medicationId)
+                    )
+                }
+            )
+            scheduleEventAlarm(fullEvent)
         }
     }
 
     fun deleteEvent(event: EventEntity) {
         viewModelScope.launch {
-            alarmScheduler.cancelAlarm(event.id)
             eventRepository.deleteEvent(event)
+            alarmScheduler.cancelAlarm(event.id)
         }
     }
 
-    private fun scheduleEventAlarm(event: EventWithMedications) {
-        val parts = event.event.time.split(":")
+    fun scheduleEventAlarm(eventWithMeds: EventWithMedications) {
+        if (!eventWithMeds.event.isEnabled) return
+        
+        val parts = eventWithMeds.event.time.split(":")
         if (parts.size == 2) {
-            val hour = parts[0].toIntOrNull() ?: return
-            val minute = parts[1].toIntOrNull() ?: return
-            
-            alarmScheduler.scheduleAlarm(event, hour, minute)
+            val hour = parts[0].toIntOrNull() ?: 0
+            val minute = parts[1].toIntOrNull() ?: 0
+            alarmScheduler.scheduleAlarm(eventWithMeds, hour, minute)
         }
     }
 
@@ -280,6 +288,18 @@ class DashboardViewModel(
             11 -> if (isHalf) "\uD83D\uDD6A" else "\uD83D\uDD5A"
             12 -> if (isHalf) "\uD83D\uDD6B" else "\uD83D\uDD5B"
             else -> "\uD83D\uDC8A"
+        }
+    }
+
+    private fun safeLogD(tag: String, msg: String) {
+        try {
+            if (System.getProperty("java.runtime.name")?.contains("Android", ignoreCase = true) == true) {
+                Log.d(tag, msg)
+            } else {
+                println("[$tag] $msg")
+            }
+        } catch (_: Exception) {
+            println("[$tag] $msg")
         }
     }
 }

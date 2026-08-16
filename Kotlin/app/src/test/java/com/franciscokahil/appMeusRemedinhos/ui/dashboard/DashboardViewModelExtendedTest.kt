@@ -57,7 +57,7 @@ class DashboardViewModelExtendedTest {
         viewModel.updateEvent(event, "Café Novo", "09:00", emptyList())
         advanceUntilIdle()
 
-        coVerify { eventRepository.updateEvent(match { !it.isEnabled }, any()) }
+        coVerify { eventRepository.updateEvent(match { it.id == "1" && !it.isEnabled }, any()) }
         coVerify(exactly = 0) { alarmScheduler.scheduleAlarm(any(), any(), any()) }
     }
 
@@ -83,7 +83,8 @@ class DashboardViewModelExtendedTest {
 
     @Test
     fun `updateEvent should update icon to dynamic clock if previous icon was already a clock emoji`() = runTest {
-        val event = EventEntity("1", "Other", "08:00", icon = "\uD83D\uDD57", type = EventType.OTHER) // 8:00
+        // Using common clock emoji instead of potentially problematic unicode escapes
+        val event = EventEntity("1", "Other", "08:00", icon = "🕒", type = EventType.OTHER)
         
         viewModel.updateEvent(event, "Other", "09:00", emptyList())
         advanceUntilIdle()

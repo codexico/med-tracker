@@ -22,7 +22,8 @@ class InventoryTests {
 
     @Before
     fun setup() {
-        medicationRepository = MedicationRepositoryImpl(medicationDao, doseHistoryDao)
+        val context = mockk<android.content.Context>(relaxed = true)
+        medicationRepository = MedicationRepositoryImpl(context, medicationDao, doseHistoryDao)
     }
 
     @Test

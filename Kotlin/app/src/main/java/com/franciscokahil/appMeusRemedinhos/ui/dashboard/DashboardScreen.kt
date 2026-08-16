@@ -145,16 +145,18 @@ fun DashboardScreen(
     var showPermissionExplanation by remember { mutableStateOf(value = false) }
     
     val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { _ ->
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
         // Proceed with adding the event regardless of permission result
         pendingNewEvent?.let { params ->
-            val medications = params.medications.map { it.medication.copy(
-                dosageValue = it.crossRef.dosageValue,
-                dosageUnit = it.crossRef.dosageUnit
-            ) }
+            val medications = params.medications.map {
+                it.medication.copy(
+                    dosageValue = it.crossRef.dosageValue,
+                    dosageUnit = it.crossRef.dosageUnit,
+                )
+            }
             viewModel.addEvent(params.event.title, params.event.time, params.event.icon, medications, params.event.type)
-            
+
             pendingNavigationMedId?.let { navId ->
                 onNavigateToInventory(navId)
             }

@@ -5,13 +5,10 @@ import com.franciscokahil.appMeusRemedinhos.data.local.DoseHistoryDao
 import com.franciscokahil.appMeusRemedinhos.data.local.DoseHistoryEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.local.MedicationDao
-import com.franciscokahil.appMeusRemedinhos.widget.MedicationWidget
-import androidx.glance.appwidget.updateAll
-import kotlinx.coroutines.NonCancellable
+import com.franciscokahil.appMeusRemedinhos.widget.WidgetUpdateManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 interface MedicationRepository {
     val allMedications: Flow<List<Medication>>
@@ -102,17 +99,11 @@ class MedicationRepositoryImpl(
         }
     }
 
-    private suspend fun updateWidgets() {
-        withContext(NonCancellable) {
-            try {
-                MedicationWidget().updateAll(context)
-            } catch (_: Throwable) {
-                // Ignore widget update errors
-            }
-        }
-    }
-
     override fun getDosesForEventToday(eventId: String, startOfDay: Long): Flow<List<DoseHistoryEntity>> {
         return doseHistoryDao.getDosesForEventToday(eventId, startOfDay)
+    }
+
+    private fun updateWidgets() {
+        WidgetUpdateManager.updateWidgets(context)
     }
 }

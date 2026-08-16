@@ -1,16 +1,12 @@
 package com.franciscokahil.appMeusRemedinhos.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.franciscokahil.appMeusRemedinhos.data.local.EventDao
 import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
 import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
-import com.franciscokahil.appMeusRemedinhos.widget.MedicationWidget
-import androidx.glance.appwidget.updateAll
-import kotlinx.coroutines.NonCancellable
+import com.franciscokahil.appMeusRemedinhos.widget.WidgetUpdateManager
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 
 interface EventRepository {
     val allEvents: Flow<List<EventWithMedications>>
@@ -40,21 +36,7 @@ class EventRepositoryImpl(
         updateWidgets()
     }
 
-    private suspend fun updateWidgets() {
-        try {
-            // Using NonCancellable ensures that widget updates (which are side-effects)
-            // don't throw CancellationException if the calling coroutine is cancelled.
-            // This is common in tests where the scope is cancelled before the side-effect completes.
-            withContext(NonCancellable) {
-                try {
-                    MedicationWidget().updateAll(context)
-                } catch (e: Throwable) {
-                    // Ignore errors during widget updates as they are non-critical side effects
-                    Log.e("EventRepository", "Failed to update widgets", e)
-                }
-            }
-        } catch (_: Throwable) {
-            // Extra safety to prevent any exception from bubbling up to the caller
-        }
+    private fun updateWidgets() {
+        WidgetUpdateManager.updateWidgets(context)
     }
 }

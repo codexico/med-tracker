@@ -70,6 +70,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -301,16 +302,20 @@ fun EventCard(
                         ) {
                             Text(
                                 text = if (isExpanded) editTitle.ifBlank { stringResource(R.string.new_time) } else event.event.title,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    textDecoration = if (!isExpanded && isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                                ),
                                 color = if (!isExpanded && isTakenToday) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = FontWeight.Bold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
                             )
                             Text(
                                 text = if (isExpanded) editTime else event.event.time,
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    textDecoration = if (!isExpanded && isTakenToday) TextDecoration.LineThrough else TextDecoration.None
+                                ),
                                 color = MaterialTheme.colorScheme.outline,
                             )
                         }

@@ -70,8 +70,10 @@ class MedicationWidget : GlanceAppWidget() {
 
         // Use direct snapshot query to ensure consistency when adding/updating events
         val events = try {
-            database.eventDao().getAllEventsWithMedicationsSnapshot()
-                .filter { it.event.isEnabled }
+            val snapshot = database.eventDao().getAllEventsWithMedicationsSnapshot()
+            val filtered = snapshot.filter { it.event.isEnabled }
+            Log.d("MedicationWidget", "provideGlance: Fetched ${snapshot.size} events, ${filtered.size} enabled")
+            filtered
         } catch (e: Exception) {
             Log.e("MedicationWidget", "Error loading events for widget", e)
             emptyList()
@@ -221,7 +223,7 @@ private fun WidgetEventItem(
         modifier = GlanceModifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .background(if (isLate) GlanceTheme.colors.errorContainer else GlanceTheme.colors.surface)
+            .background(GlanceTheme.colors.surface)
             .cornerRadius(12.dp)
             .padding(12.dp)
             .clickable(action),
@@ -334,7 +336,7 @@ private fun WidgetEventItemPreview(
         modifier = ComposeModifier
             .composeFillMaxWidth()
             .composePadding(vertical = 4.dp)
-            .composeBackground(if (isLate) colorError.copy(alpha = 0.1f) else colorSurface, shape = RoundedCornerShape(12.dp))
+            .composeBackground(colorSurface, shape = RoundedCornerShape(12.dp))
             .composePadding(12.dp),
     ) {
         ComposeRow(
