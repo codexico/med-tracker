@@ -25,14 +25,18 @@ object WidgetUpdateManager {
                     safeLogD("WidgetUpdateManager", "Triggering first update...")
                     try {
                         MedicationWidget().updateAll(appContext)
-                    } catch (_: Exception) { }
+                    } catch (e: Exception) { 
+                        safeLogE("WidgetUpdateManager", "First update failed", e)
+                    }
                     
-                    delay(400.milliseconds) // Brief delay to allow system/DB to settle
+                    delay(500.milliseconds) // Slightly longer delay for stability
                     
                     safeLogD("WidgetUpdateManager", "Triggering second update (safety)...")
                     try {
                         MedicationWidget().updateAll(appContext)
-                    } catch (_: Exception) { }
+                    } catch (e: Exception) { 
+                        safeLogE("WidgetUpdateManager", "Second update failed", e)
+                    }
                 }
             } catch (e: Exception) {
                 safeLogE("WidgetUpdateManager", "Failed to update widgets", e)

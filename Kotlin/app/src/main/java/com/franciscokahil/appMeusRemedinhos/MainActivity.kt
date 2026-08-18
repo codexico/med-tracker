@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.franciscokahil.appMeusRemedinhos.background.NotificationHelper
+import com.franciscokahil.appMeusRemedinhos.background.AlarmSchedulerImpl
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
 import com.franciscokahil.appMeusRemedinhos.ui.MainNavigation
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         NotificationHelper(this).createNotificationChannel()
+        AlarmSchedulerImpl(this).scheduleMidnightRefresh()
         com.franciscokahil.appMeusRemedinhos.background.StockWorker.schedule(this)
         handleIntent(intent)
 

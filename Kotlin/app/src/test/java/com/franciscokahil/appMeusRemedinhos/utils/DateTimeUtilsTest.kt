@@ -40,6 +40,29 @@ class DateTimeUtilsTest {
     }
 
     @Test
+    fun `isTimePassed should return true for one minute past`() {
+        val now = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 10)
+            set(Calendar.MINUTE, 1)
+        }
+        val eventTime = "10:00"
+        assertTrue(DateTimeUtils.isTimePassed(eventTime, now))
+    }
+
+    @Test
+    fun `isTimePassed at midnight boundary`() {
+        val midnight = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 1)
+        }
+        // Event at 23:59 should be passed
+        assertTrue(DateTimeUtils.isTimePassed("23:59", midnight))
+        // Event at 00:01 should not be passed
+        assertFalse(DateTimeUtils.isTimePassed("00:01", midnight))
+    }
+
+    @Test
     fun `isTimePassed should handle invalid format`() {
         val now = Calendar.getInstance()
         assertFalse(DateTimeUtils.isTimePassed("invalid", now))

@@ -11,6 +11,7 @@ import java.util.Calendar
 interface AlarmScheduler {
     fun scheduleAlarm(id: String, title: String, message: String, hour: Int, minute: Int)
     fun scheduleAlarm(event: com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications, hour: Int, minute: Int)
+    fun scheduleMidnightRefresh()
     fun cancelAlarm(id: String)
     fun getContext(): Context
 }
@@ -76,6 +77,35 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             "$prefix: ${event.medications.joinToString(", ") { it.displayName }}"
         }
         scheduleAlarm(event.event.id, event.event.title, message, hour, minute)
+    }
+
+    override fun scheduleMidnightRefresh() {
+        val manager = alarmManager ?: return
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            action = AlarmReceiver.ACTION_MIDNIGHT_REFRESH
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            "midnight_refresh".hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 1) // 1 second past midnight
+            if (timeInMillis <= System.currentTimeMillis()) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !manager.canScheduleExactAlarms()) {
+            manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        } else {
+            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        }
     }
 
     override fun cancelAlarm(id: String) {
