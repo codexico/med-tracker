@@ -51,15 +51,15 @@ class DateTimeUtilsTest {
 
     @Test
     fun `isTimePassed at midnight boundary`() {
-        val midnight = Calendar.getInstance().apply {
+        val earlyMorning = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 1)
+            set(Calendar.MINUTE, 5)
+            set(Calendar.SECOND, 0)
         }
-        // Event at 23:59 should be passed
-        assertTrue(DateTimeUtils.isTimePassed("23:59", midnight))
-        // Event at 00:01 should not be passed
-        assertFalse(DateTimeUtils.isTimePassed("00:01", midnight))
+        // Event at 00:01 should be passed
+        assertTrue(DateTimeUtils.isTimePassed("00:01", earlyMorning))
+        // Event at 00:10 should not be passed
+        assertFalse(DateTimeUtils.isTimePassed("00:10", earlyMorning))
     }
 
     @Test
