@@ -7,12 +7,28 @@ set -e # Aborta em caso de erro simples não tratado
 
 TYPE="${1:-patch}"
 BUILD_GRADLE="app/build.gradle.kts"
+CONTAINER_NAME="ubuntu22-android"
+
+# Detectar se estamos dentro do Distrobox
+if [ -f "/run/.containerenv" ] || [ "$NAME" == "$CONTAINER_NAME" ]; then
+    GRADLE_CMD="./gradlew"
+    echo "📦 Rodando dentro do container Distrobox..."
+else
+    # Se estivermos fora, tentamos usar o distrobox-enter
+    if command -v distrobox-enter >/dev/null 2>&1; then
+        GRADLE_CMD="distrobox-enter -n $CONTAINER_NAME -- ./gradlew"
+        echo "🔗 Rodando via host usando distrobox-enter..."
+    else
+        GRADLE_CMD="./gradlew"
+        echo "⚠️  Aviso: distrobox-enter não encontrado. Tentando rodar localmente..."
+    fi
+fi
 
 echo "🚀 Iniciando processo de release ($TYPE)..."
 
 # 1. Rodar Testes
 echo "🧪 Rodando testes unitários..."
-if ! ./gradlew testDebugUnitTest; then
+if ! $GRADLE_CMD testDebugUnitTest; then
     echo "❌ Erro: Testes falharam. Release cancelado."
     exit 1
 fi
@@ -80,7 +96,7 @@ echo "✅ Versão atualizada: $CURRENT_VERSION ($CURRENT_CODE) -> $NEW_VERSION (
 
 # 4. Build de Produção
 echo "🏗️ Gerando bundle de produção (AAB)..."
-if ! ./gradlew clean :app:bundleRelease; then
+if ! $GRADLE_CMD clean :app:bundleRelease; then
     echo "❌ Erro: Falha no build. Revertendo mudanças..."
     git checkout "$BUILD_GRADLE"
     exit 1

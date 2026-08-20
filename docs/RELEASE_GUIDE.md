@@ -4,6 +4,18 @@ Este documento descreve o procedimento padrão para gerar uma nova versão do ap
 
 ---
 
+## 📦 Ambiente de Build (Distrobox)
+
+Este projeto utiliza um ambiente isolado para build. **Todas as etapas de build e teste devem ser executadas dentro do container Distrobox.**
+
+**Como entrar no ambiente:**
+```bash
+distrobox enter ubuntu22-android
+```
+*(Para mais detalhes, veja o [Guia do Distrobox](DISTROBOX_GUIDE.md))*
+
+---
+
 ## 🛠 Script de Automação (Recomendado)
 
 Para facilitar o processo, existe um script que executa todas as etapas abaixo automaticamente.
@@ -65,14 +77,15 @@ gh release create v<versionName> --generate-notes
 
 ## 📋 Instruções para o AI Agent
 
-Quando o usuário solicitar um **"Release"**, o Agent deve agir como um pair programmer sênior e pode optar por rodar o script `./scripts/release.sh` ou seguir este protocolo:
+Quando o usuário solicitar um **"Release"**, o Agent deve agir como um pair programmer sênior e seguir este protocolo, **sempre garantindo que os comandos de build rodem no ambiente Distrobox**:
 
-1.  **Tests**: Rodar `./gradlew testDebugUnitTest`.
-2.  **Check-in**: Verificar se há arquivos não commitados e realizar o commit.
-3.  **Version Bump**: Incrementar `versionCode` (+1) e `versionName` (Minor ou Patch).
-4.  **Build**: Executar `./gradlew :app:bundleRelease`.
-5.  **Finalize Git**: Commitar o bump, criar a tag e executar o `push` com `--follow-tags`.
-6.  **Relatório**: Informar o sucesso, a nova versão e o local do arquivo `.aab`.
+1.  **Ambiente**: Verificar se o comando está sendo executado dentro do container. Se estiver fora, prefixar comandos Gradle com `distrobox-enter -n ubuntu22-android --`.
+2.  **Tests**: Rodar os testes unitários.
+3.  **Check-in**: Verificar se há arquivos não commitados e realizar o commit.
+4.  **Version Bump**: Incrementar `versionCode` (+1) e `versionName` (Minor ou Patch).
+5.  **Build**: Executar o build do bundle.
+6.  **Finalize Git**: Commitar o bump, criar a tag e executar o `push` com `--follow-tags`.
+7.  **Relatório**: Informar o sucesso, a nova versão e o local do arquivo `.aab`.
 
 > [!IMPORTANT]
 > O processo de release só é considerado completo após o **Push** bem-sucedido para o repositório remoto.
