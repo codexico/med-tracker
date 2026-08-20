@@ -1,6 +1,0 @@
-import 'expo-router/entry-classic';
-import { registerWidgetTaskHandler } from 'react-native-android-widget';
-
-import { widgetTaskHandler } from './widgets/widget-task-handler';
-
-registerWidgetTaskHandler(widgetTaskHandler);
