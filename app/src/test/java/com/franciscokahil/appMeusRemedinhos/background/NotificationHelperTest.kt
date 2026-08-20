@@ -1,7 +1,10 @@
 package com.franciscokahil.appMeusRemedinhos.background
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import io.mockk.*
@@ -22,11 +25,16 @@ class NotificationHelperTest {
     @Before
     fun setup() {
         mockkConstructor(NotificationCompat.Builder::class)
+        mockkStatic(PendingIntent::class)
+        
         every { anyConstructed<NotificationCompat.Builder>().build() } returns mockk(relaxed = true)
+        every { PendingIntent.getActivity(any(), any(), any(), any()) } returns mockk(relaxed = true)
 
         // Mock context string resource for channel creation
         every { mockContext.getString(any()) } returns "Lembretes"
         every { mockContext.getString(any(), *anyVararg()) } returns "Lembretes"
+        every { mockContext.packageManager } returns mockk(relaxed = true)
+        every { mockContext.packageName } returns "com.franciscokahil.appMeusRemedinhos"
 
         every { mockContext.getSystemService(Context.NOTIFICATION_SERVICE) } returns mockNotificationManager
         notificationHelper = NotificationHelper(mockContext)
