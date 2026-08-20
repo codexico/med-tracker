@@ -57,6 +57,9 @@ Envie todos os commits e a tag para o servidor remoto.
 ```bash
 git push origin main --follow-tags
 ```
+```bash
+gh release create v<versionName> --generate-notes
+```
 
 ---
 
