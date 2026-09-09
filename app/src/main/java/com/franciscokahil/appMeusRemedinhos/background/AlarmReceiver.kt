@@ -21,7 +21,11 @@ class AlarmReceiver : BroadcastReceiver() {
         val message = intent.getStringExtra("EXTRA_MESSAGE") ?: context.getString(R.string.notification_default_msg)
 
         val notificationHelper = NotificationHelper(context)
-        notificationHelper.showNotification(title, message)
+        notificationHelper.showNotification(
+            title,
+            message,
+            NotificationHelper.NotificationType.EVENTS,
+        )
 
         // Ensure widget is in sync (marks item as late)
         WidgetUpdateManager.updateWidgets(context)

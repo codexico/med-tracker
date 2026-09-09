@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        NotificationHelper(this).createNotificationChannel()
+        NotificationHelper(this).createNotificationChannels()
         AlarmSchedulerImpl(this).scheduleMidnightRefresh()
         com.franciscokahil.appMeusRemedinhos.background.StockWorker.schedule(this)
         handleIntent(intent)

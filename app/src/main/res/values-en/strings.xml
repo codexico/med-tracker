@@ -78,8 +78,10 @@
     <string name="manage_stock_label">Manage Stock</string>
 
     <!-- System and Notification Strings -->
-    <string name="notification_channel_name">Medication Reminders</string>
-    <string name="notification_channel_desc">Notifications for your medication times</string>
+    <string name="notification_events_channel_name">Medication Times</string>
+    <string name="notification_events_channel_desc">Notifications for your medication times</string>
+    <string name="notification_stock_channel_name">Medication Stock</string>
+    <string name="notification_stock_channel_desc">Notifications when medication stock is low</string>
     <string name="notification_default_title">Med Time</string>
     <string name="notification_default_msg">Don\'t forget your medication!</string>
     <string name="notification_med_prefix">Medication</string>

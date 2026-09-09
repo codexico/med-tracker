@@ -31,7 +31,11 @@ class StockWorker(
             } else {
                 applicationContext.getString(R.string.stock_notification_multiple, lowStockMeds.size)
             }
-            notificationHelper.showNotification(title, message)
+            notificationHelper.showNotification(
+                title,
+                message,
+                NotificationHelper.NotificationType.STOCK,
+            )
         }
 
         return Result.success()
