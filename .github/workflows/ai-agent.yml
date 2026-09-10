@@ -1,0 +1,29 @@
+name: AI Issue Resolver
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  resolve-issue:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'ai-fix')
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run AI Agent Task
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY_GEMINI }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          echo "Recebida a issue: $ISSUE_TITLE"
+          echo "O agente será acionado aqui para processar o repositório e abrir o PR."
+          # Aqui entra a chamada do script do agente (como o OpenHands ou um script customizado em Python)
