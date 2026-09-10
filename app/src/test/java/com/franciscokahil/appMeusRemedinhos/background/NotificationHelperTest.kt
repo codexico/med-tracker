@@ -9,6 +9,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import io.mockk.*
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -117,6 +119,46 @@ class NotificationHelperTest {
         verify {
             mockNotificationManager.notify(any<Int>(), any())
         }
+    }
+
+    @Test
+    fun `getStockNotificationId returns a stable id per medication`() {
+        val idFirstCall = notificationHelper.getStockNotificationId("med-a")
+        val idSecondCall = notificationHelper.getStockNotificationId("med-a")
+
+        assertEquals(idFirstCall, idSecondCall)
+    }
+
+    @Test
+    fun `getStockNotificationId differs across medications`() {
+        val idMedA = notificationHelper.getStockNotificationId("med-a")
+        val idMedB = notificationHelper.getStockNotificationId("med-b")
+
+        assertNotEquals(idMedA, idMedB)
+    }
+
+    @Test
+    fun `cancelStockNotification only cancels the target medication's notification`() {
+        val medAId = notificationHelper.getStockNotificationId("med-a")
+
+        notificationHelper.cancelStockNotification("med-a")
+
+        verify(exactly = 1) { mockNotificationManager.cancel(medAId) }
+        verify(exactly = 0) { mockNotificationManager.cancel(notificationHelper.getStockNotificationId("med-b")) }
+    }
+
+    @Test
+    fun `showNotification for a stock alert uses the medication's stable id`() {
+        val notificationId = notificationHelper.getStockNotificationId("med-a")
+
+        notificationHelper.showNotification(
+            "Estoque Baixo",
+            "Med A está acabando.",
+            NotificationHelper.NotificationType.STOCK,
+            notificationId,
+        )
+
+        verify { mockNotificationManager.notify(notificationId, any()) }
     }
 }
 

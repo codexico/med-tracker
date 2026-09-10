@@ -1,6 +1,7 @@
 package com.franciscokahil.appMeusRemedinhos.data.repository
 
 import app.cash.turbine.test
+import com.franciscokahil.appMeusRemedinhos.background.NotificationHelper
 import com.franciscokahil.appMeusRemedinhos.data.local.*
 import com.franciscokahil.appMeusRemedinhos.ui.inventory.InventoryViewModel
 import io.mockk.coEvery
@@ -58,7 +59,8 @@ class InventoryTests {
         every { mockMedRepo.allHistory } returns flowOf(emptyList())
         every { mockEventRepo.allEvents } returns flowOf(listOf(event1, event2))
 
-        val viewModel = InventoryViewModel(mockMedRepo, mockEventRepo)
+        val notificationHelper = mockk<NotificationHelper>(relaxed = true)
+        val viewModel = InventoryViewModel(mockMedRepo, mockEventRepo, notificationHelper)
         
         viewModel.medications.test {
             // Wait for non-empty item

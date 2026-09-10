@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.franciscokahil.appMeusRemedinhos.R
+import com.franciscokahil.appMeusRemedinhos.background.NotificationHelper
 import com.franciscokahil.appMeusRemedinhos.data.local.AppDatabase
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepositoryImpl
@@ -44,7 +45,8 @@ fun InventoryScreen(
     val database = remember { AppDatabase.getDatabase(context) }
     val medRepository = remember { MedicationRepositoryImpl(context, database.medicationDao(), database.doseHistoryDao()) }
     val eventRepository = remember { EventRepositoryImpl(context, database.eventDao()) }
-    val factory = remember { InventoryViewModelFactory(medRepository, eventRepository) }
+    val notificationHelper = remember { NotificationHelper(context) }
+    val factory = remember { InventoryViewModelFactory(medRepository, eventRepository, notificationHelper) }
     val viewModel: InventoryViewModel = viewModel(factory = factory)
 
     val uiModels by viewModel.medications.collectAsState()

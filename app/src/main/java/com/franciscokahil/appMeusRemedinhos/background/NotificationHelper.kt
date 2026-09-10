@@ -68,6 +68,7 @@ class NotificationHelper(private val context: Context) {
         title: String,
         message: String,
         type: NotificationType = NotificationType.EVENTS,
+        notificationId: Int = System.currentTimeMillis().toInt(),
     ) {
         createNotificationChannels()
 
@@ -78,7 +79,7 @@ class NotificationHelper(private val context: Context) {
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            notificationId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -94,6 +95,20 @@ class NotificationHelper(private val context: Context) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+        notificationManager.notify(notificationId, builder.build())
+    }
+
+    /**
+     * Stock notifications are keyed per-medication so that clearing or refreshing
+     * one medication's low-stock alert never touches another medication's.
+     */
+    fun getStockNotificationId(medicationId: String): Int {
+        return ("stock_$medicationId").hashCode() and 0x7FFFFFFF
+    }
+
+    fun cancelStockNotification(medicationId: String) {
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(getStockNotificationId(medicationId))
     }
 }
