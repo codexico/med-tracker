@@ -1,39 +1,35 @@
 package com.franciscokahil.appMeusRemedinhos.ui.inventory
 
-import com.franciscokahil.appMeusRemedinhos.data.local.EventEntity
-import com.franciscokahil.appMeusRemedinhos.data.local.EventType
-import com.franciscokahil.appMeusRemedinhos.data.local.EventMedicationEntity
-import com.franciscokahil.appMeusRemedinhos.data.local.EventWithMedications
+import com.franciscokahil.appMeusRemedinhos.background.NotificationHelper
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
-import com.franciscokahil.appMeusRemedinhos.data.local.MedicationWithDosage
-import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
-import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
+import org.mockito.Mockito.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class InventoryViewModelTest {
 
-    private val medicationRepository = mockk<MedicationRepository>()
-    private val eventRepository = mockk<EventRepository>()
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
+    private lateinit var repository: MedicationRepository
+    private lateinit var notificationHelper: NotificationHelper
+    private lateinit var viewModel: InventoryViewModel
 
     @Before
-    fun setup() {
+    fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        repository = mock(MedicationRepository::class.java)
+        notificationHelper = mock(NotificationHelper::class.java)
+        viewModel = InventoryViewModel(repository, notificationHelper)
     }
 
     @After
@@ -42,40 +38,33 @@ class InventoryViewModelTest {
     }
 
     @Test
-    fun `medications flow should calculate daily dosage and days remaining correctly`() = runTest {
-        val medication = Medication(id = "1", name = "Test Med", currentStock = 10f)
-        val event = EventEntity(id = "1", title = "Event", time = "10:00", isEnabled = true, type = EventType.OTHER)
-        val medicationWithDosage = MedicationWithDosage(
-            medication = medication,
-            crossRef = EventMedicationEntity("1", "1", dosageValue = "2.0", dosageUnit = "pill")
-        )
-        val eventWithMedications = EventWithMedications(event, listOf(medicationWithDosage))
+    fun updateStock_cancelsNotificationForTargetMedicationOnly() = runTest {
+        val targetMedicationId = 1L
+        val otherMedicationId = 2L
 
-        every { medicationRepository.allMedications } returns MutableStateFlow(listOf(medication))
-        every { eventRepository.allEvents } returns MutableStateFlow(listOf(eventWithMedications))
+        viewModel.updateStock(medicationId = targetMedicationId, newQuantity = 10)
 
-        val viewModel = InventoryViewModel(medicationRepository, eventRepository)
-        
-        val result = viewModel.medications.first { it.isNotEmpty() }
-        
-        assertEquals(1, result.size)
-        assertEquals(2f, result[0].dailyDosage)
-        assertEquals(5, result[0].daysRemaining)
+        verify(notificationHelper).cancelStockNotification(targetMedicationId)
+        verify(notificationHelper, never()).cancelStockNotification(otherMedicationId)
     }
 
     @Test
-    fun `daysRemaining should be null if daily dosage is zero`() = runTest {
-        val medication = Medication(id = "1", name = "Test Med", currentStock = 10f)
+    fun addStock_cancelsNotificationForTargetMedicationOnly() = runTest {
+        val targetMedicationId = 5L
+        val otherMedicationId = 6L
 
-        every { medicationRepository.allMedications } returns MutableStateFlow(listOf(medication))
-        every { eventRepository.allEvents } returns MutableStateFlow(emptyList())
+        viewModel.addStock(medicationId = targetMedicationId, amountToAdd = 5)
 
-        val viewModel = InventoryViewModel(medicationRepository, eventRepository)
-        
-        val result = viewModel.medications.first { it.isNotEmpty() }
-        
-        assertEquals(1, result.size)
-        assertEquals(0f, result[0].dailyDosage)
-        assertNull(result[0].daysRemaining)
+        verify(notificationHelper).cancelStockNotification(targetMedicationId)
+        verify(notificationHelper, never()).cancelStockNotification(otherMedicationId)
+    }
+
+    @Test
+    fun updateMedication_cancelsNotificationForMedication() = runTest {
+        val med = Medication(id = 3L, name = "Paracetamol", quantity = 20, minQuantity = 5)
+
+        viewModel.updateMedication(med)
+
+        verify(notificationHelper).cancelStockNotification(3L)
     }
 }

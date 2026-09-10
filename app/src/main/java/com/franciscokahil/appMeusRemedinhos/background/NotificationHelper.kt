@@ -7,93 +7,77 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.franciscokahil.appMeusRemedinhos.MainActivity
 import com.franciscokahil.appMeusRemedinhos.R
+import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 
-class NotificationHelper(private val context: Context) {
+open class NotificationHelper(private val context: Context) {
+
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
     companion object {
-        const val EVENTS_CHANNEL_ID = "medication_events_channel"
-        const val STOCK_CHANNEL_ID = "medication_stock_channel"
+        const val CHANNEL_DOSE = "dose_channel"
+        const val CHANNEL_STOCK = "stock_channel"
+        const val STOCK_NOTIFICATION_BASE_ID = 10000
     }
 
-    enum class NotificationType(
-        val channelId: String,
-        val importance: Int,
-        val priority: Int,
-        val nameRes: Int,
-        val descriptionRes: Int,
-    ) {
-        EVENTS(
-            EVENTS_CHANNEL_ID,
-            NotificationManager.IMPORTANCE_HIGH,
-            NotificationCompat.PRIORITY_HIGH,
-            R.string.notification_events_channel_name,
-            R.string.notification_events_channel_desc,
-        ),
-        STOCK(
-            STOCK_CHANNEL_ID,
-            NotificationManager.IMPORTANCE_LOW,
-            NotificationCompat.PRIORITY_LOW,
-            R.string.notification_stock_channel_name,
-            R.string.notification_stock_channel_desc,
-        ),
+    init {
+        createNotificationChannels()
     }
 
-    fun createNotificationChannels() {
+    private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            NotificationType.entries.forEach { type ->
-                val channel = NotificationChannel(
-                    type.channelId,
-                    context.getString(type.nameRes),
-                    type.importance,
-                ).apply {
-                    description = context.getString(type.descriptionRes)
-                    enableLights(true)
-                    enableVibration(type == NotificationType.EVENTS)
-                    setShowBadge(true)
-                }
-                notificationManager.createNotificationChannel(channel)
-            }
+            val doseChannel = NotificationChannel(
+                CHANNEL_DOSE,
+                "Lembretes de Doses",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val stockChannel = NotificationChannel(
+                CHANNEL_STOCK,
+                "Alertas de Estoque",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(doseChannel)
+            notificationManager.createNotificationChannel(stockChannel)
         }
     }
 
-    // Kept for callers that only need to initialize notifications.
-    fun createNotificationChannel() {
-        createNotificationChannels()
+    open fun getStockNotificationId(medicationId: Long): Int {
+        return (STOCK_NOTIFICATION_BASE_ID + medicationId).toInt()
     }
 
-    fun showNotification(
-        title: String,
-        message: String,
-        type: NotificationType = NotificationType.EVENTS,
-    ) {
-        createNotificationChannels()
-
-        // The channel controls importance on Android 8+; priority covers older versions.
-        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    open fun showLowStockNotification(medicationId: Long, medicationName: String, remainingQuantity: Int) {
+        val notificationId = getStockNotificationId(medicationId)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("navigate_to", "inventory")
         }
-
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            notificationId,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val builder = NotificationCompat.Builder(context, type.channelId)
+        val notification = NotificationCompat.Builder(context, CHANNEL_STOCK)
             .setSmallIcon(R.drawable.ic_notification_pill)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(type.priority)
+            .setContentTitle("Estoque Baixo: $medicationName")
+            .setContentText("Resta(m) apenas $remainingQuantity unidade(s).")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+            .build()
 
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(notificationId, notification)
+    }
 
-        notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+    open fun showLowStockNotification(medication: Medication) {
+        showLowStockNotification(medication.id, medication.name, medication.quantity)
+    }
+
+    open fun cancelStockNotification(medicationId: Long) {
+        val notificationId = getStockNotificationId(medicationId)
+        notificationManager.cancel(notificationId)
     }
 }

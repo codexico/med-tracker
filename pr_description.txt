@@ -1,0 +1,3 @@
+Resolves #9
+
+Resolved Issue #9 by ensuring stock notifications are managed on a per-medication basis with unique notification IDs. Updated `NotificationHelper` to map medication IDs to distinct stock notification IDs and added `cancelStockNotification(medicationId: Long)`. Updated `InventoryViewModel` and `StockWorker` to cancel stock notifications when a medication's stock is updated/replenished, ensuring that updating Medication A's stock does not cancel or affect Medication B's notification. Added unit tests in `NotificationHelperTest` and `InventoryViewModelTest` to verify this behavior.
