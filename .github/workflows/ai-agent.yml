@@ -11,6 +11,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -20,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install google-genai
+          pip install google-genai pydantic
 
       - name: Run AI Agent Task
         env:
@@ -28,5 +31,32 @@ jobs:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           python ai/agent_runner.py
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: |
+          BRANCH_NAME="ai-fix-issue-${ISSUE_NUM}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout -b $BRANCH_NAME
+          git add -A
+          
+          if git diff --staged --quiet; then
+            echo "Nenhuma mudança gerada pela IA."
+            exit 0
+          fi
+          
+          git commit -m "fix: resolve issue #${ISSUE_NUM} via AI Agent"
+          git push origin $BRANCH_NAME --force
+          
+          gh pr create \
+            --base main \
+            --head $BRANCH_NAME \
+            --title "fix: resolucao automatica da issue #${ISSUE_NUM}" \
+            --body-file pr_description.txt
