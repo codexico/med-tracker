@@ -108,13 +108,15 @@ class DashboardViewModel(
     fun toggleEventStatus(eventWithMeds: EventWithMedications, isTaken: Boolean) {
         viewModelScope.launch {
             if (isTaken) {
+                val now = System.currentTimeMillis()
                 if (eventWithMeds.medications.isEmpty()) {
                     // Even if there are no medications, we record the event as taken
                     medicationRepository.markAsTaken(
                         eventWithMeds.event.id,
                         "", // No specific medication
                         0f,
-                        System.currentTimeMillis()
+                        now,
+                        now,
                     )
                 } else {
                     eventWithMeds.medications.forEach { medWithDosage ->
@@ -122,7 +124,8 @@ class DashboardViewModel(
                             eventWithMeds.event.id,
                             medWithDosage.medication.id,
                             medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f,
-                            System.currentTimeMillis()
+                            now,
+                            now,
                         )
                     }
                 }
@@ -132,14 +135,39 @@ class DashboardViewModel(
         }
     }
 
+    // The dose's `timestamp` must land on the previous day so it doesn't also satisfy
+    // today's own `timestamp >= todayStart` check in `events` (which would make today's
+    // occurrence of this recurring event show as taken too). We use the event's actual
+    // scheduled time on the previous day, rather than an arbitrary end-of-day stamp, so
+    // reports reflect when the dose was really due.
+    private fun getPreviousOccurrenceTimestamp(timeStr: String): Long {
+        val parts = timeStr.split(":")
+        val hour = parts.getOrNull(0)?.toIntOrNull()
+        val minute = parts.getOrNull(1)?.toIntOrNull()
+        if (hour == null || minute == null) {
+            return getStartOfDay(System.currentTimeMillis()) - 1
+        }
+        return Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, -1)
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
     fun markAsTakenRetrospectively(eventWithMeds: EventWithMedications) {
         viewModelScope.launch {
+            val doseTimestamp = getPreviousOccurrenceTimestamp(eventWithMeds.event.time)
+            val recordedAt = System.currentTimeMillis()
             if (eventWithMeds.medications.isEmpty()) {
                 medicationRepository.markAsTaken(
                     eventWithMeds.event.id,
                     "",
                     0f,
-                    System.currentTimeMillis()
+                    doseTimestamp,
+                    recordedAt,
+                    isOverdue = true,
                 )
             } else {
                 eventWithMeds.medications.forEach { medWithDosage ->
@@ -147,7 +175,9 @@ class DashboardViewModel(
                         eventWithMeds.event.id,
                         medWithDosage.medication.id,
                         medWithDosage.crossRef.dosageValue.toFloatOrNull() ?: 0f,
-                        System.currentTimeMillis()
+                        doseTimestamp,
+                        recordedAt,
+                        isOverdue = true,
                     )
                 }
             }
@@ -156,11 +186,15 @@ class DashboardViewModel(
 
     fun markAsSkippedRetrospectively(eventWithMeds: EventWithMedications) {
         viewModelScope.launch {
+            val doseTimestamp = getPreviousOccurrenceTimestamp(eventWithMeds.event.time)
+            val recordedAt = System.currentTimeMillis()
             eventWithMeds.medications.forEach { medWithDosage ->
                 medicationRepository.markAsSkipped(
                     eventWithMeds.event.id,
                     medWithDosage.medication.id,
-                    System.currentTimeMillis()
+                    doseTimestamp,
+                    recordedAt,
+                    isOverdue = true,
                 )
             }
         }

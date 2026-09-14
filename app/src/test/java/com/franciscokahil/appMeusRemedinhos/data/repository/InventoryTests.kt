@@ -78,7 +78,7 @@ class InventoryTests {
         val amount = 2.0f
         val timestamp = 1000L
         
-        medicationRepository.markAsTaken("event1", medicationId, amount, timestamp)
+        medicationRepository.markAsTaken("event1", medicationId, amount, timestamp, timestamp)
         
         coVerify { medicationDao.subtractFromStock(medicationId, amount) }
         coVerify { doseHistoryDao.insertDose(match { 
@@ -91,7 +91,7 @@ class InventoryTests {
         val medicationId = "med123"
         val timestamp = 2000L
         
-        medicationRepository.markAsSkipped("event1", medicationId, timestamp)
+        medicationRepository.markAsSkipped("event1", medicationId, timestamp, timestamp)
         
         coVerify(exactly = 0) { medicationDao.subtractFromStock(any(), any()) }
         coVerify { doseHistoryDao.insertDose(match { 

@@ -13,7 +13,7 @@ import androidx.room.TypeConverters
         EventMedicationEntity::class,
         DoseHistoryEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(EventTypeConverter::class)

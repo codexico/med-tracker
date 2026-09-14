@@ -17,8 +17,21 @@ interface MedicationRepository {
     suspend fun insertMedication(medication: Medication): String
     suspend fun updateMedication(medication: Medication)
     suspend fun deleteMedication(medication: Medication)
-    suspend fun markAsTaken(eventId: String, medicationId: String, amount: Float, timestamp: Long)
-    suspend fun markAsSkipped(eventId: String, medicationId: String, timestamp: Long)
+    suspend fun markAsTaken(
+        eventId: String,
+        medicationId: String,
+        amount: Float,
+        timestamp: Long,
+        recordedAt: Long,
+        isOverdue: Boolean = false,
+    )
+    suspend fun markAsSkipped(
+        eventId: String,
+        medicationId: String,
+        timestamp: Long,
+        recordedAt: Long,
+        isOverdue: Boolean = false,
+    )
     suspend fun unmarkAsTaken(eventId: String, startOfDay: Long)
     fun getDosesForEventToday(eventId: String, startOfDay: Long): Flow<List<DoseHistoryEntity>>
 }
@@ -56,14 +69,23 @@ class MedicationRepositoryImpl(
         medicationDao.deleteMedication(medication)
     }
 
-    override suspend fun markAsTaken(eventId: String, medicationId: String, amount: Float, timestamp: Long) {
+    override suspend fun markAsTaken(
+        eventId: String,
+        medicationId: String,
+        amount: Float,
+        timestamp: Long,
+        recordedAt: Long,
+        isOverdue: Boolean,
+    ) {
         mutex.withLock {
             val dose = DoseHistoryEntity(
                 eventId = eventId,
                 medicationId = medicationId,
                 timestamp = timestamp,
                 amountTaken = amount,
-                status = "TAKEN"
+                status = "TAKEN",
+                recordedAt = recordedAt,
+                isOverdue = isOverdue,
             )
             doseHistoryDao.insertDose(dose)
             medicationDao.subtractFromStock(medicationId, amount)
@@ -71,13 +93,21 @@ class MedicationRepositoryImpl(
         }
     }
 
-    override suspend fun markAsSkipped(eventId: String, medicationId: String, timestamp: Long) {
+    override suspend fun markAsSkipped(
+        eventId: String,
+        medicationId: String,
+        timestamp: Long,
+        recordedAt: Long,
+        isOverdue: Boolean,
+    ) {
         val dose = DoseHistoryEntity(
             eventId = eventId,
             medicationId = medicationId,
             timestamp = timestamp,
             amountTaken = 0f,
-            status = "SKIPPED"
+            status = "SKIPPED",
+            recordedAt = recordedAt,
+            isOverdue = isOverdue,
         )
         doseHistoryDao.insertDose(dose)
         updateWidgets()

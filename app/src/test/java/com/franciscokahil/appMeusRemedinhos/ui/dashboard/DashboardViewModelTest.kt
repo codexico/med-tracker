@@ -105,7 +105,7 @@ class DashboardViewModelTest {
         viewModel.toggleEventStatus(eventWithMeds, isTaken = true)
         advanceUntilIdle()
 
-        coVerify { medicationRepository.markAsTaken("1", "med1", 1f, any()) }
+        coVerify { medicationRepository.markAsTaken("1", "med1", 1f, any(), any()) }
     }
 
     @Test
