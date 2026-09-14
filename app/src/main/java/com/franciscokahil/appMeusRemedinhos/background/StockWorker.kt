@@ -18,24 +18,28 @@ class StockWorker(
     override suspend fun doWork(): Result {
         val database = AppDatabase.getDatabase(applicationContext)
         val medications = database.medicationDao().getAllMedications().first()
-        
-        val lowStockMeds = medications.filter { 
-            (it.currentStock <= it.lowStockThreshold) && (it.lowStockThreshold > 0)
-        }
+        val notificationHelper = NotificationHelper(applicationContext)
+        val title = applicationContext.getString(R.string.stock_banner_title)
 
-        if (lowStockMeds.isNotEmpty()) {
-            val notificationHelper = NotificationHelper(applicationContext)
-            val title = applicationContext.getString(R.string.stock_banner_title)
-            val message = if (lowStockMeds.size == 1) {
-                applicationContext.getString(R.string.stock_notification_single, lowStockMeds[0].name)
+        medications.forEach { medication ->
+            val isLowStock = medication.lowStockThreshold > 0 &&
+                medication.currentStock <= medication.lowStockThreshold
+            if (isLowStock) {
+                val message = applicationContext.getString(
+                    R.string.stock_notification_single,
+                    medication.name,
+                )
+                notificationHelper.showNotification(
+                    title,
+                    message,
+                    NotificationHelper.NotificationType.STOCK,
+                    notificationHelper.getStockNotificationId(medication.id),
+                )
             } else {
-                applicationContext.getString(R.string.stock_notification_multiple, lowStockMeds.size)
+                // Stock was replenished (or the alert was disabled) since the last check,
+                // so any stale low-stock notification for this medication must go away.
+                notificationHelper.cancelStockNotification(medication.id)
             }
-            notificationHelper.showNotification(
-                title,
-                message,
-                NotificationHelper.NotificationType.STOCK,
-            )
         }
 
         return Result.success()

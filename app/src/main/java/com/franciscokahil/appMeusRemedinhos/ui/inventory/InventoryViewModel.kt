@@ -3,6 +3,7 @@ package com.franciscokahil.appMeusRemedinhos.ui.inventory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.franciscokahil.appMeusRemedinhos.background.NotificationHelper
 import com.franciscokahil.appMeusRemedinhos.data.local.Medication
 import com.franciscokahil.appMeusRemedinhos.data.repository.EventRepository
 import com.franciscokahil.appMeusRemedinhos.data.repository.MedicationRepository
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 class InventoryViewModel(
     private val medicationRepository: MedicationRepository,
     eventRepository: EventRepository,
+    private val notificationHelper: NotificationHelper,
 ) : ViewModel() {
 
     val medications: StateFlow<List<MedicationStockUIModel>> = combine(
@@ -52,24 +54,30 @@ class InventoryViewModel(
     fun updateMedication(medication: Medication) {
         viewModelScope.launch {
             medicationRepository.updateMedication(medication)
+            // Stock may have just been replenished; drop the stale low-stock alert for
+            // THIS medication only. It's harmless to cancel when still low: the periodic
+            // StockWorker check will re-post it if the medication remains under threshold.
+            notificationHelper.cancelStockNotification(medication.id)
         }
     }
 
     fun deleteMedication(medication: Medication) {
         viewModelScope.launch {
             medicationRepository.deleteMedication(medication)
+            notificationHelper.cancelStockNotification(medication.id)
         }
     }
 }
 
 class InventoryViewModelFactory(
     private val medicationRepository: MedicationRepository,
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val notificationHelper: NotificationHelper,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(InventoryViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return InventoryViewModel(medicationRepository, eventRepository) as T
+            return InventoryViewModel(medicationRepository, eventRepository, notificationHelper) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
